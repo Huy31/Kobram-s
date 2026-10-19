@@ -588,9 +588,9 @@ export default function HomePage() {
           {/* 3 Value Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Card 1 */}
-            <div className="p-space-lg bg-surface-container-lowest border border-outline-variant rounded-2xl flex flex-col justify-between hover:shadow-lg transition-shadow">
+            <div className="p-space-lg bg-surface-container-lowest border border-outline-variant rounded-3xl flex flex-col justify-between hover:shadow-lg transition-shadow">
               <div>
-                <div className="w-12 h-12 bg-surface-container-low border border-outline-variant rounded-xl flex items-center justify-center mb-6">
+                <div className="w-12 h-12 bg-surface-container-low border border-outline-variant rounded-2xl flex items-center justify-center mb-6">
                   <span className="material-symbols-outlined text-2xl text-primary">forest</span>
                 </div>
                 <h3 className="font-headline-sm text-xl text-primary font-bold mb-2">
@@ -607,9 +607,9 @@ export default function HomePage() {
             </div>
 
             {/* Card 2 */}
-            <div className="p-space-lg bg-surface-container-lowest border border-outline-variant rounded-2xl flex flex-col justify-between hover:shadow-lg transition-shadow">
+            <div className="p-space-lg bg-surface-container-lowest border border-outline-variant rounded-3xl flex flex-col justify-between hover:shadow-lg transition-shadow">
               <div>
-                <div className="w-12 h-12 bg-surface-container-low border border-outline-variant rounded-xl flex items-center justify-center mb-6">
+                <div className="w-12 h-12 bg-surface-container-low border border-outline-variant rounded-2xl flex items-center justify-center mb-6">
                   <span className="material-symbols-outlined text-2xl text-primary">hardware</span>
                 </div>
                 <h3 className="font-headline-sm text-xl text-primary font-bold mb-2">
@@ -626,9 +626,9 @@ export default function HomePage() {
             </div>
 
             {/* Card 3 */}
-            <div className="p-space-lg bg-surface-container-lowest border border-outline-variant rounded-2xl flex flex-col justify-between hover:shadow-lg transition-shadow">
+            <div className="p-space-lg bg-surface-container-lowest border border-outline-variant rounded-3xl flex flex-col justify-between hover:shadow-lg transition-shadow">
               <div>
-                <div className="w-12 h-12 bg-surface-container-low border border-outline-variant rounded-xl flex items-center justify-center mb-6">
+                <div className="w-12 h-12 bg-surface-container-low border border-outline-variant rounded-2xl flex items-center justify-center mb-6">
                   <span className="material-symbols-outlined text-2xl text-primary">workspace_premium</span>
                 </div>
                 <h3 className="font-headline-sm text-xl text-primary font-bold mb-2">
@@ -648,7 +648,7 @@ export default function HomePage() {
 
         {/* WORKSHOP BANNER SECTION */}
         <section id="xuong-moc" className="py-space-md px-space-md lg:px-margin max-w-7xl mx-auto">
-          <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl lg:rounded-3xl p-space-lg sm:p-space-xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center overflow-hidden">
+          <div className="bg-surface-container-lowest border border-outline-variant rounded-3xl lg:rounded-[36px] p-space-lg sm:p-space-xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center overflow-hidden">
             <div className="lg:col-span-7 space-y-4">
               <span className="text-label-sm font-label-sm text-outline uppercase tracking-widest block">
                 {t.home.workshopTag}
@@ -671,7 +671,7 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="lg:col-span-5 relative aspect-[16/10] sm:aspect-[16/9] overflow-hidden border border-outline-variant rounded-xl lg:rounded-2xl">
+            <div className="lg:col-span-5 relative aspect-[16/10] sm:aspect-[16/9] overflow-hidden border border-outline-variant rounded-2xl lg:rounded-3xl">
               <Image
                 src="/images/artisan-woodworker.jpg"
                 alt="Thợ mộc Komorebi bào gỗ tại xưởng chế tác thủ công"

@@ -334,7 +334,7 @@ export default function LoginPage() {
         setIsGoogleLoading(true);
         showToast(curr.googleConnecting);
         const supabase = createClient();
-        const { error } = await supabase.auth.signInWithOAuth({
+        const { data, error } = await supabase.auth.signInWithOAuth({
           provider: "google",
           options: {
             redirectTo: `${window.location.origin}/auth/callback?next=/tai-khoan`,
@@ -348,7 +348,18 @@ export default function LoginPage() {
         if (error) {
           showToast(`Google error: ${error.message}`);
           setIsGoogleLoading(false);
+          return;
         }
+
+        if (data?.url) {
+          window.location.assign(data.url);
+          window.location.href = data.url;
+        }
+
+        // Safety fallback: reset loading after 6s in case redirect is delayed or cancelled
+        setTimeout(() => {
+          setIsGoogleLoading(false);
+        }, 6000);
       } catch (err: any) {
         showToast(`Google error: ${err?.message || "Lỗi không xác định"}`);
         setIsGoogleLoading(false);
@@ -361,7 +372,7 @@ export default function LoginPage() {
         setIsFacebookLoading(true);
         showToast(curr.facebookConnecting);
         const supabase = createClient();
-        const { error } = await supabase.auth.signInWithOAuth({
+        const { data, error } = await supabase.auth.signInWithOAuth({
           provider: "facebook",
           options: {
             redirectTo: `${window.location.origin}/auth/callback?next=/tai-khoan`,
@@ -371,7 +382,18 @@ export default function LoginPage() {
         if (error) {
           showToast(`Facebook error: ${error.message}`);
           setIsFacebookLoading(false);
+          return;
         }
+
+        if (data?.url) {
+          window.location.assign(data.url);
+          window.location.href = data.url;
+        }
+
+        // Safety fallback: reset loading after 6s in case redirect is delayed or cancelled
+        setTimeout(() => {
+          setIsFacebookLoading(false);
+        }, 6000);
       } catch (err: any) {
         showToast(`Facebook error: ${err?.message || "Lỗi không xác định"}`);
         setIsFacebookLoading(false);
@@ -571,8 +593,8 @@ export default function LoginPage() {
         </section>
 
         {/* RIGHT PANEL: High-End Interactive Authentication Card (5 Cols Desktop) */}
-        <section className="lg:col-span-5 bg-white flex flex-col justify-between p-4 sm:p-8 lg:p-12 overflow-y-auto">
-          <div className="w-full max-w-md mx-auto my-auto space-y-4 sm:space-y-5">
+        <section className="lg:col-span-5 bg-white flex flex-col justify-between p-4 sm:p-8 lg:p-12 overflow-y-visible lg:overflow-y-auto">
+          <div className="w-full max-w-md mx-auto my-0 lg:my-auto space-y-4 sm:space-y-5">
             {/* Role Persona Selector (Personal vs Architect/Partner) */}
             <div className="w-full border border-[#E4E4E7] p-1 bg-[#F4F4F5] flex items-center gap-1 rounded-xl">
               <button
@@ -584,7 +606,7 @@ export default function LoginPage() {
                     : "text-[#71717A] hover:text-black"
                 }`}
               >
-                <span className="flex items-center justify-center gap-1 sm:gap-1.5">
+                <span className="flex items-center justify-center gap-1 sm:gap-1.5 pointer-events-none">
                   <span className="material-symbols-outlined text-[15px]">person</span>
                   <span>{curr.clientTab}</span>
                 </span>
@@ -599,7 +621,7 @@ export default function LoginPage() {
                     : "text-[#71717A] hover:text-black"
                 }`}
               >
-                <span className="flex items-center justify-center gap-1 sm:gap-1.5">
+                <span className="flex items-center justify-center gap-1 sm:gap-1.5 pointer-events-none">
                   <span className="material-symbols-outlined text-[15px]">handyman</span>
                   <span>{curr.architectTab}</span>
                 </span>
@@ -667,16 +689,16 @@ export default function LoginPage() {
                   type="button"
                   disabled={isGoogleLoading}
                   onClick={() => handleSSO("Google")}
-                  className={`flex items-center justify-center gap-1.5 py-2 sm:py-2.5 px-1.5 sm:px-3 border border-[#E4E4E7] hover:border-[#4285F4] bg-white hover:bg-[#F4F4F5] transition-all group rounded-xl ${
+                  className={`flex items-center justify-center gap-1.5 min-h-[44px] py-2 sm:py-2.5 px-1.5 sm:px-3 border border-[#E4E4E7] hover:border-[#4285F4] bg-white hover:bg-[#F4F4F5] transition-all group rounded-xl touch-manipulation cursor-pointer select-none active:scale-95 ${
                     isGoogleLoading ? "opacity-60 cursor-wait" : ""
                   }`}
                   title={curr.googleTitle}
                 >
                   {isGoogleLoading ? (
-                    <span className="w-4 h-4 border-2 border-[#4285F4] border-t-transparent rounded-full animate-spin"></span>
+                    <span className="w-4 h-4 border-2 border-[#4285F4] border-t-transparent rounded-full animate-spin pointer-events-none"></span>
                   ) : (
                     <svg
-                      className="w-4 h-4 flex-shrink-0 group-hover:scale-110 transition-transform"
+                      className="w-4 h-4 flex-shrink-0 group-hover:scale-110 transition-transform pointer-events-none"
                       viewBox="0 0 24 24"
                     >
                       <path
@@ -697,7 +719,7 @@ export default function LoginPage() {
                       />
                     </svg>
                   )}
-                  <span className="text-[11px] sm:text-xs uppercase font-semibold text-[#4285F4]">
+                  <span className="text-[11px] sm:text-xs uppercase font-semibold text-[#4285F4] pointer-events-none">
                     {isGoogleLoading ? (lang === "VN" ? "Đang kết nối..." : "Connecting...") : "Google"}
                   </span>
                 </button>
@@ -707,22 +729,22 @@ export default function LoginPage() {
                   type="button"
                   disabled={isFacebookLoading}
                   onClick={() => handleSSO("Facebook")}
-                  className={`flex items-center justify-center gap-1.5 py-2 sm:py-2.5 px-1.5 sm:px-3 border border-[#E4E4E7] hover:border-[#1877F2] bg-white hover:bg-[#F4F4F5] transition-all group rounded-xl ${
+                  className={`flex items-center justify-center gap-1.5 min-h-[44px] py-2 sm:py-2.5 px-1.5 sm:px-3 border border-[#E4E4E7] hover:border-[#1877F2] bg-white hover:bg-[#F4F4F5] transition-all group rounded-xl touch-manipulation cursor-pointer select-none active:scale-95 ${
                     isFacebookLoading ? "opacity-60 cursor-wait" : ""
                   }`}
                   title={curr.facebookTitle}
                 >
                   {isFacebookLoading ? (
-                    <span className="w-4 h-4 border-2 border-[#1877F2] border-t-transparent rounded-full animate-spin"></span>
+                    <span className="w-4 h-4 border-2 border-[#1877F2] border-t-transparent rounded-full animate-spin pointer-events-none"></span>
                   ) : (
                     <svg
-                      className="w-4 h-4 fill-[#1877F2] group-hover:scale-110 transition-transform flex-shrink-0"
+                      className="w-4 h-4 fill-[#1877F2] group-hover:scale-110 transition-transform flex-shrink-0 pointer-events-none"
                       viewBox="0 0 24 24"
                     >
                       <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                     </svg>
                   )}
-                  <span className="text-[11px] sm:text-xs uppercase font-semibold text-[#1877F2]">
+                  <span className="text-[11px] sm:text-xs uppercase font-semibold text-[#1877F2] pointer-events-none">
                     {isFacebookLoading ? (lang === "VN" ? "Đang kết nối..." : "Connecting...") : "Facebook"}
                   </span>
                 </button>
@@ -731,16 +753,16 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => handleSSO("ArchID", true)}
-                  className="flex items-center justify-center gap-1 py-2 sm:py-2.5 px-1 sm:px-2.5 border border-dashed border-[#D4D4D8] bg-[#F4F4F5]/90 opacity-60 cursor-not-allowed hover:bg-[#EAEAEA] transition-all rounded-xl relative"
+                  className="flex items-center justify-center gap-1 min-h-[44px] py-2 sm:py-2.5 px-1 sm:px-2.5 border border-dashed border-[#D4D4D8] bg-[#F4F4F5]/90 opacity-60 cursor-not-allowed hover:bg-[#EAEAEA] transition-all rounded-xl relative touch-manipulation select-none"
                   title={curr.archIdTitle}
                 >
-                  <span className="material-symbols-outlined text-[15px] sm:text-[17px] text-[#71717A]">
+                  <span className="material-symbols-outlined text-[15px] sm:text-[17px] text-[#71717A] pointer-events-none">
                     architecture
                   </span>
-                  <span className="text-[11px] sm:text-xs uppercase font-semibold text-[#71717A]">
+                  <span className="text-[11px] sm:text-xs uppercase font-semibold text-[#71717A] pointer-events-none">
                     ArchID
                   </span>
-                  <span className="material-symbols-outlined text-[12px] text-[#A1A1AA] ml-0.5">
+                  <span className="material-symbols-outlined text-[12px] text-[#A1A1AA] ml-0.5 pointer-events-none">
                     lock
                   </span>
                 </button>
