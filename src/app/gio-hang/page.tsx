@@ -8,8 +8,10 @@ import Footer from "@/components/Footer";
 import VietQRModal from "@/components/VietQRModal";
 import ConsultationModal from "@/components/ConsultationModal";
 import { useCart } from "@/context/CartContext";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function CartAndCheckoutPage() {
+  const { lang, t } = useLanguage();
   const {
     items,
     removeFromCart,
@@ -52,7 +54,7 @@ export default function CartAndCheckoutPage() {
   const handleApplyVoucher = (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputVoucher) {
-      showToast("Vui lòng nhập mã ưu đãi.");
+      showToast(lang === "VN" ? "Vui lòng nhập mã ưu đãi." : "Please enter a voucher code.");
       return;
     }
     const res = applyDiscount(inputVoucher);
@@ -63,18 +65,18 @@ export default function CartAndCheckoutPage() {
 
   const handleProceedToPayment = () => {
     if (items.length === 0) {
-      showToast("Giỏ hàng của bạn đang trống.");
+      showToast(t.cart.emptyCartNotice);
       return;
     }
     if (!fullName || !phone) {
-      showToast("Vui lòng điền họ tên và số điện thoại giao nhận.");
+      showToast(t.cart.fillRequiredNotice);
       return;
     }
 
     if (selectedPaymentMethod === "vietqr") {
       setIsVietQRModalOpen(true);
     } else if (selectedPaymentMethod === "card") {
-      showToast("Đang kết nối cổng thanh toán thẻ quốc tế Visa/Mastercard 3D Secure...");
+      showToast(t.cart.connectingGateway);
       setTimeout(() => {
         setIsVietQRModalOpen(true);
       }, 800);
@@ -97,12 +99,12 @@ export default function CartAndCheckoutPage() {
             {/* Breadcrumbs */}
             <nav className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-label-md font-label-md text-on-surface-variant overflow-x-auto no-scrollbar whitespace-nowrap py-1">
               <Link href="/" className="hover:text-primary transition-colors flex-shrink-0">
-                Trang chủ
+                {t.cart.breadcrumbHome}
               </Link>
               <span className="material-symbols-outlined text-xs sm:text-sm text-outline flex-shrink-0">chevron_right</span>
-              <span className="text-primary font-semibold flex-shrink-0">Giỏ hàng &amp; Cấu hình</span>
+              <span className="text-primary font-semibold flex-shrink-0">{t.cart.breadcrumbCart}</span>
               <span className="material-symbols-outlined text-xs sm:text-sm text-outline flex-shrink-0">chevron_right</span>
-              <span className="text-outline flex-shrink-0">Thanh toán an toàn</span>
+              <span className="text-outline flex-shrink-0">{t.cart.breadcrumbCheckout}</span>
             </nav>
 
             {/* Checkout Steps Indicator */}
@@ -113,7 +115,7 @@ export default function CartAndCheckoutPage() {
                   1
                 </span>
                 <span className="text-xs sm:text-label-md font-label-md text-primary font-bold tracking-tight whitespace-nowrap">
-                  Giỏ hàng &amp; Tùy chỉnh
+                  {t.cart.step1}
                 </span>
               </div>
               <div className="w-4 sm:w-8 h-[1px] bg-primary flex-shrink-0"></div>
@@ -124,7 +126,7 @@ export default function CartAndCheckoutPage() {
                   2
                 </span>
                 <span className="text-xs sm:text-label-md font-label-md text-on-surface-variant whitespace-nowrap">
-                  Địa chỉ &amp; Lắp đặt
+                  {t.cart.step2}
                 </span>
               </div>
               <div className="w-4 sm:w-8 h-[1px] bg-outline-variant flex-shrink-0"></div>
@@ -135,7 +137,7 @@ export default function CartAndCheckoutPage() {
                   3
                 </span>
                 <span className="text-xs sm:text-label-md font-label-md text-on-surface-variant whitespace-nowrap">
-                  Thanh toán
+                  {t.cart.step3}
                 </span>
               </div>
             </div>
@@ -152,18 +154,22 @@ export default function CartAndCheckoutPage() {
               KOMOREBI LIVING — CẤU HÌNH ĐƠN HÀNG #KL-84920
             </span>
             <h1 className="text-headline-lg font-headline-lg text-2xl sm:text-3xl lg:text-4xl text-primary font-medium tracking-tight">
-              Giỏ Hàng &amp; Cấu Hình Kiến Trúc
+              {t.cart.title}
             </h1>
           </div>
           <div className="text-left md:text-right">
             <p className="text-label-md font-label-md text-on-surface-variant">
-              Số lượng:{" "}
+              {lang === "VN" ? "Số lượng: " : "Quantity: "}
               <span className="text-primary font-bold">
-                {itemCount.toString().padStart(2, "0")} vật phẩm độc bản
+                {lang === "VN"
+                  ? `${itemCount.toString().padStart(2, "0")} vật phẩm độc bản`
+                  : `${itemCount.toString().padStart(2, "0")} bespoke items`}
               </span>
             </p>
             <p className="text-body-sm font-body-sm text-outline text-xs">
-              Đóng kiện thủ công &amp; Kiểm định vật liệu FSC®
+              {lang === "VN"
+                ? "Đóng kiện thủ công & Kiểm định vật liệu FSC®"
+                : "Handcrafted packaging & FSC® verified materials"}
             </p>
           </div>
         </div>
@@ -176,10 +182,10 @@ export default function CartAndCheckoutPage() {
             <section className="bg-surface-container-lowest border border-outline-variant p-space-md sm:p-space-lg rounded-2xl shadow-sm">
               <div className="flex items-center justify-between pb-space-md border-b border-outline-variant/40 mb-space-md">
                 <h2 className="text-headline-sm font-headline-sm text-lg sm:text-xl text-primary tracking-tight font-bold">
-                  Danh Sách Tuyển Chọn
+                  {lang === "VN" ? "Danh Sách Tuyển Chọn" : "Curated Selection"}
                 </h2>
                 <span className="text-label-sm font-label-sm text-outline uppercase tracking-wider">
-                  Tiêu chuẩn mộc thủ công
+                  {lang === "VN" ? "Tiêu chuẩn mộc thủ công" : "Master Joinery Standards"}
                 </span>
               </div>
 
@@ -187,13 +193,13 @@ export default function CartAndCheckoutPage() {
                 <div className="py-12 text-center space-y-3">
                   <span className="material-symbols-outlined text-4xl text-outline">shopping_bag</span>
                   <p className="text-body-md text-on-surface-variant">
-                    Hiện chưa có sản phẩm nào trong giỏ hàng.
+                    {t.cart.emptyDesc}
                   </p>
                   <Link
                     href="/"
                     className="inline-block mt-2 px-6 py-2.5 bg-primary text-on-primary text-label-md uppercase tracking-wider rounded-xl"
                   >
-                    Khám phá bộ sưu tập mộc bản
+                    {t.cart.continueShopping}
                   </Link>
                 </div>
               ) : (
@@ -213,7 +219,7 @@ export default function CartAndCheckoutPage() {
                           className="object-cover group-hover:scale-105 transition-transform duration-500 rounded-xl"
                         />
                         <span className="absolute top-2 left-2 bg-primary text-on-primary text-[10px] font-bold px-1.5 py-0.5 rounded-md">
-                          SẴN KHO
+                          {lang === "VN" ? "SẴN KHO" : "IN STOCK"}
                         </span>
                       </div>
 
@@ -223,7 +229,7 @@ export default function CartAndCheckoutPage() {
                           <div className="flex items-start justify-between gap-2">
                             <div>
                               <span className="text-label-sm font-label-sm text-outline block text-xs">
-                                MÃ SP: {item.sku}
+                                {lang === "VN" ? "MÃ SP: " : "SKU: "}{item.sku}
                               </span>
                               <h3 className="text-headline-sm font-headline-sm text-base sm:text-lg text-primary font-bold">
                                 {item.title}
@@ -233,8 +239,8 @@ export default function CartAndCheckoutPage() {
                               type="button"
                               onClick={() => removeFromCart(item.id)}
                               className="text-outline hover:text-error transition-colors p-1 rounded-lg"
-                              title="Xóa khỏi đơn"
-                              aria-label="Xóa sản phẩm"
+                              title={lang === "VN" ? "Xóa khỏi đơn" : "Remove"}
+                              aria-label={lang === "VN" ? "Xóa sản phẩm" : "Remove item"}
                             >
                               <span className="material-symbols-outlined text-[18px]">close</span>
                             </button>
@@ -244,19 +250,25 @@ export default function CartAndCheckoutPage() {
                           <div className="mt-2 text-xs text-on-surface-variant space-y-0.5 bg-surface-container-low p-2 px-3 border-l-2 border-primary rounded-r-lg">
                             {item.options?.wood && (
                               <p>
-                                <strong className="font-semibold text-on-surface">Vật liệu:</strong>{" "}
+                                <strong className="font-semibold text-on-surface">
+                                  {lang === "VN" ? "Vật liệu:" : "Material:"}
+                                </strong>{" "}
                                 {item.options.wood}
                               </p>
                             )}
                             {item.options?.size && (
                               <p>
-                                <strong className="font-semibold text-on-surface">Quy cách:</strong>{" "}
+                                <strong className="font-semibold text-on-surface">
+                                  {lang === "VN" ? "Quy cách:" : "Dimensions:"}
+                                </strong>{" "}
                                 {item.options.size}
                               </p>
                             )}
                             {item.options?.notes && (
                               <p>
-                                <strong className="font-semibold text-on-surface">Cam kết:</strong>{" "}
+                                <strong className="font-semibold text-on-surface">
+                                  {lang === "VN" ? "Cam kết:" : "Promise:"}
+                                </strong>{" "}
                                 {item.options.notes}
                               </p>
                             )}
@@ -293,16 +305,16 @@ export default function CartAndCheckoutPage() {
                               href="/san-pham/kura-lounge-chair"
                               className="text-xs text-outline hover:text-primary underline ml-2 transition-colors hidden sm:inline"
                             >
-                              Đổi cấu hình mộc
+                              {lang === "VN" ? "Đổi cấu hình mộc" : "Change config"}
                             </Link>
                           </div>
 
                           <div className="text-right">
                             <span className="text-xs text-outline block">
-                              {item.price.toLocaleString("vi-VN")} đ / chiếc
+                              {item.price.toLocaleString(lang === "VN" ? "vi-VN" : "en-US")} {t.common.currency} / {lang === "VN" ? "chiếc" : "pc"}
                             </span>
                             <span className="text-headline-sm font-headline-sm text-base sm:text-lg text-primary font-bold">
-                              {(item.price * item.quantity).toLocaleString("vi-VN")} đ
+                              {(item.price * item.quantity).toLocaleString(lang === "VN" ? "vi-VN" : "en-US")} {t.common.currency}
                             </span>
                           </div>
                         </div>
@@ -319,14 +331,20 @@ export default function CartAndCheckoutPage() {
                   className="inline-flex items-center gap-2 text-outline hover:text-primary transition-colors text-xs sm:text-sm"
                 >
                   <span className="material-symbols-outlined text-[16px]">arrow_back</span>
-                  Tiếp tục khám phá Bộ Sưu Tập
+                  {lang === "VN" ? "Tiếp tục khám phá Bộ Sưu Tập" : "Continue Exploring Collection"}
                 </Link>
                 <button
                   type="button"
-                  onClick={() => showToast("Giỏ hàng đã được đồng bộ với hệ thống xưởng.")}
+                  onClick={() =>
+                    showToast(
+                      lang === "VN"
+                        ? "Giỏ hàng đã được đồng bộ với hệ thống xưởng."
+                        : "Shopping bag synchronized with workshop."
+                    )
+                  }
                   className="text-outline hover:text-primary transition-colors uppercase tracking-wider text-xs sm:text-sm"
                 >
-                  Cập nhật giỏ hàng
+                  {lang === "VN" ? "Cập nhật giỏ hàng" : "Update Bag"}
                 </button>
               </div>
             </section>
@@ -466,10 +484,10 @@ export default function CartAndCheckoutPage() {
             <section className="bg-surface-container-lowest border border-outline-variant p-space-md sm:p-space-lg rounded-2xl shadow-sm">
               <div className="pb-space-sm border-b border-outline-variant/40 mb-space-md">
                 <span className="text-label-sm font-label-sm text-outline uppercase tracking-widest block text-xs">
-                  HỒ SƠ KHÁCH HÀNG
+                  {lang === "VN" ? "HỒ SƠ KHÁCH HÀNG" : "CLIENT PROFILE"}
                 </span>
                 <h2 className="text-headline-sm font-headline-sm text-lg sm:text-xl text-primary font-bold">
-                  Thông Tin Người Nhận &amp; Địa Chỉ Bàn Giao
+                  {t.cart.deliveryTitle}
                 </h2>
               </div>
 
@@ -478,7 +496,7 @@ export default function CartAndCheckoutPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-space-md">
                   <div>
                     <label className="block text-label-sm font-label-sm text-outline uppercase mb-1 text-xs">
-                      Họ và tên quý khách *
+                      {t.cart.fullNameLabel}
                     </label>
                     <input
                       type="text"
@@ -490,7 +508,7 @@ export default function CartAndCheckoutPage() {
                   </div>
                   <div>
                     <label className="block text-label-sm font-label-sm text-outline uppercase mb-1 text-xs">
-                      Số điện thoại liên hệ *
+                      {t.cart.phoneLabel}
                     </label>
                     <input
                       type="tel"
@@ -505,7 +523,7 @@ export default function CartAndCheckoutPage() {
                 {/* Email */}
                 <div>
                   <label className="block text-label-sm font-label-sm text-outline uppercase mb-1 text-xs">
-                    Email nhận hồ sơ bảo hành kỹ thuật *
+                    {t.cart.emailLabel} *
                   </label>
                   <input
                     type="email"
@@ -520,7 +538,7 @@ export default function CartAndCheckoutPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-space-md">
                   <div>
                     <label className="block text-label-sm font-label-sm text-outline uppercase mb-1 text-xs">
-                      Tỉnh / Thành phố *
+                      {t.cart.cityLabel}
                     </label>
                     <select
                       value={city}
@@ -536,7 +554,7 @@ export default function CartAndCheckoutPage() {
                   </div>
                   <div>
                     <label className="block text-label-sm font-label-sm text-outline uppercase mb-1 text-xs">
-                      Quận / Huyện *
+                      {t.cart.districtLabel}
                     </label>
                     <select
                       value={district}
@@ -555,7 +573,7 @@ export default function CartAndCheckoutPage() {
                 {/* Address */}
                 <div>
                   <label className="block text-label-sm font-label-sm text-outline uppercase mb-1 text-xs">
-                    Địa chỉ chi tiết / Tên Biệt Thự / Mã Căn Hộ *
+                    {t.cart.addressLabel}
                   </label>
                   <input
                     type="text"
@@ -576,7 +594,7 @@ export default function CartAndCheckoutPage() {
                       className="w-[18px] h-[18px] rounded border border-primary text-primary focus:ring-0"
                     />
                     <span className="text-label-md font-label-md text-primary font-semibold text-xs sm:text-sm">
-                      Xuất hóa đơn điện tử VAT cho công ty thiết kế kiến trúc / Doanh nghiệp
+                      {t.cart.vatLabel}
                     </span>
                   </label>
 
@@ -584,14 +602,14 @@ export default function CartAndCheckoutPage() {
                     <div className="mt-space-sm pl-7 grid grid-cols-1 md:grid-cols-2 gap-space-md animate-in fade-in">
                       <input
                         type="text"
-                        placeholder="Tên doanh nghiệp"
+                        placeholder={t.cart.companyNameLabel}
                         value={companyName}
                         onChange={(e) => setCompanyName(e.target.value)}
                         className="w-full h-[44px] bg-surface-container-low border border-outline-variant text-body-sm text-primary px-3 rounded-xl focus:outline-none text-xs"
                       />
                       <input
                         type="text"
-                        placeholder="Mã số thuế"
+                        placeholder={t.cart.taxIdLabel}
                         value={taxId}
                         onChange={(e) => setTaxId(e.target.value)}
                         className="w-full h-[44px] bg-surface-container-low border border-outline-variant text-body-sm text-primary px-3 rounded-xl focus:outline-none text-xs"
@@ -609,19 +627,19 @@ export default function CartAndCheckoutPage() {
             <div className="bg-surface-container-lowest border border-outline-variant p-space-md sm:p-space-lg rounded-2xl shadow-sm">
               <div className="pb-space-sm border-b border-outline-variant mb-space-md flex items-center justify-between">
                 <h2 className="text-headline-sm font-headline-sm text-lg sm:text-xl text-primary font-bold tracking-tight">
-                  Tóm Tắt Đơn Hàng
+                  {lang === "VN" ? "Tóm Tắt Đơn Hàng" : "Order Summary"}
                 </h2>
                 <span className="text-label-sm font-label-sm text-outline uppercase tracking-wider text-xs">
-                  VND (VIỆT NAM ĐỒNG)
+                  {t.common.currency} ({lang === "VN" ? "VIỆT NAM ĐỒNG" : "VIETNAM DONG"})
                 </span>
               </div>
 
               {/* Price Ledger Breakdown */}
               <div className="space-y-3 pb-space-md border-b border-outline-variant/30 text-body-sm">
                 <div className="flex items-center justify-between text-on-surface-variant">
-                  <span>Tạm tính giá trị sản phẩm ({itemCount} món)</span>
+                  <span>{t.cart.subtotal} ({itemCount} {lang === "VN" ? "món" : "items"})</span>
                   <span className="text-on-surface font-semibold">
-                    {subtotal.toLocaleString("vi-VN")} đ
+                    {subtotal.toLocaleString(lang === "VN" ? "vi-VN" : "en-US")} {t.common.currency}
                   </span>
                 </div>
 
@@ -629,13 +647,13 @@ export default function CartAndCheckoutPage() {
                 {discountAmount > 0 && (
                   <div className="flex items-center justify-between text-on-surface">
                     <div className="flex items-center gap-1.5">
-                      <span>Ưu đãi BST Mùa Thu</span>
+                      <span>{t.cart.discount}</span>
                       <span className="px-1.5 py-0.5 bg-surface-container text-[11px] font-mono border border-outline-variant text-primary font-bold rounded-md">
                         {discountCode}
                       </span>
                     </div>
                     <span className="font-bold text-primary">
-                      - {discountAmount.toLocaleString("vi-VN")} đ
+                      - {discountAmount.toLocaleString(lang === "VN" ? "vi-VN" : "en-US")} {t.common.currency}
                     </span>
                   </div>
                 )}
@@ -643,27 +661,35 @@ export default function CartAndCheckoutPage() {
                 {/* Delivery */}
                 <div className="flex items-center justify-between text-on-surface-variant">
                   <div>
-                    <span>Vận chuyển &amp; Lắp đặt White-glove</span>
+                    <span>{t.cart.shippingFee}</span>
                     <span className="block text-[11px] text-outline">
-                      Đội xe chuyên dụng &amp; Thợ mộc xưởng
+                      {lang === "VN" ? "Đội xe chuyên dụng & Thợ mộc xưởng" : "Dedicated transport & Atelier artisans"}
                     </span>
                   </div>
                   <div className="text-right">
-                    <span className="line-through text-outline text-xs block">1.500.000 đ</span>
-                    <span className="text-primary font-semibold text-xs">0 đ (Miễn phí)</span>
+                    <span className="line-through text-outline text-xs block">
+                      1.500.000 {t.common.currency}
+                    </span>
+                    <span className="text-primary font-semibold text-xs">
+                      0 {t.common.currency} ({lang === "VN" ? "Miễn phí" : "Free"})
+                    </span>
                   </div>
                 </div>
 
                 {/* Insurance */}
                 <div className="flex items-center justify-between text-on-surface-variant">
-                  <span>Bảo hiểm rủi ro &amp; Đóng kiện gỗ mộc</span>
-                  <span className="text-primary font-semibold text-xs">Đã bao gồm</span>
+                  <span>{lang === "VN" ? "Bảo hiểm rủi ro & Đóng kiện gỗ mộc" : "Joinery insurance & protective crating"}</span>
+                  <span className="text-primary font-semibold text-xs">
+                    {lang === "VN" ? "Đã bao gồm" : "Included"}
+                  </span>
                 </div>
 
                 {/* VAT */}
                 <div className="flex items-center justify-between text-on-surface-variant">
-                  <span>Thuế giá trị gia tăng (VAT 8%)</span>
-                  <span className="text-xs text-outline">Đã tính trong giá niêm yết</span>
+                  <span>{lang === "VN" ? "Thuế giá trị gia tăng (VAT 8%)" : "Value Added Tax (VAT 8%)"}</span>
+                  <span className="text-xs text-outline">
+                    {lang === "VN" ? "Đã tính trong giá niêm yết" : "Included in listed prices"}
+                  </span>
                 </div>
               </div>
 
@@ -672,15 +698,17 @@ export default function CartAndCheckoutPage() {
                 <div className="flex items-baseline justify-between">
                   <div>
                     <span className="text-label-md font-label-md text-outline uppercase tracking-wider block text-xs">
-                      Tổng Thanh Toán Trọn Gói
+                      {t.cart.totalAmount}
                     </span>
                     <span className="text-xs text-outline">
-                      Cam kết không phát sinh phụ phí tại công trình
+                      {lang === "VN"
+                        ? "Cam kết không phát sinh phụ phí tại công trình"
+                        : "Guaranteed no hidden on-site surcharges"}
                     </span>
                   </div>
                   <div className="text-right">
                     <span className="text-headline-md font-headline-md text-2xl sm:text-3xl text-primary font-bold tracking-tight">
-                      {total.toLocaleString("vi-VN")} đ
+                      {total.toLocaleString(lang === "VN" ? "vi-VN" : "en-US")} {t.common.currency}
                     </span>
                   </div>
                 </div>
@@ -689,30 +717,30 @@ export default function CartAndCheckoutPage() {
               {/* Voucher Application */}
               <div className="py-space-md border-b border-outline-variant/30">
                 <label className="block text-label-sm font-label-sm text-outline uppercase mb-2 text-xs">
-                  Mã Đặc Quyền Kiến Trúc Sư / Voucher
+                  {lang === "VN" ? "Mã Đặc Quyền Kiến Trúc Sư / Voucher" : "Architect Privilege / Voucher"}
                 </label>
                 <form onSubmit={handleApplyVoucher} className="flex items-stretch gap-2">
                   <input
                     type="text"
                     value={inputVoucher}
                     onChange={(e) => setInputVoucher(e.target.value)}
-                    placeholder="MÃ VOUCHER..."
+                    placeholder={t.cart.discountCodePlaceholder}
                     className="flex-1 min-w-0 h-11 bg-surface-container-low border border-primary text-label-md text-primary px-3 uppercase font-mono rounded-xl focus:outline-none text-xs sm:text-sm"
                   />
                   <button
                     type="submit"
                     className="px-3 sm:px-4 bg-surface-container text-primary text-label-md font-label-md border border-outline-variant hover:bg-primary hover:text-on-primary transition-colors text-xs uppercase rounded-xl flex-shrink-0"
                   >
-                    Áp dụng
+                    {t.cart.applyDiscountBtn}
                   </button>
                   {discountPercent > 0 && (
                     <button
                       type="button"
                       onClick={removeDiscount}
                       className="px-2 text-outline hover:text-error transition-colors text-xs"
-                      title="Gỡ mã"
+                      title={t.common.cancel}
                     >
-                      Hủy
+                      {t.common.cancel}
                     </button>
                   )}
                 </form>
@@ -720,7 +748,9 @@ export default function CartAndCheckoutPage() {
                 {discountPercent > 0 && (
                   <p className="text-label-sm font-label-sm text-primary mt-1.5 flex items-center gap-1 text-xs">
                     <span className="material-symbols-outlined text-sm text-emerald-600">check_circle</span>
-                    Đã giảm trực tiếp {discountPercent}% cho thành viên Komorebi Atelier
+                    {lang === "VN"
+                      ? `Đã giảm trực tiếp ${discountPercent}% cho thành viên Komorebi Atelier`
+                      : `Applied ${discountPercent}% trade discount for Komorebi Atelier member`}
                   </p>
                 )}
               </div>
@@ -728,7 +758,7 @@ export default function CartAndCheckoutPage() {
               {/* Payment Methods */}
               <div className="py-space-md space-y-2.5">
                 <label className="block text-label-sm font-label-sm text-outline uppercase mb-1 text-xs">
-                  Phương Thức Thanh Toán Cao Cấp
+                  {t.cart.paymentTitle}
                 </label>
 
                 {/* Option 1: VietQR */}
@@ -750,13 +780,13 @@ export default function CartAndCheckoutPage() {
                         className="w-[18px] h-[18px] rounded-full border border-primary text-primary focus:ring-0"
                       />
                       <span className="text-label-md font-label-md text-primary font-bold text-xs sm:text-sm">
-                        Chuyển Khoản QR Tự Động (VietQR / Napas247)
+                        {t.cart.vietQrMethod}
                       </span>
                     </div>
                     <span className="material-symbols-outlined text-primary text-xl">qr_code_2</span>
                   </div>
                   <p className="text-xs text-on-surface-variant mt-2 pl-6">
-                    Tạo mã QR định danh theo đơn đặt. Xác nhận hệ thống tức thì trong 30 giây, không cần gửi ủy nhiệm chi.
+                    {t.cart.vietQrDesc}
                   </p>
                 </label>
 
@@ -779,15 +809,15 @@ export default function CartAndCheckoutPage() {
                         className="w-[18px] h-[18px] rounded-full border border-primary text-primary focus:ring-0"
                       />
                       <span className="text-label-md font-label-md text-primary font-bold text-xs sm:text-sm">
-                        Thẻ Quốc Tế (Visa / Mastercard / Amex)
+                        {t.cart.cardMethod}
                       </span>
                     </div>
                     <span className="material-symbols-outlined text-outline text-lg">credit_card</span>
                   </div>
                   <div className="pl-6 mt-1 flex items-center justify-between text-xs text-on-surface-variant">
-                    <span>Trả góp 0% lãi suất qua 28 ngân hàng</span>
+                    <span>{t.cart.cardDesc}</span>
                     <span className="font-bold text-primary">
-                      ~ {Math.round(total / 12).toLocaleString("vi-VN")} đ / tháng (12 kỳ)
+                      ~ {Math.round(total / 12).toLocaleString(lang === "VN" ? "vi-VN" : "en-US")} {t.common.currency} / {lang === "VN" ? "tháng" : "mo"}
                     </span>
                   </div>
                 </label>
@@ -811,13 +841,15 @@ export default function CartAndCheckoutPage() {
                         className="w-[18px] h-[18px] rounded-full border border-primary text-primary focus:ring-0"
                       />
                       <span className="text-label-md font-label-md text-primary font-bold text-xs sm:text-sm">
-                        Thanh Toán Cọc 30% — Còn Lại Khi Nghiệm Thu
+                        {t.cart.depositMethod}
                       </span>
                     </div>
                     <span className="material-symbols-outlined text-outline text-lg">verified</span>
                   </div>
                   <p className="text-xs text-on-surface-variant mt-2 pl-6">
-                    Đặt cọc {depositAmount.toLocaleString("vi-VN")} đ giữ phôi gỗ tại xưởng. Thanh toán 70% còn lại sau khi gia chủ ký biên bản nghiệm thu mộc.
+                    {lang === "VN"
+                      ? `Đặt cọc ${depositAmount.toLocaleString("vi-VN")} đ giữ phôi gỗ tại xưởng. Thanh toán 70% còn lại sau khi gia chủ ký biên bản nghiệm thu mộc.`
+                      : `Deposit ${depositAmount.toLocaleString("en-US")} ${t.common.currency} to hold timber billets. Pay remaining 70% after on-site inspection.`}
                   </p>
                 </label>
               </div>
@@ -831,15 +863,19 @@ export default function CartAndCheckoutPage() {
                 >
                   <span>
                     {selectedPaymentMethod === "deposit"
-                      ? `Xác Nhận Đặt Cọc (${depositAmount.toLocaleString("vi-VN")} đ)`
-                      : "Xác Nhận Đặt Hàng & Thanh Toán"}
+                      ? (lang === "VN"
+                          ? `Xác Nhận Đặt Cọc (${depositAmount.toLocaleString("vi-VN")} đ)`
+                          : `Confirm Deposit (${depositAmount.toLocaleString("en-US")} ${t.common.currency})`)
+                      : t.cart.checkoutBtn}
                   </span>
                   <span className="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">
                     arrow_forward
                   </span>
                 </button>
                 <p className="text-xs text-center text-outline mt-2">
-                  Bằng việc xác nhận, quý khách đồng ý với Điều Khoản Dịch Vụ Mộc Bản của Komorebi.
+                  {lang === "VN"
+                    ? "Bằng việc xác nhận, quý khách đồng ý với Điều Khoản Dịch Vụ Mộc Bản của Komorebi."
+                    : "By confirming, you agree to Komorebi Living Woodworking Terms of Service."}
                 </p>
               </div>
             </div>

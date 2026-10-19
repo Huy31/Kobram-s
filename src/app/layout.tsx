@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { LanguageProvider } from "@/context/LanguageContext";
 import { CartProvider } from "@/context/CartContext";
 import WishlistDrawer from "@/components/WishlistDrawer";
+import ChatbotWidget from "@/components/ChatbotWidget";
 
 export const metadata: Metadata = {
   title: "Komorebi Living | Nghệ Thuật Cân Bằng Không Gian Sống",
@@ -44,10 +46,13 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-[#FAFAFA] text-[#18181B] antialiased selection:bg-[#09090B] selection:text-white min-h-screen flex flex-col font-body-md text-body-md">
-        <CartProvider>
-          {children}
-          <WishlistDrawer />
-        </CartProvider>
+        <LanguageProvider>
+          <CartProvider>
+            {children}
+            <WishlistDrawer />
+            <ChatbotWidget />
+          </CartProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

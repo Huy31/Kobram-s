@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useCart } from "@/context/CartContext";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface ShowroomModalProps {
   isOpen: boolean;
@@ -15,11 +16,16 @@ export default function ShowroomModal({
   productName = "Ghế Thư Giãn Gỗ Sồi Kura Lounge Chair",
 }: ShowroomModalProps) {
   const { showToast } = useCart();
+  const { t, lang } = useLanguage();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [date, setDate] = useState("2025-11-20");
   const [time, setTime] = useState("10:00 - 11:30");
-  const [showroom, setShowroom] = useState("Showroom Thảo Điền (18 Đường Số 10, TP. Thủ Đức, HCM)");
+  const [showroom, setShowroom] = useState(
+    lang === "VN"
+      ? "Showroom Thảo Điền (18 Đường Số 10, TP. Thủ Đức, HCM)"
+      : "Thao Dien Showroom (18 Street 10, Thu Duc City, HCMC)"
+  );
   const [submitted, setSubmitted] = useState(false);
 
   if (!isOpen) return null;
@@ -27,11 +33,11 @@ export default function ShowroomModal({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!phone) {
-      showToast("Vui lòng cung cấp số điện thoại để nhận mã xác nhận.");
+      showToast(t.showroomModal.phoneRequiredError);
       return;
     }
     setSubmitted(true);
-    showToast(`Đã đặt lịch trải nghiệm ${productName} thành công!`);
+    showToast(t.showroomModal.bookedToast(productName));
   };
 
   const handleClose = () => {
@@ -49,16 +55,17 @@ export default function ShowroomModal({
         <div className="sticky top-0 bg-surface-container-lowest z-10 flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-outline-variant">
           <div>
             <span className="text-[10px] sm:text-label-sm font-label-sm text-outline uppercase tracking-widest block">
-              SHOWROOM PRIVÉ
+              {t.showroomModal.badge}
             </span>
             <h3 className="text-base sm:text-headline-sm font-headline-sm text-primary tracking-tight font-bold">
-              Đặt Lịch Thử Sản Phẩm Trực Tiếp
+              {t.showroomModal.title}
             </h3>
           </div>
           <button
             type="button"
             onClick={handleClose}
             className="p-1 sm:p-1.5 text-outline hover:text-primary transition-colors rounded-lg"
+            aria-label={t.common.close}
           >
             <span className="material-symbols-outlined text-[20px]">close</span>
           </button>
@@ -71,44 +78,54 @@ export default function ShowroomModal({
                 <span className="material-symbols-outlined text-3xl">verified</span>
               </div>
               <h4 className="text-headline-sm font-bold text-primary">
-                Đã Khởi Tạo Lịch Hẹn Trải Nghiệm
+                {t.showroomModal.successTitle}
               </h4>
               <p className="text-body-sm text-on-surface-variant max-w-sm mx-auto">
-                Chuyên viên Atelier tại <strong className="text-primary">{showroom.split("(")[0]}</strong> đã chuẩn bị mẫu mộc <strong className="text-primary">{productName}</strong> và trà đạo đón tiếp quý khách vào lúc <strong className="text-primary">{time} ngày {date}</strong>.
+                {t.showroomModal.successDesc(showroom.split("(")[0].trim(), productName, time, date)}
               </p>
               <button
                 type="button"
                 onClick={handleClose}
                 className="mt-4 px-6 py-2.5 bg-primary text-on-primary text-label-md uppercase tracking-wider hover:bg-[#27272a] transition-colors rounded-xl"
               >
-                Đóng
+                {t.showroomModal.closeBtn}
               </button>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4 text-body-sm">
               <div className="p-3 bg-surface-container-low border border-outline-variant/60 rounded-xl">
-                <span className="text-label-sm font-label-sm text-outline uppercase block">Vật Phẩm Trải Nghiệm</span>
+                <span className="text-label-sm font-label-sm text-outline uppercase block">
+                  {t.showroomModal.productLabel}
+                </span>
                 <strong className="text-primary font-headline-sm text-base">{productName}</strong>
               </div>
 
               <div>
                 <label className="block text-label-sm font-label-sm text-outline uppercase mb-1">
-                  Chọn không gian trưng bày *
+                  {t.showroomModal.chooseShowroom}
                 </label>
                 <select
                   value={showroom}
                   onChange={(e) => setShowroom(e.target.value)}
                   className="w-full h-11 px-3 bg-surface-container-low border border-outline-variant text-primary focus:border-primary focus:outline-none rounded-xl"
                 >
-                  <option>Showroom Thảo Điền (18 Đường Số 10, TP. Thủ Đức, HCM)</option>
-                  <option>Showroom Hoàn Kiếm (45 Quang Trung, Hoàn Kiếm, Hà Nội)</option>
+                  <option>
+                    {lang === "VN"
+                      ? "Showroom Thảo Điền (18 Đường Số 10, TP. Thủ Đức, HCM)"
+                      : "Thao Dien Showroom (18 Street 10, Thu Duc City, HCMC)"}
+                  </option>
+                  <option>
+                    {lang === "VN"
+                      ? "Showroom Hoàn Kiếm (45 Quang Trung, Hoàn Kiếm, Hà Nội)"
+                      : "Hoan Kiem Showroom (45 Quang Trung, Hoan Kiem, Hanoi)"}
+                  </option>
                 </select>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-label-sm font-label-sm text-outline uppercase mb-1">
-                    Ngày hẹn *
+                    {t.showroomModal.dateLabel}
                   </label>
                   <input
                     type="date"
@@ -119,17 +136,17 @@ export default function ShowroomModal({
                 </div>
                 <div>
                   <label className="block text-label-sm font-label-sm text-outline uppercase mb-1">
-                    Khung giờ *
+                    {t.showroomModal.timeLabel}
                   </label>
                   <select
                     value={time}
                     onChange={(e) => setTime(e.target.value)}
                     className="w-full h-11 px-3 bg-surface-container-low border border-outline-variant text-primary focus:border-primary focus:outline-none rounded-xl"
                   >
-                    <option>09:30 - 11:00 (Sáng yên tĩnh)</option>
-                    <option>14:00 - 15:30 (Trưa ánh sáng đẹp)</option>
-                    <option>16:30 - 18:00 (Chiều hoàng hôn)</option>
-                    <option>18:30 - 20:00 (Buổi tối ấm cúng)</option>
+                    <option>{lang === "VN" ? "09:30 - 11:00 (Sáng yên tĩnh)" : "09:30 - 11:00 (Quiet Morning)"}</option>
+                    <option>{lang === "VN" ? "14:00 - 15:30 (Trưa ánh sáng đẹp)" : "14:00 - 15:30 (Daylight)"}</option>
+                    <option>{lang === "VN" ? "16:30 - 18:00 (Chiều hoàng hôn)" : "16:30 - 18:00 (Sunset)"}</option>
+                    <option>{lang === "VN" ? "18:30 - 20:00 (Buổi tối ấm cúng)" : "18:30 - 20:00 (Cozy Evening)"}</option>
                   </select>
                 </div>
               </div>
@@ -137,12 +154,12 @@ export default function ShowroomModal({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-label-sm font-label-sm text-outline uppercase mb-1">
-                    Họ và tên *
+                    {t.showroomModal.nameLabel}
                   </label>
                   <input
                     type="text"
                     required
-                    placeholder="Quý khách..."
+                    placeholder={t.showroomModal.namePlaceholder}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="w-full h-11 px-3 bg-surface-container-low border border-outline-variant text-primary focus:border-primary focus:outline-none rounded-xl"
@@ -150,12 +167,12 @@ export default function ShowroomModal({
                 </div>
                 <div>
                   <label className="block text-label-sm font-label-sm text-outline uppercase mb-1">
-                    Số điện thoại *
+                    {t.showroomModal.phoneLabel}
                   </label>
                   <input
                     type="tel"
                     required
-                    placeholder="09xx xxx xxx"
+                    placeholder={t.showroomModal.phonePlaceholder}
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     className="w-full h-11 px-3 bg-surface-container-low border border-outline-variant text-primary focus:border-primary focus:outline-none rounded-xl"
@@ -168,7 +185,7 @@ export default function ShowroomModal({
                   type="submit"
                   className="w-full py-3.5 bg-primary text-on-primary text-label-md font-label-md uppercase tracking-wider hover:bg-[#27272a] transition-all flex items-center justify-center gap-2 rounded-xl"
                 >
-                  <span>Xác Nhận Giữ Chỗ Trải Nghiệm</span>
+                  <span>{t.showroomModal.submitBtn}</span>
                   <span className="material-symbols-outlined text-[18px]">calendar_today</span>
                 </button>
               </div>

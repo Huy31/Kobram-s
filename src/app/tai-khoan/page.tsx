@@ -8,6 +8,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ConsultationModal from "@/components/ConsultationModal";
 import { useCart } from "@/context/CartContext";
+import { useLanguage } from "@/context/LanguageContext";
 import { createClient } from "@/utils/supabase/client";
 import { getUserOrders } from "@/services/productService";
 import type { User } from "@supabase/supabase-js";
@@ -26,6 +27,7 @@ interface AddressItem {
 
 export default function AccountProfilePage() {
   const router = useRouter();
+  const { lang, t } = useLanguage();
   const { addToCart, showToast, wishlist, removeFromWishlist } = useCart();
   const [activeTab, setActiveTab] = useState<TabId>("tab-1");
   const [isConsultationOpen, setIsConsultationOpen] = useState(false);
@@ -510,14 +512,14 @@ export default function AccountProfilePage() {
             <div className="flex flex-row md:flex-col items-start md:items-end justify-between w-full md:w-auto gap-3 pt-3 md:pt-0 border-t md:border-t-0 border-outline-variant/40">
               <div className="text-left md:text-right">
                 <span className="text-xs text-outline uppercase tracking-wider block">
-                  Hạng Thành Viên
+                  {lang === "VN" ? "Hạng Thành Viên" : "Membership Tier"}
                 </span>
                 <span className="text-lg sm:text-xl text-primary font-bold tracking-tight">
                   {profileRole.includes("Kiến trúc")
-                    ? "ĐỐI TÁC KIẾN TRÚC SƯ"
+                    ? t.account.architectPartner
                     : user
-                    ? "HỘI VIÊN TIÊU CHUẨN"
-                    : "KHÁCH HÀNG"}
+                    ? t.account.standardMember
+                    : (lang === "VN" ? "KHÁCH HÀNG" : "CLIENT")}
                 </span>
               </div>
               <div className="flex items-center gap-2">
@@ -526,7 +528,7 @@ export default function AccountProfilePage() {
                   onClick={() => setIsCharterOpen(true)}
                   className="text-primary hover:text-outline text-xs uppercase tracking-wider underline underline-offset-4 transition-colors font-semibold mr-2"
                 >
-                  Điều lệ hội viên
+                  {t.account.charterBtn}
                 </button>
                 {user ? (
                   <button
@@ -535,7 +537,7 @@ export default function AccountProfilePage() {
                     className="text-xs uppercase tracking-wider text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 px-3 py-1.5 rounded-lg font-bold transition-all flex items-center gap-1 active:scale-95"
                   >
                     <span className="material-symbols-outlined text-[16px]">logout</span>
-                    Đăng xuất
+                    {t.account.signOutBtn}
                   </button>
                 ) : (
                   <Link
@@ -543,7 +545,7 @@ export default function AccountProfilePage() {
                     className="text-xs uppercase tracking-wider text-primary hover:bg-surface-container-high border border-outline px-3 py-1.5 rounded-lg font-bold transition-all flex items-center gap-1"
                   >
                     <span className="material-symbols-outlined text-[16px]">login</span>
-                    Đăng nhập
+                    {lang === "VN" ? "Đăng nhập" : "Sign In"}
                   </Link>
                 )}
               </div>
@@ -652,7 +654,7 @@ export default function AccountProfilePage() {
               }`}
             >
               <span className={`w-1.5 h-1.5 rounded-full ${activeTab === "tab-1" ? "bg-primary" : "bg-transparent"}`} />
-              <span>Tổng quan &amp; Đơn hàng</span>
+              <span>{t.account.overviewTab}</span>
             </button>
 
             <button
@@ -665,7 +667,7 @@ export default function AccountProfilePage() {
               }`}
             >
               <span className={`w-1.5 h-1.5 rounded-full ${activeTab === "tab-2" ? "bg-primary" : "bg-transparent"}`} />
-              <span>Hồ sơ &amp; Sổ địa chỉ</span>
+              <span>{t.account.profileAddressTab}</span>
             </button>
 
             <button
@@ -678,7 +680,7 @@ export default function AccountProfilePage() {
               }`}
             >
               <span className={`w-1.5 h-1.5 rounded-full ${activeTab === "tab-3" ? "bg-primary" : "bg-transparent"}`} />
-              <span>Sổ bảo hành &amp; Nhật ký mộc</span>
+              <span>{lang === "VN" ? "Sổ bảo hành & Nhật ký mộc" : "Warranty & Joinery Log"}</span>
             </button>
 
             <button
@@ -691,7 +693,7 @@ export default function AccountProfilePage() {
               }`}
             >
               <span className={`w-1.5 h-1.5 rounded-full ${activeTab === "tab-4" ? "bg-primary" : "bg-transparent"}`} />
-              <span>Bản vẽ 3D &amp; May đo</span>
+              <span>{lang === "VN" ? "Bản vẽ 3D & May đo" : "3D Drawings & Bespoke"}</span>
             </button>
 
             <button
@@ -704,7 +706,7 @@ export default function AccountProfilePage() {
               }`}
             >
               <span className={`w-1.5 h-1.5 rounded-full ${activeTab === "tab-5" ? "bg-primary" : "bg-transparent"}`} />
-              <span>Yêu thích (Wishlist)</span>
+              <span>{t.account.wishlistTab}</span>
               <span className="text-[10px] bg-primary text-on-primary px-1.5 py-0.5 rounded-full font-bold">
                 {wishlist.length}
               </span>

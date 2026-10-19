@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useCart } from "@/context/CartContext";
+import { useLanguage } from "@/context/LanguageContext";
 import { submitOrderToDb } from "@/services/productService";
 
 interface VietQRModalProps {
@@ -11,6 +12,73 @@ interface VietQRModalProps {
   totalAmount?: number;
 }
 
+const qrTranslations = {
+  VN: {
+    badgeDirect: "KOMOREBI DIRECT PAY",
+    badgeAuto: "TỰ ĐỘNG 24/7",
+    title: "Thanh Toán Đơn Hàng Qua VietQR Pro",
+    closeModal: "Đóng modal",
+    successTitle: "Đã Nhận Thanh Toán Thành Công!",
+    successDesc: (code: string) =>
+      `Đơn hàng #${code} đã được chuyển tới Xưởng Chế Tác Komorebi. Kỹ thuật viên mộc sẽ liên hệ gia chủ trong vòng 2 giờ.`,
+    contractLabel: "Mã hợp đồng:",
+    matchedLabel: "Số tiền đã khớp:",
+    standardLabel: "Tiêu chuẩn bàn giao:",
+    standardVal: "White-glove installation tận phòng",
+    completeBtn: "Hoàn tất và Quay lại trang chủ",
+    timerPrefix: "Mã QR tự hủy sau:",
+    orderTag: (code: string) => `Đơn #${code}`,
+    scanApp: "Quét bằng ứng dụng ngân hàng",
+    scanSub: "Hỗ trợ tất cả ngân hàng & ví điện tử VN",
+    beneficiaryBank: "Ngân Hàng Thụ Hưởng",
+    branch: "Chi nhánh Hội Sở",
+    accountNum: "Số Tài Khoản",
+    copy: "Sao chép",
+    copied: "Đã chép",
+    accountHolder: "Chủ Tài Khoản",
+    exactAmount: "Số Tiền Chính Xác",
+    referenceLabel: "Nội Dung Chuyển Khoản Bắt Buộc",
+    statusWait: "Trạng thái: Đang chờ tín hiệu xác nhận từ cổng Napas247... Hệ thống tự động phê duyệt đơn sau 10 - 30 giây.",
+    changeMethodBtn: "Đổi phương thức thanh toán",
+    iHavePaidBtn: "Tôi đã chuyển khoản",
+    copiedToast: (val: string) => `Đã sao chép: ${val}`,
+    paidSuccessToast: "Giao dịch thanh toán VietQR thành công! Đơn hàng đã được lưu vào hệ thống.",
+    currency: "đ",
+  },
+  EN: {
+    badgeDirect: "KOMOREBI DIRECT PAY",
+    badgeAuto: "24/7 AUTOMATIC",
+    title: "Order Payment via VietQR Pro",
+    closeModal: "Close modal",
+    successTitle: "Payment Received Successfully!",
+    successDesc: (code: string) =>
+      `Order #${code} has been dispatched to Komorebi Atelier. Our timber technicians will reach out within 2 hours.`,
+    contractLabel: "Contract Code:",
+    matchedLabel: "Settled Amount:",
+    standardLabel: "Delivery Standard:",
+    standardVal: "White-glove room-of-choice installation",
+    completeBtn: "Done and Return to Home",
+    timerPrefix: "QR code expires in:",
+    orderTag: (code: string) => `Order #${code}`,
+    scanApp: "Scan with any banking app",
+    scanSub: "Supports all major banks & e-wallets",
+    beneficiaryBank: "Beneficiary Bank",
+    branch: "Headquarters Branch",
+    accountNum: "Account Number",
+    copy: "Copy",
+    copied: "Copied",
+    accountHolder: "Beneficiary Name",
+    exactAmount: "Exact Amount",
+    referenceLabel: "Required Transfer Message",
+    statusWait: "Status: Awaiting signal from Napas247 gateway... Auto-approved within 10 - 30 seconds.",
+    changeMethodBtn: "Change payment method",
+    iHavePaidBtn: "I Have Transferred",
+    copiedToast: (val: string) => `Copied: ${val}`,
+    paidSuccessToast: "VietQR transaction successful! Order has been recorded.",
+    currency: "VND",
+  },
+};
+
 export default function VietQRModal({
   isOpen,
   onClose,
@@ -18,6 +86,8 @@ export default function VietQRModal({
   totalAmount,
 }: VietQRModalProps) {
   const { items, total, clearCart, showToast } = useCart();
+  const { lang } = useLanguage();
+  const t = qrTranslations[lang];
   const effectiveTotal = totalAmount !== undefined ? totalAmount : total;
 
   // Countdown timer: 10 minutes (600 seconds)
@@ -49,7 +119,7 @@ export default function VietQRModal({
     if (navigator.clipboard) {
       navigator.clipboard.writeText(text);
       setCopiedField(fieldName);
-      showToast(`Đã sao chép: ${text}`);
+      showToast(t.copiedToast(text));
       setTimeout(() => setCopiedField(null), 2000);
     }
   };
@@ -77,7 +147,7 @@ export default function VietQRModal({
         subtotal: it.price * it.quantity,
       })),
     });
-    showToast("Giao dịch thanh toán VietQR thành công! Đơn hàng đã được lưu vào hệ thống.");
+    showToast(t.paidSuccessToast);
     setTimeout(() => {
       clearCart();
     }, 1500);
@@ -97,21 +167,21 @@ export default function VietQRModal({
           <div>
             <div className="flex items-center gap-2">
               <span className="text-label-sm font-label-sm text-outline uppercase tracking-widest">
-                KOMOREBI DIRECT PAY
+                {t.badgeDirect}
               </span>
               <span className="px-1.5 py-0.5 bg-primary text-on-primary text-label-sm font-label-sm font-bold rounded-md">
-                TỰ ĐỘNG 24/7
+                {t.badgeAuto}
               </span>
             </div>
             <h3 className="text-headline-sm font-headline-sm text-primary tracking-tight mt-0.5">
-              Thanh Toán Đơn Hàng Qua VietQR Pro
+              {t.title}
             </h3>
           </div>
           <button
             type="button"
             onClick={onClose}
             className="p-1.5 text-outline hover:text-primary border border-outline-variant hover:border-primary transition-colors rounded-lg"
-            aria-label="Đóng modal"
+            aria-label={t.closeModal}
           >
             <span className="material-symbols-outlined text-[20px] block">close</span>
           </button>
@@ -125,15 +195,15 @@ export default function VietQRModal({
                 <span className="material-symbols-outlined text-4xl">check</span>
               </div>
               <h4 className="text-headline-md font-bold text-primary">
-                Đã Nhận Thanh Toán Thành Công!
+                {t.successTitle}
               </h4>
               <p className="text-on-surface-variant max-w-md mx-auto text-body-md">
-                Đơn hàng <span className="font-mono font-bold text-primary">#{orderCode}</span> đã được chuyển tới Xưởng Chế Tác Komorebi. Kỹ thuật viên mộc sẽ liên hệ gia chủ trong vòng 2 giờ.
+                {t.successDesc(orderCode)}
               </p>
               <div className="p-4 bg-surface-container-low border border-outline-variant text-body-sm text-left max-w-md mx-auto space-y-1 rounded-xl">
-                <p><strong>Mã hợp đồng:</strong> KL-2025-KYOTO-{orderCode}</p>
-                <p><strong>Số tiền đã khớp:</strong> {effectiveTotal.toLocaleString("vi-VN")} đ</p>
-                <p><strong>Tiêu chuẩn bàn giao:</strong> White-glove installation tận phòng</p>
+                <p><strong>{t.contractLabel}</strong> KL-2025-KYOTO-{orderCode}</p>
+                <p><strong>{t.matchedLabel}</strong> {effectiveTotal.toLocaleString(lang === "EN" ? "en-US" : "vi-VN")} {t.currency}</p>
+                <p><strong>{t.standardLabel}</strong> {t.standardVal}</p>
               </div>
               <div className="pt-4">
                 <button
@@ -141,7 +211,7 @@ export default function VietQRModal({
                   onClick={onClose}
                   className="px-8 py-3 bg-primary text-on-primary uppercase text-label-md tracking-wider hover:bg-[#27272a] transition-colors rounded-xl"
                 >
-                  Hoàn tất và Quay lại trang chủ
+                  {t.completeBtn}
                 </button>
               </div>
             </div>
@@ -152,7 +222,7 @@ export default function VietQRModal({
                 <div className="flex items-center gap-2">
                   <span className="material-symbols-outlined text-primary text-[20px]">schedule</span>
                   <span className="text-body-sm font-body-sm text-on-surface-variant">
-                    Mã QR tự hủy sau:
+                    {t.timerPrefix}
                   </span>
                   <span className="font-mono font-bold text-primary text-body-md" id="qr-countdown">
                     {timeFormatted}
@@ -161,7 +231,7 @@ export default function VietQRModal({
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-primary animate-ping"></span>
                   <span className="text-label-sm font-label-sm text-primary font-bold tracking-wider uppercase">
-                    Đơn #{orderCode}
+                    {t.orderTag(orderCode)}
                   </span>
                 </div>
               </div>
@@ -179,7 +249,7 @@ export default function VietQRModal({
                     <img
                       className="w-48 h-48 sm:w-52 sm:h-52 object-contain"
                       src={qrUrl}
-                      alt={`Mã QR Thanh Toán Vietcombank ${effectiveTotal.toLocaleString("vi-VN")}đ ${orderCode}`}
+                      alt={`QR ${effectiveTotal} ${orderCode}`}
                     />
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                       <div className="w-9 h-9 bg-white border border-primary flex items-center justify-center shadow-sm rounded-lg">
@@ -191,10 +261,10 @@ export default function VietQRModal({
                   </div>
                   <div className="mt-3 text-center">
                     <span className="text-label-sm font-label-sm text-primary font-bold tracking-wider uppercase block">
-                      Quét bằng ứng dụng ngân hàng
+                      {t.scanApp}
                     </span>
                     <span className="text-body-sm font-body-sm text-outline">
-                      Hỗ trợ tất cả ngân hàng &amp; ví điện tử VN
+                      {t.scanSub}
                     </span>
                   </div>
                 </div>
@@ -204,20 +274,20 @@ export default function VietQRModal({
                   {/* Bank */}
                   <div className="p-space-sm bg-surface-container-low border border-outline-variant/40 rounded-xl">
                     <span className="text-label-sm font-label-sm text-outline uppercase block">
-                      Ngân Hàng Thụ Hưởng
+                      {t.beneficiaryBank}
                     </span>
                     <div className="flex items-center justify-between mt-0.5">
                       <strong className="text-on-surface font-semibold text-body-md">
                         Vietcombank (VCB)
                       </strong>
-                      <span className="text-label-sm font-label-sm text-outline">Chi nhánh Hội Sở</span>
+                      <span className="text-label-sm font-label-sm text-outline">{t.branch}</span>
                     </div>
                   </div>
 
                   {/* Account Number */}
                   <div className="p-space-sm bg-surface-container-low border border-outline-variant/40 rounded-xl">
                     <span className="text-label-sm font-label-sm text-outline uppercase block">
-                      Số Tài Khoản
+                      {t.accountNum}
                     </span>
                     <div className="flex items-center justify-between mt-0.5">
                       <strong className="text-primary font-mono text-body-lg font-bold tracking-wider">
@@ -228,7 +298,7 @@ export default function VietQRModal({
                         onClick={() => copyToClipboard("190388299999", "account")}
                         className="text-label-sm font-label-sm text-primary hover:underline font-bold border border-outline-variant px-2 py-0.5 bg-surface-container-lowest transition-colors rounded-lg"
                       >
-                        {copiedField === "account" ? "Đã chép" : "Sao chép"}
+                        {copiedField === "account" ? t.copied : t.copy}
                       </button>
                     </div>
                   </div>
@@ -236,7 +306,7 @@ export default function VietQRModal({
                   {/* Beneficiary */}
                   <div className="p-space-sm bg-surface-container-low border border-outline-variant/40 rounded-xl">
                     <span className="text-label-sm font-label-sm text-outline uppercase block">
-                      Chủ Tài Khoản
+                      {t.accountHolder}
                     </span>
                     <strong className="text-on-surface font-medium block mt-0.5 uppercase tracking-wide">
                       CÔNG TY CP KOMOREBI LIVING
@@ -246,18 +316,18 @@ export default function VietQRModal({
                   {/* Exact Amount */}
                   <div className="p-space-sm bg-surface-container-low border border-primary rounded-xl">
                     <span className="text-label-sm font-label-sm text-outline uppercase block">
-                      Số Tiền Chính Xác
+                      {t.exactAmount}
                     </span>
                     <div className="flex items-center justify-between mt-0.5">
                       <strong className="text-headline-sm font-headline-sm text-primary font-bold">
-                        {effectiveTotal.toLocaleString("vi-VN")} đ
+                        {effectiveTotal.toLocaleString(lang === "EN" ? "en-US" : "vi-VN")} {t.currency}
                       </strong>
                       <button
                         type="button"
                         onClick={() => copyToClipboard(effectiveTotal.toString(), "amount")}
                         className="text-label-sm font-label-sm text-primary hover:underline font-bold border border-outline-variant px-2 py-0.5 bg-surface-container-lowest transition-colors rounded-lg"
                       >
-                        {copiedField === "amount" ? "Đã chép" : "Sao chép"}
+                        {copiedField === "amount" ? t.copied : t.copy}
                       </button>
                     </div>
                   </div>
@@ -265,7 +335,7 @@ export default function VietQRModal({
                   {/* Reference / Code */}
                   <div className="p-space-sm bg-surface-container-low border border-primary rounded-xl">
                     <span className="text-label-sm font-label-sm text-outline uppercase block">
-                      Nội Dung Chuyển Khoản Bắt Buộc
+                      {t.referenceLabel}
                     </span>
                     <div className="flex items-center justify-between mt-0.5">
                       <strong className="text-primary font-mono text-headline-sm font-bold tracking-widest">
@@ -276,7 +346,7 @@ export default function VietQRModal({
                         onClick={() => copyToClipboard(orderCode, "code")}
                         className="text-label-sm font-label-sm text-primary hover:underline font-bold border border-outline-variant px-2 py-0.5 bg-surface-container-lowest transition-colors rounded-lg"
                       >
-                        {copiedField === "code" ? "Đã chép" : "Sao chép"}
+                        {copiedField === "code" ? t.copied : t.copy}
                       </button>
                     </div>
                   </div>
@@ -289,7 +359,7 @@ export default function VietQRModal({
                   progress_activity
                 </span>
                 <p className="text-body-sm font-body-sm text-on-surface-variant flex-1">
-                  <span className="font-medium text-primary">Trạng thái:</span> Đang chờ tín hiệu xác nhận từ cổng Napas247... Hệ thống tự động phê duyệt đơn sau 10 - 30 giây.
+                  {t.statusWait}
                 </p>
               </div>
 
@@ -300,14 +370,14 @@ export default function VietQRModal({
                   onClick={onClose}
                   className="w-full sm:w-auto px-space-md py-3 text-label-md font-label-md border border-outline-variant hover:border-primary text-primary transition-colors text-center rounded-xl"
                 >
-                  Đổi phương thức thanh toán
+                  {t.changeMethodBtn}
                 </button>
                 <button
                   type="button"
                   onClick={handleConfirmPaid}
                   className="w-full sm:w-auto px-space-lg py-3 bg-primary text-on-primary text-label-md font-label-md tracking-wider uppercase hover:bg-[#27272A] transition-colors flex items-center justify-center gap-2 rounded-xl"
                 >
-                  <span>Tôi đã chuyển khoản</span>
+                  <span>{t.iHavePaidBtn}</span>
                   <span className="material-symbols-outlined text-[16px]">check</span>
                 </button>
               </div>

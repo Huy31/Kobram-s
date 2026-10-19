@@ -5,11 +5,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
+import { useLanguage } from "@/context/LanguageContext";
 import { createClient } from "@/utils/supabase/client";
 
 type AuthMode = "signin" | "register";
 type Role = "client" | "architect";
-type Lang = "VN" | "EN";
 
 const translations = {
   VN: {
@@ -192,31 +192,23 @@ export default function LoginPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isFacebookLoading, setIsFacebookLoading] = useState(false);
-  const [lang, setLang] = useState<Lang>("VN");
+  const { lang, setLang } = useLanguage();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const savedLang = localStorage.getItem("komorebi_lang") as Lang;
-      if (savedLang === "VN" || savedLang === "EN") {
-        setLang(savedLang);
-      }
       const params = new URLSearchParams(window.location.search);
       if (params.get("error") === "auth_failed") {
         showToast(
-          savedLang === "EN"
+          lang === "EN"
             ? "Authentication failed or was cancelled."
             : "Xác thực không thành công hoặc đã bị hủy."
         );
       }
     }
-  }, []);
+  }, [lang, showToast]);
 
-  const changeLang = (newLang: Lang) => {
+  const changeLang = (newLang: "VN" | "EN") => {
     setLang(newLang);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("komorebi_lang", newLang);
-      window.dispatchEvent(new Event("komorebi_lang_change"));
-    }
   };
 
   const curr = translations[lang];

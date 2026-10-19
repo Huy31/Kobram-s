@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import ConsultationModal from "@/components/ConsultationModal";
 import SafeImage from "@/components/SafeImage";
 import { useCart } from "@/context/CartContext";
+import { useLanguage } from "@/context/LanguageContext";
 import { getProductsByCategory } from "@/services/productService";
 
 interface LivingProduct {
@@ -127,6 +128,7 @@ const initialLivingProducts: LivingProduct[] = [
 ];
 
 export default function LivingRoomPage() {
+  const { lang, t } = useLanguage();
   const { addToCart, toggleWishlist, isWishlisted } = useCart();
   const [products, setProducts] = useState<LivingProduct[]>(initialLivingProducts);
   const [selectedSubcat, setSelectedSubcat] = useState("all");
@@ -179,29 +181,37 @@ export default function LivingRoomPage() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-end">
               <div className="lg:col-span-8">
                 <div className="flex items-center gap-2 mb-space-sm text-secondary font-label-sm text-label-sm uppercase tracking-widest text-xs">
-                  <span>Kiến trúc &amp; Tĩnh tại</span>
+                  <span>{lang === "VN" ? "Kiến trúc & Tĩnh tại" : "Architecture & Stillness"}</span>
                   <span className="w-8 h-[1px] bg-outline-variant"></span>
                   <span>Japandi Curation 2025</span>
                 </div>
                 <h1 className="font-display-hero text-2xl sm:text-4xl lg:text-5xl text-primary tracking-tight font-bold mb-space-md uppercase">
-                  Không Gian Phòng Khách — Nơi Chạm Vào Sự Tĩnh Lặng
+                  {lang === "VN"
+                    ? "Không Gian Phòng Khách — Nơi Chạm Vào Sự Tĩnh Lặng"
+                    : "Living Room Spaces — Where Serenity Resides"}
                 </h1>
                 <p className="font-body-lg text-body-lg text-on-surface-variant max-w-2xl font-light text-sm sm:text-base leading-relaxed">
-                  Tuyển tập các tác phẩm nội thất mộc bản cho gian khách đương đại. Chế tác độc bản từ gỗ sồi Bắc Mỹ chuẩn FAS và đệm vải lanh linen tự nhiên, đón ánh sáng tĩnh tại của thời gian qua từng chi tiết ghép mộng không đinh.
+                  {lang === "VN"
+                    ? "Tuyển tập các tác phẩm nội thất mộc bản cho gian khách đương đại. Chế tác độc bản từ gỗ sồi Bắc Mỹ chuẩn FAS và đệm vải lanh linen tự nhiên, đón ánh sáng tĩnh tại của thời gian qua từng chi tiết ghép mộng không đinh."
+                    : "Curated solid wood furniture for contemporary living rooms. Handcrafted from FAS North American white oak and natural linen, embracing serene light through nail-free joinery."}
                 </p>
               </div>
 
               <div className="lg:col-span-4 flex flex-col justify-between border-t lg:border-t-0 lg:border-l border-outline-variant/40 pt-space-md lg:pt-0 lg:pl-space-lg">
                 <div className="space-y-1 mb-space-md text-xs sm:text-sm">
                   <span className="font-label-sm text-label-sm uppercase tracking-widest text-secondary block">
-                    Quy chuẩn xưởng mộc
+                    {lang === "VN" ? "Quy chuẩn xưởng mộc" : "Atelier Standards"}
                   </span>
                   <p className="font-body-sm text-body-sm text-on-surface">
-                    Khớp mộng Kigumi truyền thống · Sơn gốc nước an toàn EU tiêu chuẩn E0 · Bảo hành mộng gỗ 10 năm.
+                    {lang === "VN"
+                      ? "Khớp mộng Kigumi truyền thống · Sơn gốc nước an toàn EU tiêu chuẩn E0 · Bảo hành mộng gỗ 10 năm."
+                      : "Traditional Kigumi joinery · EU standard non-toxic water-based finish · 10-year joint warranty."}
                   </p>
                 </div>
                 <div className="flex items-center gap-2 text-primary font-label-md text-label-md uppercase tracking-wider text-xs font-bold">
-                  <span>{products.length} Thiết kế cốt lõi</span>
+                  <span>
+                    {products.length} {lang === "VN" ? "Thiết kế cốt lõi" : "Core Designs"}
+                  </span>
                   <span className="material-symbols-outlined text-sm">arrow_forward</span>
                 </div>
               </div>
@@ -210,10 +220,25 @@ export default function LivingRoomPage() {
             {/* Subcategory Filter Chips */}
             <div className="mt-space-xl pt-space-lg border-t border-outline-variant/30 flex items-center gap-2 overflow-x-auto pb-2">
               {[
-                { id: "all", label: `Tất cả (${products.length < 10 ? `0${products.length}` : products.length})` },
-                { id: "sofa", label: "Sofa & Ghế bành thư giãn" },
-                { id: "table", label: "Bàn trà & Bàn góc" },
-                { id: "storage", label: "Kệ tivi & Tủ trang trí" },
+                {
+                  id: "all",
+                  label:
+                    lang === "VN"
+                      ? `Tất cả (${products.length < 10 ? `0${products.length}` : products.length})`
+                      : `All (${products.length < 10 ? `0${products.length}` : products.length})`,
+                },
+                {
+                  id: "sofa",
+                  label: lang === "VN" ? "Sofa & Ghế bành thư giãn" : "Sofas & Lounge Chairs",
+                },
+                {
+                  id: "table",
+                  label: lang === "VN" ? "Bàn trà & Bàn góc" : "Coffee & Side Tables",
+                },
+                {
+                  id: "storage",
+                  label: lang === "VN" ? "Kệ tivi & Tủ trang trí" : "Media Consoles & Cabinets",
+                },
               ].map((chip) => (
                 <button
                   key={chip.id}
@@ -237,7 +262,9 @@ export default function LivingRoomPage() {
             <div className="flex flex-wrap items-center gap-3">
               <div className="flex items-center gap-1.5 text-secondary">
                 <span className="material-symbols-outlined text-base">tune</span>
-                <span className="font-label-sm uppercase tracking-wider font-semibold">Bộ lọc:</span>
+                <span className="font-label-sm uppercase tracking-wider font-semibold">
+                  {lang === "VN" ? "Bộ lọc:" : "Filters:"}
+                </span>
               </div>
 
               {/* Material filter */}
@@ -246,11 +273,11 @@ export default function LivingRoomPage() {
                 onChange={(e) => setSelectedMaterial(e.target.value)}
                 className="bg-surface-container-lowest border border-outline-variant/60 text-on-surface text-label-sm uppercase py-1.5 px-3 focus:outline-none focus:border-primary text-xs"
               >
-                <option value="all">Chất liệu: Tất cả</option>
-                <option value="sồi">Gỗ Sồi Trắng FAS</option>
-                <option value="óc chó">Gỗ Óc Chó Walnut</option>
-                <option value="da">Da bò sáp thủ công</option>
-                <option value="lanh">Vải dệt Linen tự nhiên</option>
+                <option value="all">{lang === "VN" ? "Chất liệu: Tất cả" : "Material: All"}</option>
+                <option value="sồi">{lang === "VN" ? "Gỗ Sồi Trắng FAS" : "White Oak FAS"}</option>
+                <option value="óc chó">{lang === "VN" ? "Gỗ Óc Chó Walnut" : "American Walnut"}</option>
+                <option value="da">{lang === "VN" ? "Da bò sáp thủ công" : "Handcrafted Wax Leather"}</option>
+                <option value="lanh">{lang === "VN" ? "Vải dệt Linen tự nhiên" : "Natural Linen Fabric"}</option>
               </select>
 
               {/* Layout filter */}
@@ -259,24 +286,26 @@ export default function LivingRoomPage() {
                 onChange={(e) => setSelectedLayout(e.target.value)}
                 className="bg-surface-container-lowest border border-outline-variant/60 text-on-surface text-label-sm uppercase py-1.5 px-3 focus:outline-none focus:border-primary text-xs"
               >
-                <option value="all">Mặt bằng: Tất cả</option>
-                <option value="small">Căn hộ &lt;70m²</option>
-                <option value="townhouse">Nhà phố liền kề</option>
-                <option value="villa">Biệt thự &amp; Penthouse</option>
+                <option value="all">{lang === "VN" ? "Mặt bằng: Tất cả" : "Floor Layout: All"}</option>
+                <option value="small">{lang === "VN" ? "Căn hộ <70m²" : "Apartment <70m²"}</option>
+                <option value="townhouse">{lang === "VN" ? "Nhà phố liền kề" : "Townhouse"}</option>
+                <option value="villa">{lang === "VN" ? "Biệt thự & Penthouse" : "Villa & Penthouse"}</option>
               </select>
             </div>
 
             {/* Sort */}
             <div className="flex items-center gap-2">
-              <span className="text-secondary uppercase font-label-sm text-xs">Sắp xếp:</span>
+              <span className="text-secondary uppercase font-label-sm text-xs">
+                {lang === "VN" ? "Sắp xếp:" : "Sort:"}
+              </span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
                 className="bg-surface-container-lowest border border-outline-variant/60 text-on-surface text-label-sm uppercase py-1.5 px-3 focus:outline-none focus:border-primary text-xs"
               >
-                <option value="featured">Tiêu biểu xưởng</option>
-                <option value="price-asc">Giá: Thấp đến cao</option>
-                <option value="price-desc">Giá: Cao đến thấp</option>
+                <option value="featured">{lang === "VN" ? "Tiêu biểu xưởng" : "Featured Atelier"}</option>
+                <option value="price-asc">{lang === "VN" ? "Giá: Thấp đến cao" : "Price: Low to High"}</option>
+                <option value="price-desc">{lang === "VN" ? "Giá: Cao đến thấp" : "Price: High to Low"}</option>
               </select>
             </div>
           </div>
@@ -337,7 +366,7 @@ export default function LivingRoomPage() {
                         {p.desc}
                       </p>
                       <span className="text-[11px] text-outline block pt-1">
-                        Kích thước: {p.dimensions}
+                        {lang === "VN" ? "Kích thước: " : "Dimensions: "}{p.dimensions}
                       </span>
                     </div>
                   </div>
@@ -346,11 +375,11 @@ export default function LivingRoomPage() {
                   <div className="p-space-md pt-0 border-t border-outline-variant/30 mt-4 flex items-center justify-between">
                     <div>
                       <span className="font-headline-sm text-lg text-primary font-bold block">
-                        {p.price.toLocaleString("vi-VN")} đ
+                        {p.price.toLocaleString(lang === "VN" ? "vi-VN" : "en-US")} {t.common.currency}
                       </span>
                       {p.originalPrice && (
                         <span className="text-xs text-outline line-through">
-                          {p.originalPrice.toLocaleString("vi-VN")} đ
+                          {p.originalPrice.toLocaleString(lang === "VN" ? "vi-VN" : "en-US")} {t.common.currency}
                         </span>
                       )}
                     </div>
@@ -376,7 +405,7 @@ export default function LivingRoomPage() {
                       className="px-4 py-2 border border-primary text-primary hover:bg-primary hover:text-on-primary text-xs uppercase tracking-wider font-semibold transition-colors flex items-center gap-1.5"
                     >
                       <span className="material-symbols-outlined text-sm">shopping_bag</span>
-                      Thêm vào giỏ
+                      {lang === "VN" ? "Thêm vào giỏ" : "Add to Bag"}
                     </button>
                   </div>
                 </article>
