@@ -32,6 +32,7 @@ export default function AccountProfilePage() {
   const [activeTab, setActiveTab] = useState<TabId>("tab-1");
   const [isConsultationOpen, setIsConsultationOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [isCheckingAuth, setIsCheckingAuth] = useState<boolean>(true);
   const [orders, setOrders] = useState<any[]>([]);
   const [isLoadingOrders, setIsLoadingOrders] = useState<boolean>(true);
   const [profileAvatar, setProfileAvatar] = useState<string>("/images/stitch1-img-1.jpg");
@@ -67,6 +68,7 @@ export default function AccountProfilePage() {
 
       if (currentUser) {
         setUser(currentUser);
+        setIsCheckingAuth(false);
         if (currentUser.email) setProfileEmail(currentUser.email);
         const metaName =
           currentUser.user_metadata?.full_name ||
@@ -174,20 +176,20 @@ export default function AccountProfilePage() {
           setIsLoadingOrders(false);
         });
       } else {
-        // Tài khoản vãng lai hoặc demo
-        setProfileRole(savedRole === "architect" ? "Kiến trúc sư" : "Khách hàng");
-        // Fetch guest or public orders
-        getUserOrders().then((ordList) => {
-          if (ordList) setOrders(ordList);
-          setIsLoadingOrders(false);
-        });
+        // Chưa đăng nhập vào tài khoản -> Chuyển hướng sang trang đăng nhập
+        router.replace("/dang-nhap");
       }
     });
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
+      async (event, session) => {
         const currentUser = session?.user ?? null;
+        if (event === "SIGNED_OUT" || !currentUser) {
+          router.replace("/dang-nhap");
+          return;
+        }
         setUser(currentUser);
+        setIsCheckingAuth(false);
         if (currentUser) {
           if (currentUser.email) setProfileEmail(currentUser.email);
           const metaName =
@@ -411,6 +413,21 @@ export default function AccountProfilePage() {
       },
     });
   };
+
+  if (isCheckingAuth) {
+    return (
+      <>
+        <Header onOpenConsultation={() => setIsConsultationOpen(true)} />
+        <main className="min-h-[60vh] flex flex-col items-center justify-center bg-surface-container-lowest text-on-surface">
+          <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin mb-3"></div>
+          <p className="text-xs tracking-widest uppercase font-mono text-outline">
+            {lang === "VN" ? "Đang xác thực tài khoản..." : "Authenticating..."}
+          </p>
+        </main>
+        <Footer />
+      </>
+    );
+  }
 
   return (
     <>

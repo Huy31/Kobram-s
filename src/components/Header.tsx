@@ -245,10 +245,10 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
 
             {/* Account Link */}
             <Link
-              href="/tai-khoan"
-              aria-label={user ? `Hội viên: ${user.user_metadata?.full_name || user.email}` : (lang === "VN" ? "Đăng nhập / Tài khoản" : "Sign In / Profile")}
+              href={user ? "/tai-khoan" : "/dang-nhap"}
+              aria-label={user ? `Hội viên: ${user.user_metadata?.full_name || user.email}` : (lang === "VN" ? "Đăng nhập" : "Sign In")}
               className={`p-1.5 sm:px-2.5 sm:py-1.5 text-on-surface hover:text-primary transition-colors active:scale-95 rounded-full sm:rounded-xl hover:bg-surface-container-low inline-flex items-center gap-1.5 ${
-                pathname === "/tai-khoan"
+                pathname === "/tai-khoan" || pathname === "/dang-nhap"
                   ? "text-primary font-bold bg-surface-container-low"
                   : ""
               }`}
@@ -479,7 +479,7 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
 
                     {/* Account Link */}
                     <Link
-                      href="/tai-khoan"
+                      href={user ? "/tai-khoan" : "/dang-nhap"}
                       onClick={() => setSidebarOpen(false)}
                       className="p-3 rounded-xl flex items-center justify-between hover:bg-surface-container-low text-on-surface hover:text-primary transition-colors"
                     >
@@ -501,14 +501,14 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
                                 ? `Chào, ${user.user_metadata?.full_name || user.email}`
                                 : `Hello, ${user.user_metadata?.full_name || user.email}`)
                             : (lang === "VN"
-                                ? "Komorebi Circle • Tài Khoản & KTS"
-                                : "Komorebi Circle • Account & Trade")}
+                                ? "Komorebi Circle • Đăng nhập"
+                                : "Komorebi Circle • Sign In")}
                         </span>
                       </div>
                       <span className="text-[10px] uppercase font-mono tracking-wider text-outline font-bold">
                         {user
                           ? (lang === "VN" ? "Đã đăng nhập" : "Active")
-                          : "Elite"}
+                          : (lang === "VN" ? "Đăng nhập" : "Sign In")}
                       </span>
                     </Link>
 
