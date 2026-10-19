@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Header from "@/components/Header";
@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import ConsultationModal from "@/components/ConsultationModal";
 import SafeImage from "@/components/SafeImage";
 import { useCart } from "@/context/CartContext";
+import { getProductsByCategory } from "@/services/productService";
 
 interface LivingProduct {
   id: string;
@@ -24,7 +25,7 @@ interface LivingProduct {
   slug?: string;
 }
 
-const livingProducts: LivingProduct[] = [
+const initialLivingProducts: LivingProduct[] = [
   {
     id: "living-1",
     sku: "KL-SOF-NAM",
@@ -127,13 +128,33 @@ const livingProducts: LivingProduct[] = [
 
 export default function LivingRoomPage() {
   const { addToCart, toggleWishlist, isWishlisted } = useCart();
+  const [products, setProducts] = useState<LivingProduct[]>(initialLivingProducts);
   const [selectedSubcat, setSelectedSubcat] = useState("all");
   const [selectedMaterial, setSelectedMaterial] = useState("all");
   const [selectedLayout, setSelectedLayout] = useState("all");
   const [sortBy, setSortBy] = useState("featured");
   const [isConsultationOpen, setIsConsultationOpen] = useState(false);
 
-  const filteredProducts = livingProducts
+  useEffect(() => {
+    getProductsByCategory<LivingProduct>("cat-living", initialLivingProducts, (item) => ({
+      id: item.id,
+      sku: item.sku,
+      title: item.title,
+      category: item.sku.includes("SOF") || item.sku.includes("LOU") || item.sku.includes("POU") ? "sofa" : item.sku.includes("TAB") ? "table" : "storage",
+      price: item.price,
+      originalPrice: item.original_price,
+      material: item.material,
+      dimensions: item.dimensions || "",
+      desc: item.description || "",
+      tag: item.tag || "",
+      image: item.image,
+      slug: item.slug,
+    })).then((res) => {
+      if (res && res.length > 0) setProducts(res);
+    });
+  }, []);
+
+  const filteredProducts = products
     .filter((item) => {
       if (selectedSubcat !== "all" && item.category !== selectedSubcat) return false;
       if (selectedMaterial !== "all") {
@@ -180,7 +201,7 @@ export default function LivingRoomPage() {
                   </p>
                 </div>
                 <div className="flex items-center gap-2 text-primary font-label-md text-label-md uppercase tracking-wider text-xs font-bold">
-                  <span>{livingProducts.length} Thiết kế cốt lõi</span>
+                  <span>{products.length} Thiết kế cốt lõi</span>
                   <span className="material-symbols-outlined text-sm">arrow_forward</span>
                 </div>
               </div>
@@ -189,7 +210,7 @@ export default function LivingRoomPage() {
             {/* Subcategory Filter Chips */}
             <div className="mt-space-xl pt-space-lg border-t border-outline-variant/30 flex items-center gap-2 overflow-x-auto pb-2">
               {[
-                { id: "all", label: `Tất cả (${livingProducts.length < 10 ? `0${livingProducts.length}` : livingProducts.length})` },
+                { id: "all", label: `Tất cả (${products.length < 10 ? `0${products.length}` : products.length})` },
                 { id: "sofa", label: "Sofa & Ghế bành thư giãn" },
                 { id: "table", label: "Bàn trà & Bàn góc" },
                 { id: "storage", label: "Kệ tivi & Tủ trang trí" },

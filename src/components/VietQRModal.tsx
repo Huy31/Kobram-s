@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useCart } from "@/context/CartContext";
+import { submitOrderToDb } from "@/services/productService";
 
 interface VietQRModalProps {
   isOpen: boolean;
@@ -16,7 +17,7 @@ export default function VietQRModal({
   orderCode = "KL84920",
   totalAmount,
 }: VietQRModalProps) {
-  const { total, clearCart, showToast } = useCart();
+  const { items, total, clearCart, showToast } = useCart();
   const effectiveTotal = totalAmount !== undefined ? totalAmount : total;
 
   // Countdown timer: 10 minutes (600 seconds)
@@ -53,9 +54,30 @@ export default function VietQRModal({
     }
   };
 
-  const handleConfirmPaid = () => {
+  const handleConfirmPaid = async () => {
     setIsSuccess(true);
-    showToast("Giao dịch thanh toán VietQR thành công! Đơn hàng đã được xác nhận.");
+    await submitOrderToDb({
+      orderCode: orderCode,
+      customerName: "Khách hàng Komorebi (VietQR)",
+      customerPhone: "0900000000",
+      shippingAddress: "Địa chỉ theo xác nhận thanh toán trực tuyến VietQR",
+      subtotal: effectiveTotal,
+      totalAmount: effectiveTotal,
+      paymentMethod: "vietqr",
+      items: items.map((it) => ({
+        productId: it.id,
+        productTitle: it.title,
+        productSku: it.sku,
+        productImage: it.image,
+        selectedWood: it.options?.wood,
+        selectedUpholstery: it.options?.upholstery,
+        selectedSize: it.options?.size,
+        unitPrice: it.price,
+        quantity: it.quantity,
+        subtotal: it.price * it.quantity,
+      })),
+    });
+    showToast("Giao dịch thanh toán VietQR thành công! Đơn hàng đã được lưu vào hệ thống.");
     setTimeout(() => {
       clearCart();
     }, 1500);

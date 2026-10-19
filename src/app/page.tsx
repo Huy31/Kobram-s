@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ConsultationModal from "@/components/ConsultationModal";
+import SafeImage from "@/components/SafeImage";
 import { useCart } from "@/context/CartContext";
+import { getFeaturedProducts, submitConsultationToDb } from "@/services/productService";
 
 interface Product {
   id: string;
@@ -24,7 +26,7 @@ interface Product {
   slug: string;
 }
 
-const productsData: Product[] = [
+const initialProductsData: Product[] = [
   {
     id: "p1",
     sku: "KL-LOU-01",
@@ -119,6 +121,7 @@ const productsData: Product[] = [
 
 export default function HomePage() {
   const { addToCart, toggleWishlist, isWishlisted, showToast } = useCart();
+  const [productsList, setProductsList] = useState<Product[]>(initialProductsData);
   const [isConsultationOpen, setIsConsultationOpen] = useState(false);
   const [selectedSpace, setSelectedSpace] = useState("Phòng Khách");
   const [selectedMaterial, setSelectedMaterial] = useState<string | null>(null);
@@ -127,11 +130,31 @@ export default function HomePage() {
   const [showAllProducts, setShowAllProducts] = useState(false);
   const [bannerPhone, setBannerPhone] = useState("");
 
+  useEffect(() => {
+    getFeaturedProducts<Product>(initialProductsData, (item) => ({
+      id: item.id,
+      sku: item.sku,
+      title: item.title,
+      subtitle: item.description || item.title,
+      price: item.price,
+      originalPrice: item.original_price || Math.round(item.price * 1.15),
+      tag: item.tag || "Mộc bản FAS",
+      ratingCount: 36,
+      image: item.image,
+      space: item.category_id === "cat-living" ? "Phòng Khách" : item.category_id === "cat-bedroom" ? "Phòng Ngủ" : "Phòng Ăn",
+      material: item.material,
+      inStockShowroom: true,
+      slug: item.slug,
+    })).then((res) => {
+      if (res && res.length > 0) setProductsList(res);
+    });
+  }, []);
+
   const spaceTabs = ["Phòng Khách", "Phòng Ăn", "Phòng Ngủ", "Góc Làm Việc Yên Tĩnh"];
   const materialChips = ["Gỗ Teak", "Gỗ Walnut", "Da bò Ý", "Linen tự nhiên"];
 
   // Filter products
-  const filteredProducts = productsData.filter((item) => {
+  const filteredProducts = productsList.filter((item) => {
     // Space filter (if space matches or 'all')
     if (selectedSpace !== "Tất cả" && item.space !== selectedSpace && !showAllProducts) {
       // allow flexible viewing when space tab matches
@@ -154,12 +177,16 @@ export default function HomePage() {
 
   const displayedProducts = showAllProducts ? filteredProducts : filteredProducts.slice(0, 4);
 
-  const handleBannerSubmit = (e: React.FormEvent) => {
+  const handleBannerSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!bannerPhone) {
       showToast("Vui lòng nhập số điện thoại để nhận tư vấn.");
       return;
     }
+    await submitConsultationToDb({
+      phone: bannerPhone,
+      spaceType: "Tư vấn khảo sát từ Banner Trang Chủ",
+    });
     showToast(`Cảm ơn bạn! KTS Komorebi sẽ gọi đến ${bannerPhone} trong vòng 30 phút.`);
     setBannerPhone("");
   };

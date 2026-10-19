@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Header from "@/components/Header";
@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import ConsultationModal from "@/components/ConsultationModal";
 import SafeImage from "@/components/SafeImage";
 import { useCart } from "@/context/CartContext";
+import { getProductsByCategory } from "@/services/productService";
 
 interface BedroomProduct {
   id: string;
@@ -23,7 +24,7 @@ interface BedroomProduct {
   slug?: string;
 }
 
-const bedroomProducts: BedroomProduct[] = [
+const initialBedroomProducts: BedroomProduct[] = [
   {
     id: "bed-1",
     sku: "KL-BED-ZEN",
@@ -106,7 +107,26 @@ const bedroomProducts: BedroomProduct[] = [
 
 export default function BedroomPage() {
   const { addToCart, toggleWishlist, isWishlisted } = useCart();
+  const [products, setProducts] = useState<BedroomProduct[]>(initialBedroomProducts);
   const [isConsultationOpen, setIsConsultationOpen] = useState(false);
+
+  useEffect(() => {
+    getProductsByCategory<BedroomProduct>("cat-bedroom", initialBedroomProducts, (item) => ({
+      id: item.id,
+      sku: item.sku,
+      title: item.title,
+      price: item.price,
+      originalPrice: item.original_price,
+      material: item.material,
+      dimensions: item.dimensions || "",
+      desc: item.description || "",
+      tag: item.tag || "",
+      image: item.image,
+      slug: item.slug,
+    })).then((res) => {
+      if (res && res.length > 0) setProducts(res);
+    });
+  }, []);
 
   return (
     <>
@@ -173,12 +193,12 @@ export default function BedroomPage() {
               </h2>
             </div>
             <p className="font-body-sm text-body-sm text-on-surface-variant text-xs sm:text-sm mt-2 md:mt-0">
-              Hiển thị 6 tác phẩm mộc độc bản • Chứng nhận xuất xưởng Komorebi Studio
+              Hiển thị {products.length} tác phẩm mộc độc bản • Chứng nhận xuất xưởng Komorebi Studio
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            {bedroomProducts.map((p) => {
+            {products.map((p) => {
               const wishlisted = isWishlisted(p.id);
               return (
                 <article

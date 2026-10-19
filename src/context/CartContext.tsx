@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { createClient } from "@/utils/supabase/client";
 
 export interface CartItem {
   id: string;
@@ -439,6 +440,37 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     } catch {
       // Ignore localStorage errors
     }
+
+    // Sync masterCatalog dynamically from Supabase
+    async function syncCatalogFromSupabase() {
+      try {
+        const supabase = createClient();
+        const { data } = await supabase.from("products").select("*").eq("is_active", true);
+        if (data && data.length > 0) {
+          data.forEach((p: any) => {
+            const wishItem: WishlistItem = {
+              id: p.id,
+              sku: p.sku,
+              title: p.title,
+              subtitle: p.material || p.title,
+              price: Number(p.price),
+              originalPrice: p.original_price ? Number(p.original_price) : undefined,
+              image: p.image,
+              category: p.category_id === "cat-living" ? "Phòng Khách" : p.category_id === "cat-bedroom" ? "Phòng Ngủ" : "Phòng Ăn",
+              material: p.material,
+              slug: p.slug,
+            };
+            masterCatalog[p.id] = wishItem;
+            if (p.slug) {
+              masterCatalog[p.slug] = wishItem;
+            }
+          });
+        }
+      } catch (err) {
+        // Fallback to static catalog
+      }
+    }
+    syncCatalogFromSupabase();
   }, []);
 
   const showToast = (msg: string) => {

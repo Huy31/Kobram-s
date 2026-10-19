@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Header from "@/components/Header";
@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import ConsultationModal from "@/components/ConsultationModal";
 import SafeImage from "@/components/SafeImage";
 import { useCart } from "@/context/CartContext";
+import { getProductsByCategory } from "@/services/productService";
 
 interface DiningProduct {
   id: string;
@@ -24,7 +25,7 @@ interface DiningProduct {
   slug?: string;
 }
 
-const diningProducts: DiningProduct[] = [
+const initialDiningProducts: DiningProduct[] = [
   {
     id: "dining-1",
     sku: "KL-TAB-18",
@@ -113,11 +114,31 @@ const diningProducts: DiningProduct[] = [
 
 export default function DiningKitchenPage() {
   const { addToCart, toggleWishlist, isWishlisted } = useCart();
+  const [products, setProducts] = useState<DiningProduct[]>(initialDiningProducts);
   const [selectedSubcat, setSelectedSubcat] = useState("all");
   const [selectedWood, setSelectedWood] = useState("all");
   const [isConsultationOpen, setIsConsultationOpen] = useState(false);
 
-  const filteredProducts = diningProducts.filter((item) => {
+  useEffect(() => {
+    getProductsByCategory<DiningProduct>("cat-dining", initialDiningProducts, (item) => ({
+      id: item.id,
+      sku: item.sku,
+      title: item.title,
+      category: item.sku.includes("TAB") ? "table" : item.sku.includes("CHA") || item.sku.includes("BEN") ? "chair" : "cabinet",
+      price: item.price,
+      originalPrice: item.original_price,
+      material: item.material,
+      specs: item.dimensions || item.description || "",
+      desc: item.description || "",
+      tag: item.tag || "",
+      image: item.image,
+      slug: item.slug,
+    })).then((res) => {
+      if (res && res.length > 0) setProducts(res);
+    });
+  }, []);
+
+  const filteredProducts = products.filter((item) => {
     if (selectedSubcat !== "all" && item.category !== selectedSubcat) return false;
     if (selectedWood !== "all") {
       if (!item.material.toLowerCase().includes(selectedWood.toLowerCase())) return false;

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useCart } from "@/context/CartContext";
+import { submitConsultationToDb } from "@/services/productService";
 
 interface ConsultationModalProps {
   isOpen: boolean;
@@ -18,12 +19,18 @@ export default function ConsultationModal({ isOpen, onClose }: ConsultationModal
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!phone) {
       showToast("Vui lòng nhập số điện thoại liên hệ.");
       return;
     }
+    await submitConsultationToDb({
+      fullName: name,
+      phone: phone,
+      spaceType: spaceType,
+      notes: notes,
+    });
     setIsSubmitted(true);
     showToast("Đã gửi yêu cầu tư vấn thành công!");
   };
