@@ -5,8 +5,15 @@ import { NextResponse } from "next/server";
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
+  const error = searchParams.get("error");
+  const errorDescription = searchParams.get("error_description");
   // Trang chuyển hướng sau khi đăng nhập thành công
   const next = searchParams.get("next") ?? "/tai-khoan";
+
+  if (error) {
+    const errorMsg = encodeURIComponent(errorDescription || error);
+    return NextResponse.redirect(`${origin}/dang-nhap?error=${errorMsg}`);
+  }
 
   if (code) {
     const cookieStore = await cookies();

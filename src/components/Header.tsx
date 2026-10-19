@@ -11,6 +11,8 @@ interface HeaderProps {
   onOpenConsultation?: () => void;
 }
 
+type Lang = "VN" | "EN";
+
 export default function Header({ onOpenConsultation }: HeaderProps) {
   const pathname = usePathname();
   const { itemCount, wishlistCount, openWishlist } = useCart();
@@ -18,10 +20,44 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [mounted, setMounted] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [lang, setLang] = useState<Lang>("VN");
 
   useEffect(() => {
     setMounted(true);
 
+    // Sync language from localStorage
+    if (typeof window !== "undefined") {
+      const savedLang = localStorage.getItem("komorebi_lang") as Lang;
+      if (savedLang === "VN" || savedLang === "EN") {
+        setLang(savedLang);
+      }
+
+      const handleLangSync = () => {
+        const updated = localStorage.getItem("komorebi_lang") as Lang;
+        if (updated === "VN" || updated === "EN") {
+          setLang(updated);
+        }
+      };
+
+      window.addEventListener("komorebi_lang_change", handleLangSync);
+      window.addEventListener("storage", handleLangSync);
+
+      return () => {
+        window.removeEventListener("komorebi_lang_change", handleLangSync);
+        window.removeEventListener("storage", handleLangSync);
+      };
+    }
+  }, []);
+
+  const changeLang = (newLang: Lang) => {
+    setLang(newLang);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("komorebi_lang", newLang);
+      window.dispatchEvent(new Event("komorebi_lang_change"));
+    }
+  };
+
+  useEffect(() => {
     const supabase = createClient();
     supabase.auth.getUser().then(({ data }) => {
       setUser(data.user);
@@ -38,34 +74,49 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
 
   const navLinks = [
     {
-      label: "Phòng Khách",
+      label: lang === "VN" ? "Phòng Khách" : "Living Room",
       href: "/phong-khach",
       icon: "chair",
-      desc: "Sofa mộc bản, bàn trà Enso & kệ tivi",
+      desc:
+        lang === "VN"
+          ? "Sofa mộc bản, bàn trà Enso & kệ tivi"
+          : "Crafted sofas, Enso tea tables & media consoles",
     },
     {
-      label: "Phòng Bếp",
+      label: lang === "VN" ? "Phòng Bếp" : "Kitchen & Dining",
       href: "/phong-bep",
       icon: "table_restaurant",
-      desc: "Bàn ăn Mori, ghế Kanso & hệ tủ mộc",
+      desc:
+        lang === "VN"
+          ? "Bàn ăn Mori, ghế Kanso & hệ tủ mộc"
+          : "Mori dining tables, Kanso chairs & cabinetry",
     },
     {
-      label: "Phòng Ngủ",
+      label: lang === "VN" ? "Phòng Ngủ" : "Bedroom",
       href: "/phong-ngu",
       icon: "bed",
-      desc: "Giường Zen Platform, chiếu Tatami & tủ Shoji",
+      desc:
+        lang === "VN"
+          ? "Giường Zen Platform, chiếu Tatami & tủ Shoji"
+          : "Zen Platform beds, Tatami mats & Shoji closets",
     },
     {
-      label: "Bộ Sưu Tập",
+      label: lang === "VN" ? "Bộ Sưu Tập" : "Kyoto Collection",
       href: "/bo-suu-tap",
       icon: "auto_awesome",
-      desc: "Kyoto Atelier Archive & gốm Wabi-sabi",
+      desc:
+        lang === "VN"
+          ? "Kyoto Atelier Archive & gốm Wabi-sabi"
+          : "Kyoto Atelier Archive & Wabi-Sabi ceramics",
     },
     {
-      label: "Dự Án Kiến Trúc",
+      label: lang === "VN" ? "Dự Án Kiến Trúc" : "Architectural Projects",
       href: "/du-an-kien-truc",
       icon: "architecture",
-      desc: "Villa Thảo Điền, Penthouse & Resort",
+      desc:
+        lang === "VN"
+          ? "Villa Thảo Điền, Penthouse & Resort"
+          : "Thao Dien Villa, Penthouses & Eco-Resorts",
     },
   ];
 
@@ -107,8 +158,8 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
             type="button"
             onClick={() => setSidebarOpen(true)}
             className="p-2 sm:px-3 sm:py-2 flex items-center gap-1.5 text-primary bg-surface-container-low hover:bg-primary hover:text-white rounded-xl transition-all active:scale-95 font-medium"
-            aria-label="Mở danh mục điều hướng"
-            title="Mở menu danh mục không gian"
+            aria-label={lang === "VN" ? "Mở danh mục điều hướng" : "Open navigation menu"}
+            title={lang === "VN" ? "Mở menu danh mục không gian" : "Open space catalog menu"}
           >
             <span className="material-symbols-outlined text-[22px] sm:text-[24px]">
               menu
@@ -134,7 +185,7 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Tìm sản phẩm, chất liệu..."
+              placeholder={lang === "VN" ? "Tìm sản phẩm, chất liệu..." : "Search products, timber..."}
               className="pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-full text-body-sm font-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:border-primary w-44 xl:w-60 transition-all focus:bg-white focus:w-56 xl:focus:w-72"
             />
           </div>
@@ -142,13 +193,39 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
 
         {/* Right: Actions Cluster */}
         <div className="flex items-center gap-1.5 sm:gap-3">
+          {/* Desktop Lang Switcher */}
+          <div className="hidden sm:flex items-center border border-outline-variant p-0.5 bg-surface-container-low text-xs font-semibold rounded-lg">
+            <button
+              type="button"
+              onClick={() => changeLang("VN")}
+              className={`px-2 py-0.5 transition-colors rounded-md text-[11px] font-bold ${
+                lang === "VN"
+                  ? "bg-white text-primary shadow-xs"
+                  : "text-outline hover:text-primary"
+              }`}
+            >
+              VN
+            </button>
+            <button
+              type="button"
+              onClick={() => changeLang("EN")}
+              className={`px-2 py-0.5 transition-colors rounded-md text-[11px] font-bold ${
+                lang === "EN"
+                  ? "bg-white text-primary shadow-xs"
+                  : "text-outline hover:text-primary"
+              }`}
+            >
+              EN
+            </button>
+          </div>
+
           {/* Tư vấn thiết kế Button (Desktop/Tablet) */}
           <button
             type="button"
             onClick={onOpenConsultation}
             className="hidden sm:inline-flex items-center justify-center px-4 py-2 bg-primary text-on-primary text-label-md font-label-md uppercase tracking-wider rounded-xl hover:bg-[#27272a] active:scale-95 transition-all shadow-sm text-xs sm:text-sm font-bold"
           >
-            Tư vấn thiết kế
+            {lang === "VN" ? "Tư vấn thiết kế" : "Architect Consult"}
           </button>
 
           {/* Icon buttons */}
@@ -157,9 +234,9 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
             <button
               type="button"
               onClick={openWishlist}
-              aria-label="Danh sách yêu thích"
+              aria-label={lang === "VN" ? "Danh sách yêu thích" : "Wishlist"}
               className="p-2 text-on-surface hover:text-primary transition-colors relative active:scale-95 group rounded-full hover:bg-surface-container-low"
-              title="Danh sách tác phẩm yêu thích"
+              title={lang === "VN" ? "Danh sách tác phẩm yêu thích" : "Curated wishlist"}
             >
               <span className="material-symbols-outlined text-[20px] sm:text-[22px] group-hover:scale-110 transition-transform">
                 favorite
@@ -174,7 +251,7 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
             {/* Cart link */}
             <Link
               href="/gio-hang"
-              aria-label="Giỏ hàng"
+              aria-label={lang === "VN" ? "Giỏ hàng" : "Shopping cart"}
               className={`p-2 flex items-center gap-1.5 transition-colors relative active:scale-95 rounded-xl ${
                 pathname === "/gio-hang"
                   ? "text-primary font-bold bg-surface-container-low"
@@ -185,7 +262,7 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
                 shopping_bag
               </span>
               <span className="text-label-md font-label-md hidden xl:inline font-semibold">
-                Giỏ hàng ({itemCount})
+                {lang === "VN" ? "Giỏ hàng" : "Cart"} ({itemCount})
               </span>
               {itemCount > 0 && (
                 <span className="xl:hidden absolute top-0.5 right-0.5 sm:top-1 sm:right-1 w-4 h-4 bg-primary text-on-primary text-[10px] font-bold rounded-full flex items-center justify-center">
@@ -197,13 +274,13 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
             {/* Account Link */}
             <Link
               href="/tai-khoan"
-              aria-label={user ? `Hội viên: ${user.user_metadata?.full_name || user.email}` : "Đăng nhập / Tài khoản"}
+              aria-label={user ? `Hội viên: ${user.user_metadata?.full_name || user.email}` : (lang === "VN" ? "Đăng nhập / Tài khoản" : "Sign In / Profile")}
               className={`p-1.5 sm:px-2.5 sm:py-1.5 text-on-surface hover:text-primary transition-colors active:scale-95 rounded-full sm:rounded-xl hover:bg-surface-container-low inline-flex items-center gap-1.5 ${
                 pathname === "/tai-khoan"
                   ? "text-primary font-bold bg-surface-container-low"
                   : ""
               }`}
-              title={user ? `Hội viên: ${user.user_metadata?.full_name || user.email}` : "Komorebi Circle • Đăng nhập"}
+              title={user ? `Hội viên: ${user.user_metadata?.full_name || user.email}` : (lang === "VN" ? "Komorebi Circle • Đăng nhập" : "Komorebi Circle • Sign In")}
             >
               {user?.user_metadata?.avatar_url ? (
                 <img
@@ -218,7 +295,7 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
               )}
               {user && (
                 <span className="hidden md:inline text-xs font-semibold max-w-[110px] truncate">
-                  {user.user_metadata?.full_name?.split(" ").slice(-1)[0] || "Hội viên"}
+                  {user.user_metadata?.full_name?.split(" ").slice(-1)[0] || (lang === "VN" ? "Hội viên" : "Member")}
                 </span>
               )}
             </Link>
@@ -243,7 +320,7 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
               className="relative z-10 w-full max-w-[360px] sm:max-w-[420px] bg-surface-container-lowest h-screen sm:h-[100dvh] shadow-2xl border-r border-outline-variant flex flex-col justify-between overflow-hidden animate-slide-in-left"
               role="dialog"
               aria-modal="true"
-              aria-label="Menu danh mục"
+              aria-label={lang === "VN" ? "Menu danh mục" : "Catalog menu"}
             >
               {/* Top Bar of Sidebar */}
               <div className="px-5 sm:px-6 py-4 border-b border-outline-variant/50 flex items-center justify-between bg-white">
@@ -252,18 +329,51 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
                     Komorebi Living
                   </span>
                   <span className="text-[11px] font-mono uppercase tracking-widest text-outline block">
-                    Kiến trúc &amp; Mộc bản thủ công
+                    {lang === "VN"
+                      ? "Kiến trúc & Mộc bản thủ công"
+                      : "Minimalist Woodworking & Architecture"}
                   </span>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => setSidebarOpen(false)}
-                  className="w-9 h-9 flex items-center justify-center rounded-full text-primary hover:bg-surface-container-low active:scale-95 transition-all"
-                  aria-label="Đóng menu"
-                >
-                  <span className="material-symbols-outlined text-2xl">close</span>
-                </button>
+                <div className="flex items-center gap-2.5">
+                  {/* Language Switcher in Sidebar Header */}
+                  <div className="flex items-center border border-outline-variant p-0.5 bg-surface-container-low text-xs font-semibold rounded-lg">
+                    <button
+                      type="button"
+                      onClick={() => changeLang("VN")}
+                      className={`px-2 py-0.5 transition-colors rounded-md text-[11px] font-bold ${
+                        lang === "VN"
+                          ? "bg-white text-primary shadow-xs"
+                          : "text-outline hover:text-primary"
+                      }`}
+                      title="Chuyển sang Tiếng Việt"
+                    >
+                      VN
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => changeLang("EN")}
+                      className={`px-2 py-0.5 transition-colors rounded-md text-[11px] font-bold ${
+                        lang === "EN"
+                          ? "bg-white text-primary shadow-xs"
+                          : "text-outline hover:text-primary"
+                      }`}
+                      title="Switch to English"
+                    >
+                      EN
+                    </button>
+                  </div>
+
+                  {/* Close button */}
+                  <button
+                    type="button"
+                    onClick={() => setSidebarOpen(false)}
+                    className="w-9 h-9 flex items-center justify-center rounded-full text-primary hover:bg-surface-container-low active:scale-95 transition-all"
+                    aria-label={lang === "VN" ? "Đóng menu" : "Close menu"}
+                  >
+                    <span className="material-symbols-outlined text-2xl">close</span>
+                  </button>
+                </div>
               </div>
 
               {/* Scrollable Content */}
@@ -277,7 +387,11 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Tìm bàn ghế, sofa, giường ngủ..."
+                    placeholder={
+                      lang === "VN"
+                        ? "Tìm bàn ghế, sofa, giường ngủ..."
+                        : "Search tables, sofas, zen beds..."
+                    }
                     className="w-full pl-10 pr-4 py-2.5 bg-surface-container-low border border-outline-variant rounded-xl text-body-sm text-primary placeholder:text-outline focus:outline-none focus:border-primary focus:bg-white transition-colors"
                   />
                 </div>
@@ -285,7 +399,7 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
                 {/* Core Navigation Items */}
                 <div>
                   <span className="text-[10px] uppercase font-mono tracking-widest text-outline block mb-3 font-semibold">
-                    Danh Mục Không Gian
+                    {lang === "VN" ? "Danh Mục Không Gian" : "Space Categories"}
                   </span>
                   <nav className="space-y-1.5">
                     {navLinks.map((link) => {
@@ -345,7 +459,7 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
                 {/* Special Features & Services */}
                 <div className="pt-3 border-t border-outline-variant/40">
                   <span className="text-[10px] uppercase font-mono tracking-widest text-outline block mb-3 font-semibold">
-                    Tuyển Chọn &amp; Dịch Vụ
+                    {lang === "VN" ? "Tuyển Chọn & Dịch Vụ" : "Curated & Services"}
                   </span>
                   <div className="space-y-1 text-body-sm">
                     {/* Ghế Kura Featured Link */}
@@ -359,7 +473,9 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
                           star
                         </span>
                         <span className="text-sm font-semibold">
-                          Tác Phẩm Tiêu Biểu: Ghế Kura
+                          {lang === "VN"
+                            ? "Tác Phẩm Tiêu Biểu: Ghế Kura"
+                            : "Iconic Piece: Kura Lounge Chair"}
                         </span>
                       </div>
                       <span className="px-2 py-0.5 bg-primary text-on-primary text-[10px] uppercase font-bold rounded-md">
@@ -381,11 +497,11 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
                           favorite
                         </span>
                         <span className="text-sm font-medium">
-                          Tác Phẩm Yêu Thích
+                          {lang === "VN" ? "Tác Phẩm Yêu Thích" : "Curated Wishlist"}
                         </span>
                       </div>
                       <span className="px-2 py-0.5 bg-surface-container text-xs font-bold font-mono rounded-md">
-                        {wishlistCount} món
+                        {wishlistCount} {lang === "VN" ? "món" : "items"}
                       </span>
                     </button>
 
@@ -409,12 +525,18 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
                         )}
                         <span className="text-sm font-medium">
                           {user
-                            ? `Chào, ${user.user_metadata?.full_name || user.email}`
-                            : "Komorebi Circle • Tài Khoản & KTS"}
+                            ? (lang === "VN"
+                                ? `Chào, ${user.user_metadata?.full_name || user.email}`
+                                : `Hello, ${user.user_metadata?.full_name || user.email}`)
+                            : (lang === "VN"
+                                ? "Komorebi Circle • Tài Khoản & KTS"
+                                : "Komorebi Circle • Account & Trade")}
                         </span>
                       </div>
                       <span className="text-[10px] uppercase font-mono tracking-wider text-outline font-bold">
-                        {user ? "Đã đăng nhập" : "Elite"}
+                        {user
+                          ? (lang === "VN" ? "Đã đăng nhập" : "Active")
+                          : "Elite"}
                       </span>
                     </Link>
 
@@ -428,10 +550,12 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
                         <span className="material-symbols-outlined text-[20px] text-primary">
                           shopping_bag
                         </span>
-                        <span className="text-sm">Giỏ Hàng &amp; Thanh Toán</span>
+                        <span className="text-sm">
+                          {lang === "VN" ? "Giỏ Hàng & Thanh Toán" : "Shopping Bag & Checkout"}
+                        </span>
                       </div>
                       <span className="px-2 py-0.5 bg-primary text-on-primary text-xs rounded-md font-mono">
-                        {itemCount} món
+                        {itemCount} {lang === "VN" ? "món" : "items"}
                       </span>
                     </Link>
                   </div>
@@ -448,18 +572,24 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
                   }}
                   className="w-full py-3 bg-primary text-on-primary text-label-md uppercase tracking-wider text-center rounded-xl font-bold shadow-md hover:bg-[#27272a] active:scale-98 transition-all"
                 >
-                  Đặt Lịch Tư Vấn Kiến Trúc Sư
+                  {lang === "VN"
+                    ? "Đặt Lịch Tư Vấn Kiến Trúc Sư"
+                    : "Book Architect Consultation"}
                 </button>
 
                 <div className="text-center text-xs text-outline space-y-1">
                   <p>
-                    Hotline Atelier:{" "}
+                    {lang === "VN" ? "Hotline Atelier: " : "Atelier Hotline: "}
                     <a href="tel:19006829" className="text-primary font-bold underline">
                       1900 6829
                     </a>{" "}
                     (8:30 - 20:30)
                   </p>
-                  <p>Showroom: 18 Đường Số 10, P. Thảo Điền, TP. Thủ Đức, TP.HCM</p>
+                  <p>
+                    {lang === "VN"
+                      ? "Showroom: 18 Đường Số 10, P. Thảo Điền, TP. Thủ Đức, TP.HCM"
+                      : "Showroom: 18 Street 10, Thao Dien Ward, Thu Duc City, HCMC"}
+                  </p>
                 </div>
               </div>
             </aside>
