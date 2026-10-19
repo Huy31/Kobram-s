@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCart } from "@/context/CartContext";
+import { createClient } from "@/utils/supabase/client";
 
 interface HeaderProps {
   onOpenConsultation?: () => void;
@@ -16,9 +17,23 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [mounted, setMounted] = useState(false);
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
     setMounted(true);
+
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user);
+    });
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
   }, []);
 
   const navLinks = [
@@ -182,17 +197,30 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
             {/* Account Link */}
             <Link
               href="/tai-khoan"
-              aria-label="Tài khoản & Hội viên Circle"
-              className={`p-2 text-on-surface hover:text-primary transition-colors active:scale-95 rounded-full hover:bg-surface-container-low inline-flex items-center justify-center ${
+              aria-label={user ? `Hội viên: ${user.user_metadata?.full_name || user.email}` : "Đăng nhập / Tài khoản"}
+              className={`p-1.5 sm:px-2.5 sm:py-1.5 text-on-surface hover:text-primary transition-colors active:scale-95 rounded-full sm:rounded-xl hover:bg-surface-container-low inline-flex items-center gap-1.5 ${
                 pathname === "/tai-khoan"
                   ? "text-primary font-bold bg-surface-container-low"
                   : ""
               }`}
-              title="Komorebi Circle • Tài khoản & KTS"
+              title={user ? `Hội viên: ${user.user_metadata?.full_name || user.email}` : "Komorebi Circle • Đăng nhập"}
             >
-              <span className="material-symbols-outlined text-[20px] sm:text-[22px]">
-                person
-              </span>
+              {user?.user_metadata?.avatar_url ? (
+                <img
+                  src={user.user_metadata.avatar_url}
+                  alt="Avatar"
+                  className="w-5 h-5 sm:w-6 sm:h-6 rounded-full object-cover border border-outline-variant"
+                />
+              ) : (
+                <span className="material-symbols-outlined text-[20px] sm:text-[22px]">
+                  {user ? "account_circle" : "person"}
+                </span>
+              )}
+              {user && (
+                <span className="hidden md:inline text-xs font-semibold max-w-[110px] truncate">
+                  {user.user_metadata?.full_name?.split(" ").slice(-1)[0] || "Hội viên"}
+                </span>
+              )}
             </Link>
           </div>
         </div>
@@ -368,15 +396,25 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
                       className="p-3 rounded-xl flex items-center justify-between hover:bg-surface-container-low text-on-surface hover:text-primary transition-colors"
                     >
                       <div className="flex items-center gap-2.5">
-                        <span className="material-symbols-outlined text-[20px] text-outline">
-                          person
-                        </span>
+                        {user?.user_metadata?.avatar_url ? (
+                          <img
+                            src={user.user_metadata.avatar_url}
+                            alt="Avatar"
+                            className="w-5 h-5 rounded-full object-cover border border-outline-variant"
+                          />
+                        ) : (
+                          <span className="material-symbols-outlined text-[20px] text-outline">
+                            person
+                          </span>
+                        )}
                         <span className="text-sm font-medium">
-                          Komorebi Circle • Tài Khoản &amp; KTS
+                          {user
+                            ? `Chào, ${user.user_metadata?.full_name || user.email}`
+                            : "Komorebi Circle • Tài Khoản & KTS"}
                         </span>
                       </div>
                       <span className="text-[10px] uppercase font-mono tracking-wider text-outline font-bold">
-                        Elite
+                        {user ? "Đã đăng nhập" : "Elite"}
                       </span>
                     </Link>
 

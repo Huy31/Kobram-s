@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
+import { createClient } from "@/utils/supabase/client";
 
 type AuthMode = "signin" | "register";
 type Role = "client" | "architect";
@@ -16,7 +17,17 @@ export default function LoginPage() {
   const [role, setRole] = useState<Role>("client");
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [lang, setLang] = useState<"VN" | "EN">("VN");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("error") === "auth_failed") {
+        showToast("Xác thực Google không thành công hoặc đã bị hủy.");
+      }
+    }
+  }, []);
 
   // Form states
   const [fullName, setFullName] = useState("");
@@ -53,13 +64,41 @@ export default function LoginPage() {
     }, 700);
   };
 
-  const handleSSO = (provider: string, isLocked?: boolean) => {
+  const handleSSO = async (provider: string, isLocked?: boolean) => {
     if (isLocked || provider === "Apple ID" || provider === "ArchID") {
       showToast(
         `Cổng xác thực qua ${provider} tạm thời đang bảo trì nâng cấp. Quý khách vui lòng đăng nhập qua Google hoặc Email.`
       );
       return;
     }
+
+    if (provider === "Google") {
+      try {
+        setIsGoogleLoading(true);
+        showToast("Đang kết nối tới máy chủ Google OAuth...");
+        const supabase = createClient();
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: "google",
+          options: {
+            redirectTo: `${window.location.origin}/auth/callback?next=/tai-khoan`,
+            queryParams: {
+              access_type: "offline",
+              prompt: "consent",
+            },
+          },
+        });
+
+        if (error) {
+          showToast(`Lỗi đăng nhập Google: ${error.message}`);
+          setIsGoogleLoading(false);
+        }
+      } catch (err: any) {
+        showToast(`Không thể kết nối Google: ${err?.message || "Lỗi không xác định"}`);
+        setIsGoogleLoading(false);
+      }
+      return;
+    }
+
     showToast(`Đang kết nối xác thực 1 chạm với ${provider}...`);
     setTimeout(() => {
       showToast(`Đăng nhập thành công với ${provider}! Đang chuyển hướng...`);
@@ -325,13 +364,22 @@ export default function LoginPage() {
                 {/* Google */}
                 <button
                   type="button"
+                  disabled={isGoogleLoading}
                   onClick={() => handleSSO("Google")}
-                  className="flex items-center justify-center gap-1.5 py-2 sm:py-2.5 px-1.5 sm:px-3 border border-[#E4E4E7] hover:border-black bg-white hover:bg-[#F4F4F5] transition-all group rounded-xl"
+                  className={`flex items-center justify-center gap-1.5 py-2 sm:py-2.5 px-1.5 sm:px-3 border border-[#E4E4E7] hover:border-black bg-white hover:bg-[#F4F4F5] transition-all group rounded-xl ${
+                    isGoogleLoading ? "opacity-60 cursor-wait" : ""
+                  }`}
                 >
-                  <svg className="w-4 h-4 fill-current text-black group-hover:scale-110 transition-transform flex-shrink-0" viewBox="0 0 24 24">
-                    <path d="M12.24 10.285V13.4h6.887C18.2 16.14 15.645 18 12.24 18c-3.315 0-6-2.685-6-6s2.685-6 6-6c1.62 0 3.09.615 4.2 1.635l2.37-2.37C17.37 3.84 14.985 3 12.24 3 7.275 3 3.24 7.035 3.24 12s4.035 9 9 9c5.205 0 8.655-3.66 8.655-8.82 0-.6-.06-1.185-.18-1.895H12.24z" />
-                  </svg>
-                  <span className="text-[11px] sm:text-xs uppercase font-semibold">Google</span>
+                  {isGoogleLoading ? (
+                    <span className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
+                  ) : (
+                    <svg className="w-4 h-4 fill-current text-black group-hover:scale-110 transition-transform flex-shrink-0" viewBox="0 0 24 24">
+                      <path d="M12.24 10.285V13.4h6.887C18.2 16.14 15.645 18 12.24 18c-3.315 0-6-2.685-6-6s2.685-6 6-6c1.62 0 3.09.615 4.2 1.635l2.37-2.37C17.37 3.84 14.985 3 12.24 3 7.275 3 3.24 7.035 3.24 12s4.035 9 9 9c5.205 0 8.655-3.66 8.655-8.82 0-.6-.06-1.185-.18-1.895H12.24z" />
+                    </svg>
+                  )}
+                  <span className="text-[11px] sm:text-xs uppercase font-semibold">
+                    {isGoogleLoading ? "Đang kết nối..." : "Google"}
+                  </span>
                 </button>
 
                 {/* Apple ID (Tạm khóa) */}
