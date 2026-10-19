@@ -5,56 +5,28 @@ import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCart } from "@/context/CartContext";
+import { useLanguage } from "@/context/LanguageContext";
 import { createClient } from "@/utils/supabase/client";
 
 interface HeaderProps {
   onOpenConsultation?: () => void;
 }
 
-type Lang = "VN" | "EN";
-
 export default function Header({ onOpenConsultation }: HeaderProps) {
   const pathname = usePathname();
   const { itemCount, wishlistCount, openWishlist } = useCart();
+  const { lang, setLang } = useLanguage();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [mounted, setMounted] = useState(false);
   const [user, setUser] = useState<any>(null);
-  const [lang, setLang] = useState<Lang>("VN");
 
   useEffect(() => {
     setMounted(true);
-
-    // Sync language from localStorage
-    if (typeof window !== "undefined") {
-      const savedLang = localStorage.getItem("komorebi_lang") as Lang;
-      if (savedLang === "VN" || savedLang === "EN") {
-        setLang(savedLang);
-      }
-
-      const handleLangSync = () => {
-        const updated = localStorage.getItem("komorebi_lang") as Lang;
-        if (updated === "VN" || updated === "EN") {
-          setLang(updated);
-        }
-      };
-
-      window.addEventListener("komorebi_lang_change", handleLangSync);
-      window.addEventListener("storage", handleLangSync);
-
-      return () => {
-        window.removeEventListener("komorebi_lang_change", handleLangSync);
-        window.removeEventListener("storage", handleLangSync);
-      };
-    }
   }, []);
 
-  const changeLang = (newLang: Lang) => {
+  const changeLang = (newLang: "VN" | "EN") => {
     setLang(newLang);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("komorebi_lang", newLang);
-      window.dispatchEvent(new Event("komorebi_lang_change"));
-    }
   };
 
   useEffect(() => {

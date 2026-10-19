@@ -1,7 +1,12 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function Footer() {
+  const { t } = useLanguage();
+
   return (
     <footer className="bg-surface-container-lowest text-primary border-t border-outline-variant mt-space-2xl">
       {/* Top Showroom & Workshop Details Bar */}
@@ -9,24 +14,24 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-body-sm">
           <div>
             <span className="text-label-sm font-label-sm text-outline uppercase tracking-wider block mb-1">
-              Showroom TP. Hồ Chí Minh
+              {t.footer.showroomHcm}
             </span>
-            <p className="text-on-surface font-medium">18 Đường Số 10, Thảo Điền, TP. Thủ Đức</p>
-            <p className="text-outline text-xs mt-0.5">Mở cửa: 09:00 - 20:30 (Thứ 2 - Chủ Nhật)</p>
+            <p className="text-on-surface font-medium">{t.footer.showroomHcmAddr}</p>
+            <p className="text-outline text-xs mt-0.5">{t.footer.showroomHcmHours}</p>
           </div>
           <div>
             <span className="text-label-sm font-label-sm text-outline uppercase tracking-wider block mb-1">
-              Showroom Hà Nội
+              {t.footer.showroomHn}
             </span>
-            <p className="text-on-surface font-medium">45 Quang Trung, Quận Hoàn Kiếm</p>
-            <p className="text-outline text-xs mt-0.5">Mở cửa: 09:00 - 20:30 (Thứ 2 - Chủ Nhật)</p>
+            <p className="text-on-surface font-medium">{t.footer.showroomHnAddr}</p>
+            <p className="text-outline text-xs mt-0.5">{t.footer.showroomHnHours}</p>
           </div>
           <div>
             <span className="text-label-sm font-label-sm text-outline uppercase tracking-wider block mb-1">
-              Xưởng Chế Tác Mộc Bản
+              {t.footer.workshopTitle}
             </span>
-            <p className="text-on-surface font-medium">Kyoto Atelier &amp; Xưởng Sinh Thái Bình Dương</p>
-            <p className="text-outline text-xs mt-0.5">Tiêu chuẩn mộc thủ công mộng âm dương không đinh</p>
+            <p className="text-on-surface font-medium">{t.footer.workshopDesc}</p>
+            <p className="text-outline text-xs mt-0.5">{t.footer.workshopStandard}</p>
           </div>
         </div>
       </div>
@@ -43,26 +48,26 @@ export default function Footer() {
           </Link>
           <span className="hidden md:inline-block w-1.5 h-1.5 bg-outline rounded-full"></span>
           <p className="text-body-sm font-body-sm text-on-surface-variant">
-            © 2025 Komorebi Living. Bản quyền thuộc về thương hiệu nội thất gỗ &amp; kiến trúc tối giản.
+            {t.footer.copyright}
           </p>
         </div>
 
         {/* Links */}
         <nav className="flex flex-wrap items-center justify-center gap-space-md text-label-md font-label-md">
           <Link href="/#triet-ly" className="text-on-surface-variant hover:text-primary transition-colors">
-            Về chúng tôi
+            {t.footer.aboutUs}
           </Link>
           <Link href="/#xuong-moc" className="text-on-surface-variant hover:text-primary transition-colors">
-            Xưởng chế tác thủ công
+            {t.footer.craftWorkshop}
           </Link>
           <Link href="/#bao-hanh" className="text-on-surface-variant hover:text-primary transition-colors">
-            Chính sách bảo hành 10 năm
+            {t.footer.warrantyPolicy}
           </Link>
           <Link href="/gio-hang" className="text-on-surface-variant hover:text-primary transition-colors">
-            Dịch vụ giao vận &amp; Lắp đặt
+            {t.footer.deliveryService}
           </Link>
           <Link href="/#showroom" className="text-on-surface-variant hover:text-primary transition-colors">
-            Hệ thống Showroom
+            {t.footer.showroomSystem}
           </Link>
         </nav>
       </div>

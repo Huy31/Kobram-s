@@ -5,8 +5,10 @@ import Image from "next/image";
 import Link from "next/link";
 import SafeImage from "@/components/SafeImage";
 import { useCart } from "@/context/CartContext";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function WishlistDrawer() {
+  const { t } = useLanguage();
   const {
     wishlist,
     isWishlistOpen,
@@ -67,14 +69,14 @@ export default function WishlistDrawer() {
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-headline-sm font-headline-sm text-base sm:text-lg font-bold text-primary">
-                  Tác Phẩm Yêu Thích
+                  {t.wishlist.title}
                 </h2>
                 <span className="px-2 py-0.5 bg-surface-container-low text-primary text-xs font-mono font-bold border border-outline-variant">
                   {wishlist.length.toString().padStart(2, "0")}
                 </span>
               </div>
               <p className="text-[11px] text-outline mt-0.5">
-                Tuyển chọn độc bản đã lưu của quý khách
+                {t.wishlist.subtitle}
               </p>
             </div>
           </div>
@@ -85,9 +87,9 @@ export default function WishlistDrawer() {
                 type="button"
                 onClick={clearWishlist}
                 className="text-xs text-outline hover:text-error transition-colors px-2 py-1 mr-1"
-                title="Xóa tất cả danh sách"
+                title={t.wishlist.clearAll}
               >
-                Xóa tất cả
+                {t.wishlist.clearAll}
               </button>
             )}
             <button
@@ -110,10 +112,10 @@ export default function WishlistDrawer() {
               </div>
               <div className="space-y-1">
                 <h3 className="font-headline-sm text-lg font-bold text-primary">
-                  Danh mục yêu thích đang trống
+                  {t.wishlist.emptyTitle}
                 </h3>
                 <p className="text-body-sm text-outline max-w-xs text-xs sm:text-sm">
-                  Hãy nhấn vào biểu tượng trái tim trên các sản phẩm mộc bản để lưu lại và đối chiếu phối cảnh không gian.
+                  {t.wishlist.emptyDesc}
                 </p>
               </div>
               <Link
@@ -121,7 +123,7 @@ export default function WishlistDrawer() {
                 onClick={closeWishlist}
                 className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-on-primary text-label-md font-label-md uppercase tracking-wider hover:bg-[#27272a] transition-colors"
               >
-                <span>Khám phá bộ sưu tập</span>
+                <span>{t.wishlist.exploreBtn}</span>
                 <span className="material-symbols-outlined text-sm">arrow_forward</span>
               </Link>
             </div>
@@ -232,7 +234,7 @@ export default function WishlistDrawer() {
               className="w-full py-3.5 bg-primary text-on-primary text-label-md font-label-md uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-[#27272a] transition-all active:scale-98 shadow-sm font-bold"
             >
               <span className="material-symbols-outlined text-base">add_shopping_cart</span>
-              <span>Chuyển tất cả ({wishlist.length}) vào giỏ hàng</span>
+              <span>{t.wishlist.addAllToCart(wishlist.length)}</span>
             </button>
 
             <div className="grid grid-cols-2 gap-2">
@@ -241,14 +243,14 @@ export default function WishlistDrawer() {
                 onClick={closeWishlist}
                 className="py-2.5 border border-outline-variant text-center text-xs font-semibold uppercase tracking-wider text-primary hover:bg-surface-container-low transition-colors"
               >
-                Xem trang yêu thích
+                {t.wishlist.title}
               </Link>
               <Link
                 href="/gio-hang"
                 onClick={closeWishlist}
                 className="py-2.5 bg-surface-container-low text-center text-xs font-semibold uppercase tracking-wider text-primary hover:bg-surface-container transition-colors"
               >
-                Đến giỏ hàng &rarr;
+                {t.wishlist.checkoutBtn} &rarr;
               </Link>
             </div>
 

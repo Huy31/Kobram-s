@@ -8,7 +8,107 @@ import Footer from "@/components/Footer";
 import ConsultationModal from "@/components/ConsultationModal";
 import ShowroomModal from "@/components/ShowroomModal";
 import { useCart } from "@/context/CartContext";
+import { useLanguage } from "@/context/LanguageContext";
 import { getProductBySlug, DbProduct } from "@/services/productService";
+
+const productTranslations = {
+  VN: {
+    home: "Trang chủ",
+    livingRoom: "Phòng khách",
+    kitchen: "Phòng bếp",
+    bedroom: "Phòng ngủ",
+    arSim: "Mô phỏng AR",
+    zoomHint: "Phóng to ảnh",
+    zoomToast: "Mở chế độ phóng to chi tiết vân gỗ.",
+    badge1Title: "Mộng Gỗ Kỹ Thuật",
+    badge1Desc: "Không dùng đinh kim loại",
+    badge2Title: "Gỗ Rừng FSC 100%",
+    badge2Desc: "Khai thác bền vững Bắc Mỹ",
+    badge3Title: "Bảo Hành 10 Năm",
+    badge3Desc: "Bảo trì khung gỗ trọn đời",
+    readyToShip: "Sẵn sàng giao trong 3-5 ngày",
+    totalPrice: "Tổng giá trị sản phẩm",
+    save10: "Tiết kiệm 10%",
+    installment: "Trả góp 0% lãi suất:",
+    fromMonthly: (amt: string) => `Từ ${amt} đ / tháng (12 kỳ)`,
+    woodLabel: "1. Loại gỗ cao cấp:",
+    woodCompare: "So sánh vân gỗ",
+    cushionLabel: "2. Đệm & Bọc nệm:",
+    sizeLabel: "3. Kích thước ghế:",
+    shippingEst: "Ước tính vận chuyển & Lắp đặt tận nhà",
+    techTeam: "Đội kỹ thuật Komorebi",
+    calcFee: "Tính cước",
+    calcToast: "Đã tính cước: Đơn hàng đủ điều kiện miễn phí vận chuyển & lắp đặt!",
+    optHcmHn: "Hà Nội / TP.HCM - Nội thành",
+    optSuburban: "Ngoại thành / Tỉnh lân cận",
+    optNationwide: "Các tỉnh thành khác trên toàn quốc",
+    freeInstall: "Miễn phí lắp đặt hoàn thiện & kê dọn bao bì",
+    freeShip: "Miễn phí giao hàng",
+    support50: "Hỗ trợ 50% cước đóng kiện",
+    addToCart: "Thêm Vào Giỏ Hàng",
+    bookShowroom: "Đặt Lịch Thử Tại Showroom",
+    guarantee10: "Bảo hành 10 năm",
+    return30: "Đổi trả 30 ngày",
+    securePay: "Thanh toán an toàn",
+    specsTitle: "Thông số kỹ thuật & Cam kết xưởng",
+    specDimensions: "Kích thước tổng thể:",
+    specMaterial: "Chất liệu chính:",
+    specSku: "Mã sản phẩm (SKU):",
+    specLoad: "Tải trọng thử nghiệm:",
+    specLoadVal: "180 kg (Tiêu chuẩn JIS S 1021)",
+    specWeight: "Trọng lượng hoàn thiện:",
+    specWeightVal: "19.5 kg (Mộng mộc nguyên bản)",
+    currency: "đ",
+  },
+  EN: {
+    home: "Home",
+    livingRoom: "Living Room",
+    kitchen: "Kitchen",
+    bedroom: "Bedroom",
+    arSim: "AR Preview",
+    zoomHint: "Zoom in",
+    zoomToast: "Opening high-resolution wood grain zoom view.",
+    badge1Title: "Precision Joinery",
+    badge1Desc: "100% Metal-screw free",
+    badge2Title: "100% FSC Timber",
+    badge2Desc: "Sustainably harvested North America",
+    badge3Title: "10-Year Warranty",
+    badge3Desc: "Lifetime timber joinery care",
+    readyToShip: "Ready to dispatch in 3-5 days",
+    totalPrice: "Total Product Value",
+    save10: "Save 10%",
+    installment: "0% Interest Installment:",
+    fromMonthly: (amt: string) => `From ${amt} VND / month (12 months)`,
+    woodLabel: "1. Premium Wood Selection:",
+    woodCompare: "Compare Wood Grains",
+    cushionLabel: "2. Cushion & Upholstery:",
+    sizeLabel: "3. Product Dimensions:",
+    shippingEst: "Estimated White-Glove Delivery & Assembly",
+    techTeam: "Komorebi Craftsmen Team",
+    calcFee: "Calculate",
+    calcToast: "Calculated: Order qualifies for complimentary delivery & assembly!",
+    optHcmHn: "Hanoi / HCMC - Metropolitan",
+    optSuburban: "Suburban / Adjacent Provinces",
+    optNationwide: "All other provinces nationwide",
+    freeInstall: "Complimentary on-site assembly & eco packaging removal",
+    freeShip: "Complimentary Delivery",
+    support50: "50% Crate Freight Subsidy",
+    addToCart: "Add to Bag",
+    bookShowroom: "Book Showroom Experience",
+    guarantee10: "10-Year Warranty",
+    return30: "30-Day Returns",
+    securePay: "Secure Checkout",
+    specsTitle: "Specifications & Atelier Standards",
+    specDimensions: "Overall Dimensions:",
+    specMaterial: "Primary Materials:",
+    specSku: "Product SKU:",
+    specLoad: "Tested Load Capacity:",
+    specLoadVal: "180 kg (JIS S 1021 Standard)",
+    specWeight: "Finished Weight:",
+    specWeightVal: "19.5 kg (Solid timber joinery)",
+    currency: "VND",
+  },
+};
 
 const galleryImages = [
   {
@@ -66,6 +166,9 @@ const sizeOptions = [
 
 export default function ProductDetailPage({ initialSlug = "kura-lounge-chair" }: { initialSlug?: string }) {
   const { addToCart, showToast, toggleWishlist, isWishlisted } = useCart();
+  const { lang } = useLanguage();
+  const t = productTranslations[lang];
+
   const [product, setProduct] = useState<DbProduct | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -113,10 +216,10 @@ export default function ProductDetailPage({ initialSlug = "kura-lounge-chair" }:
   // Category navigation info
   const categoryLabel =
     product?.category_id === "cat-bedroom"
-      ? "Phòng ngủ"
+      ? t.bedroom
       : product?.category_id === "cat-dining"
-      ? "Phòng bếp"
-      : "Phòng khách";
+      ? t.kitchen
+      : t.livingRoom;
   const categoryLink =
     product?.category_id === "cat-bedroom"
       ? "/phong-ngu"
@@ -164,7 +267,7 @@ export default function ProductDetailPage({ initialSlug = "kura-lounge-chair" }:
         {/* BREADCRUMBS */}
         <nav className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-label-md font-label-md text-on-surface-variant mb-4 sm:mb-8 overflow-x-auto no-scrollbar whitespace-nowrap py-1">
           <Link href="/" className="hover:text-primary transition-colors flex-shrink-0">
-            Trang chủ
+            {t.home}
           </Link>
           <span className="material-symbols-outlined text-xs sm:text-sm text-outline flex-shrink-0">chevron_right</span>
           <Link href={categoryLink} className="hover:text-primary transition-colors flex-shrink-0">
@@ -207,13 +310,13 @@ export default function ProductDetailPage({ initialSlug = "kura-lounge-chair" }:
                   className="px-2.5 sm:px-3 py-1 sm:py-1.5 bg-white/95 backdrop-blur-md border border-outline-variant text-[11px] sm:text-label-sm font-label-sm text-primary hover:bg-primary hover:text-on-primary transition-colors flex items-center gap-1 sm:gap-1.5 shadow-sm rounded-xl"
                 >
                   <span className="material-symbols-outlined text-base">view_in_ar</span>
-                  <span className="hidden xs:inline sm:inline">Mô phỏng AR</span>
+                  <span className="hidden xs:inline sm:inline">{t.arSim}</span>
                 </button>
                 <button
                   type="button"
-                  onClick={() => showToast("Mở chế độ phóng to chi tiết vân gỗ.")}
+                  onClick={() => showToast(t.zoomToast)}
                   className="p-1 sm:p-1.5 bg-white/95 backdrop-blur-md border border-outline-variant text-primary hover:bg-primary hover:text-on-primary transition-colors shadow-sm rounded-xl"
-                  title="Phóng to ảnh"
+                  title={t.zoomHint}
                 >
                   <span className="material-symbols-outlined text-base">zoom_in</span>
                 </button>
@@ -258,10 +361,10 @@ export default function ProductDetailPage({ initialSlug = "kura-lounge-chair" }:
                 <span className="material-symbols-outlined text-xl text-primary mt-0.5">handyman</span>
                 <div>
                   <strong className="text-label-md font-label-md text-primary block">
-                    Mộng Gỗ Kỹ Thuật
+                    {t.badge1Title}
                   </strong>
                   <span className="text-body-sm text-outline text-xs">
-                    Không dùng đinh kim loại
+                    {t.badge1Desc}
                   </span>
                 </div>
               </div>
@@ -270,10 +373,10 @@ export default function ProductDetailPage({ initialSlug = "kura-lounge-chair" }:
                 <span className="material-symbols-outlined text-xl text-primary mt-0.5">forest</span>
                 <div>
                   <strong className="text-label-md font-label-md text-primary block">
-                    Gỗ Rừng FSC 100%
+                    {t.badge2Title}
                   </strong>
                   <span className="text-body-sm text-outline text-xs">
-                    Khai thác bền vững Bắc Mỹ
+                    {t.badge2Desc}
                   </span>
                 </div>
               </div>
@@ -282,10 +385,10 @@ export default function ProductDetailPage({ initialSlug = "kura-lounge-chair" }:
                 <span className="material-symbols-outlined text-xl text-primary mt-0.5">verified_user</span>
                 <div>
                   <strong className="text-label-md font-label-md text-primary block">
-                    Bảo Hành 10 Năm
+                    {t.badge3Title}
                   </strong>
                   <span className="text-body-sm text-outline text-xs">
-                    Bảo trì khung gỗ trọn đời
+                    {t.badge3Desc}
                   </span>
                 </div>
               </div>
@@ -302,7 +405,7 @@ export default function ProductDetailPage({ initialSlug = "kura-lounge-chair" }:
                 </span>
                 <span className="text-label-sm font-label-sm text-primary flex items-center gap-1 font-semibold">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-                  Sẵn sàng giao trong 3-5 ngày
+                  {t.readyToShip}
                 </span>
               </div>
 
@@ -320,30 +423,30 @@ export default function ProductDetailPage({ initialSlug = "kura-lounge-chair" }:
               <div className="flex flex-wrap items-baseline justify-between gap-2 mb-2">
                 <div>
                   <span className="text-label-sm font-label-sm text-outline uppercase tracking-wider block text-xs">
-                    Tổng giá trị sản phẩm
+                    {t.totalPrice}
                   </span>
                   <div className="flex items-baseline gap-2 sm:gap-3 mt-1">
                     <span className="text-headline-md font-headline-md text-2xl sm:text-3xl font-bold text-primary">
-                      {currentPrice.toLocaleString("vi-VN")} đ
+                      {currentPrice.toLocaleString(lang === "EN" ? "en-US" : "vi-VN")} {t.currency}
                     </span>
                     <span className="text-body-sm text-outline line-through text-xs sm:text-sm">
-                      {originalPrice.toLocaleString("vi-VN")} đ
+                      {originalPrice.toLocaleString(lang === "EN" ? "en-US" : "vi-VN")} {t.currency}
                     </span>
                   </div>
                 </div>
 
                 <span className="px-2.5 py-1 bg-primary text-on-primary text-label-sm font-label-sm font-bold uppercase rounded-md self-start sm:self-auto">
-                  Tiết kiệm 10%
+                  {t.save10}
                 </span>
               </div>
 
               <div className="pt-2 border-t border-outline-variant/40 flex flex-col xs:flex-row xs:items-center justify-between text-body-sm text-on-surface-variant gap-1">
                 <span className="flex items-center gap-1 text-xs">
                   <span className="material-symbols-outlined text-base">credit_card</span>
-                  Trả góp 0% lãi suất:
+                  {t.installment}
                 </span>
                 <span className="font-semibold text-primary text-xs sm:text-sm">
-                  Từ {monthlyInstallment.toLocaleString("vi-VN")} đ / tháng (12 kỳ)
+                  {t.fromMonthly(monthlyInstallment.toLocaleString(lang === "EN" ? "en-US" : "vi-VN"))}
                 </span>
               </div>
             </div>
@@ -352,14 +455,14 @@ export default function ProductDetailPage({ initialSlug = "kura-lounge-chair" }:
             <div>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-label-md font-label-md text-primary font-bold uppercase">
-                  1. Loại gỗ cao cấp:
+                  {t.woodLabel}
                 </span>
                 <button
                   type="button"
                   onClick={() => setIsWoodComparisonOpen(true)}
                   className="text-label-sm font-label-sm text-outline hover:text-primary underline transition-colors"
                 >
-                  So sánh vân gỗ
+                  {t.woodCompare}
                 </button>
               </div>
 
@@ -384,7 +487,9 @@ export default function ProductDetailPage({ initialSlug = "kura-lounge-chair" }:
                         )}
                       </div>
                       <span className={`text-xs mt-1 block ${isChecked ? "text-white/80" : "text-outline"}`}>
-                        {w.priceExtra === 0 ? "+ 0 đ" : `+ ${w.priceExtra.toLocaleString("vi-VN")} đ`}
+                        {w.priceExtra === 0
+                          ? `+ 0 ${t.currency}`
+                          : `+ ${w.priceExtra.toLocaleString(lang === "EN" ? "en-US" : "vi-VN")} ${t.currency}`}
                       </span>
                     </button>
                   );
@@ -395,7 +500,7 @@ export default function ProductDetailPage({ initialSlug = "kura-lounge-chair" }:
             {/* Configurator 2: Upholstery */}
             <div>
               <span className="text-label-md font-label-md text-primary font-bold uppercase block mb-2">
-                2. Đệm &amp; Bọc nệm:
+                {t.cushionLabel}
               </span>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                 {upholsteryOptions.map((u) => {
@@ -428,7 +533,7 @@ export default function ProductDetailPage({ initialSlug = "kura-lounge-chair" }:
             {/* Configurator 3: Size */}
             <div>
               <span className="text-label-md font-label-md text-primary font-bold uppercase block mb-2">
-                3. Kích thước ghế:
+                {t.sizeLabel}
               </span>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 {sizeOptions.map((s) => {
@@ -463,10 +568,10 @@ export default function ProductDetailPage({ initialSlug = "kura-lounge-chair" }:
               <div className="flex items-center justify-between mb-2">
                 <span className="text-label-sm font-label-sm text-outline uppercase tracking-wider flex items-center gap-1.5">
                   <span className="material-symbols-outlined text-base">local_shipping</span>
-                  Ước tính vận chuyển &amp; Lắp đặt tận nhà
+                  {t.shippingEst}
                 </span>
                 <span className="px-2 py-0.5 bg-primary text-on-primary text-[10px] uppercase font-bold rounded-md">
-                  Đội kỹ thuật Komorebi
+                  {t.techTeam}
                 </span>
               </div>
 
@@ -476,26 +581,26 @@ export default function ProductDetailPage({ initialSlug = "kura-lounge-chair" }:
                   onChange={(e) => setShippingLocation(e.target.value)}
                   className="w-full sm:flex-1 h-11 px-3 bg-surface-container-low border border-outline-variant text-body-sm text-primary focus:border-primary focus:outline-none rounded-xl text-xs sm:text-sm"
                 >
-                  <option value="hcm-hanoi">Hà Nội / TP.HCM - Nội thành</option>
-                  <option value="suburban">Ngoại thành / Tỉnh lân cận</option>
-                  <option value="nationwide">Các tỉnh thành khác trên toàn quốc</option>
+                  <option value="hcm-hanoi">{t.optHcmHn}</option>
+                  <option value="suburban">{t.optSuburban}</option>
+                  <option value="nationwide">{t.optNationwide}</option>
                 </select>
                 <button
                   type="button"
-                  onClick={() => showToast("Đã tính cước: Đơn hàng đủ điều kiện miễn phí vận chuyển & lắp đặt!")}
+                  onClick={() => showToast(t.calcToast)}
                   className="w-full sm:w-auto h-11 px-4 bg-surface-container text-primary text-label-sm font-label-sm border border-outline-variant hover:bg-primary hover:text-on-primary transition-colors rounded-xl text-xs sm:text-sm uppercase font-semibold"
                 >
-                  Tính cước
+                  {t.calcFee}
                 </button>
               </div>
 
               <div className="flex flex-col xs:flex-row items-start xs:items-center justify-between text-body-sm text-on-surface-variant pt-1.5 border-t border-outline-variant/30 gap-1">
                 <span className="text-xs flex items-center gap-1">
                   <span className="material-symbols-outlined text-sm text-emerald-600">check</span>
-                  Miễn phí lắp đặt hoàn thiện &amp; kê dọn bao bì
+                  {t.freeInstall}
                 </span>
                 <strong className="text-primary text-xs font-bold uppercase">
-                  {shippingLocation === "hcm-hanoi" ? "Miễn phí giao hàng" : "Hỗ trợ 50% cước đóng kiện"}
+                  {shippingLocation === "hcm-hanoi" ? t.freeShip : t.support50}
                 </strong>
               </div>
             </div>
@@ -509,7 +614,7 @@ export default function ProductDetailPage({ initialSlug = "kura-lounge-chair" }:
                   className="flex-1 py-3.5 sm:py-4 px-3 sm:px-6 bg-primary text-on-primary text-xs sm:text-label-md font-label-md uppercase tracking-wider sm:tracking-widest hover:bg-[#27272A] active:scale-99 transition-all flex items-center justify-center gap-1.5 sm:gap-2 shadow-lg group rounded-xl"
                 >
                   <span className="material-symbols-outlined text-lg sm:text-xl">shopping_bag</span>
-                  <span>Thêm Vào Giỏ Hàng</span>
+                  <span>{t.addToCart}</span>
                 </button>
 
                 <button
@@ -539,20 +644,20 @@ export default function ProductDetailPage({ initialSlug = "kura-lounge-chair" }:
                 className="w-full py-3 sm:py-3.5 px-4 sm:px-8 border border-primary text-primary text-xs sm:text-label-md font-label-md uppercase tracking-wider hover:bg-surface-container-low transition-colors flex items-center justify-center gap-2 rounded-xl"
               >
                 <span className="material-symbols-outlined text-base sm:text-lg">storefront</span>
-                <span>Đặt Lịch Thử Tại Showroom</span>
+                <span>{t.bookShowroom}</span>
               </button>
             </div>
 
             {/* Trust Assurances */}
             <div className="grid grid-cols-3 gap-1 sm:gap-2 text-center text-[10px] sm:text-xs text-outline py-2.5 border-y border-outline-variant/40 rounded-xl">
               <span className="flex flex-col xs:flex-row items-center justify-center gap-0.5 sm:gap-1">
-                <span className="material-symbols-outlined text-sm">shield</span> <span>Bảo hành 10 năm</span>
+                <span className="material-symbols-outlined text-sm">shield</span> <span>{t.guarantee10}</span>
               </span>
               <span className="flex flex-col xs:flex-row items-center justify-center gap-0.5 sm:gap-1">
-                <span className="material-symbols-outlined text-sm">published_with_changes</span> <span>Đổi trả 30 ngày</span>
+                <span className="material-symbols-outlined text-sm">published_with_changes</span> <span>{t.return30}</span>
               </span>
               <span className="flex flex-col xs:flex-row items-center justify-center gap-0.5 sm:gap-1">
-                <span className="material-symbols-outlined text-sm">lock</span> <span>Thanh toán an toàn</span>
+                <span className="material-symbols-outlined text-sm">lock</span> <span>{t.securePay}</span>
               </span>
             </div>
 
@@ -569,7 +674,7 @@ export default function ProductDetailPage({ initialSlug = "kura-lounge-chair" }:
                 >
                   <span className="flex items-center gap-2">
                     <span className="material-symbols-outlined text-base">straighten</span>
-                    Thông số kỹ thuật &amp; Cam kết xưởng
+                    {t.specsTitle}
                   </span>
                   <span className="material-symbols-outlined text-sm">
                     {accordionOpen.specs ? "expand_less" : "expand_more"}
@@ -579,24 +684,24 @@ export default function ProductDetailPage({ initialSlug = "kura-lounge-chair" }:
                 {accordionOpen.specs && (
                   <div className="p-4 bg-surface-container-lowest text-body-sm space-y-2 border-t border-outline-variant/40">
                     <div className="grid grid-cols-2 gap-2 py-1 border-b border-outline-variant/20">
-                      <span className="text-outline">Kích thước tổng thể:</span>
+                      <span className="text-outline">{t.specDimensions}</span>
                       <strong className="text-right text-primary">{productDimensions}</strong>
                     </div>
                     <div className="grid grid-cols-2 gap-2 py-1 border-b border-outline-variant/20">
-                      <span className="text-outline">Chất liệu chính:</span>
+                      <span className="text-outline">{t.specMaterial}</span>
                       <strong className="text-right text-primary">{productMaterial}</strong>
                     </div>
                     <div className="grid grid-cols-2 gap-2 py-1 border-b border-outline-variant/20">
-                      <span className="text-outline">Mã sản phẩm (SKU):</span>
+                      <span className="text-outline">{t.specSku}</span>
                       <strong className="text-right text-primary font-mono">{productSku}</strong>
                     </div>
                     <div className="grid grid-cols-2 gap-2 py-1 border-b border-outline-variant/20">
-                      <span className="text-outline">Tải trọng thử nghiệm:</span>
-                      <strong className="text-right text-primary">180 kg (Tiêu chuẩn JIS S 1021)</strong>
+                      <span className="text-outline">{t.specLoad}</span>
+                      <strong className="text-right text-primary">{t.specLoadVal}</strong>
                     </div>
                     <div className="grid grid-cols-2 gap-2 py-1">
-                      <span className="text-outline">Trọng lượng hoàn thiện:</span>
-                      <strong className="text-right text-primary">19.5 kg (Mộng mộc nguyên bản)</strong>
+                      <span className="text-outline">{t.specWeight}</span>
+                      <strong className="text-right text-primary">{t.specWeightVal}</strong>
                     </div>
                   </div>
                 )}

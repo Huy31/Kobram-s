@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import ConsultationModal from "@/components/ConsultationModal";
 import SafeImage from "@/components/SafeImage";
 import { useCart } from "@/context/CartContext";
+import { useLanguage } from "@/context/LanguageContext";
 import { getProductsByCategory } from "@/services/productService";
 
 interface DiningProduct {
@@ -113,6 +114,7 @@ const initialDiningProducts: DiningProduct[] = [
 ];
 
 export default function DiningKitchenPage() {
+  const { lang, t } = useLanguage();
   const { addToCart, toggleWishlist, isWishlisted } = useCart();
   const [products, setProducts] = useState<DiningProduct[]>(initialDiningProducts);
   const [selectedSubcat, setSelectedSubcat] = useState("all");
@@ -160,23 +162,27 @@ export default function DiningKitchenPage() {
                 <div className="flex items-center gap-2 mb-3">
                   <span className="inline-block w-8 h-[1px] bg-primary"></span>
                   <span className="font-label-sm text-label-sm text-secondary uppercase tracking-widest text-xs">
-                    Komorebi Living Architecture • Bộ Sưu Tập 2025
+                    Komorebi Living Architecture • {lang === "VN" ? "Bộ Sưu Tập 2025" : "Collection 2025"}
                   </span>
                 </div>
                 <h1 className="font-headline-lg text-2xl sm:text-4xl lg:text-5xl leading-tight text-primary uppercase font-bold tracking-tight mb-space-md">
-                  Phòng Bếp &amp; Không Gian Bàn Ăn — Nghệ Thuật Gắn Kết Ấm Áp
+                  {lang === "VN"
+                    ? "Phòng Bếp & Không Gian Bàn Ăn — Nghệ Thuật Gắn Kết Ấm Áp"
+                    : "Kitchen & Dining Spaces — The Warm Art of Gathering"}
                 </h1>
                 <p className="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mb-space-lg leading-relaxed text-sm sm:text-base">
-                  Tôn vinh cấu trúc mộng gỗ Kigumi thủ công chống cong vênh tuyệt đối cùng hệ tủ bếp Teak may đo kháng ẩm. Nơi ánh sáng tự nhiên giao hòa cùng vật liệu nguyên bản, tạo dựng tâm điểm sum vầy thanh tịnh cho ngôi nhà đương đại.
+                  {lang === "VN"
+                    ? "Tôn vinh cấu trúc mộng gỗ Kigumi thủ công chống cong vênh tuyệt đối cùng hệ tủ bếp Teak may đo kháng ẩm. Nơi ánh sáng tự nhiên giao hòa cùng vật liệu nguyên bản, tạo dựng tâm điểm sum vầy thanh tịnh cho ngôi nhà đương đại."
+                    : "Honoring handcrafted Kigumi joinery and custom moisture-resistant Teak cabinetry. Where natural light meets authentic timber, creating a tranquil hearth for the contemporary home."}
                 </p>
 
                 {/* Subcategory Filter Buttons */}
                 <div className="flex flex-wrap gap-2 pt-2 border-t border-outline-variant/30">
                   {[
-                    { id: "all", label: "Tất cả không gian" },
-                    { id: "table", label: "Bàn Ăn Mở Rộng" },
-                    { id: "chair", label: "Ghế Ăn Tinh Gọn" },
-                    { id: "cabinet", label: "Tủ Bếp & Xe Đẩy" },
+                    { id: "all", label: lang === "VN" ? "Tất cả không gian" : "All Spaces" },
+                    { id: "table", label: lang === "VN" ? "Bàn Ăn Mở Rộng" : "Dining Tables" },
+                    { id: "chair", label: lang === "VN" ? "Ghế Ăn Tinh Gọn" : "Dining Chairs" },
+                    { id: "cabinet", label: lang === "VN" ? "Tủ Bếp & Xe Đẩy" : "Kitchen Cabinets" },
                   ].map((btn) => (
                     <button
                       key={btn.id}
@@ -214,24 +220,26 @@ export default function DiningKitchenPage() {
           <div className="flex items-center justify-between mb-8 pb-3 border-b border-outline-variant/40">
             <div>
               <span className="text-label-sm font-label-sm text-outline uppercase tracking-widest text-xs block">
-                DANH MỤC TUYỂN CHỌN
+                {lang === "VN" ? "DANH MỤC TUYỂN CHỌN" : "CURATED CATALOGUE"}
               </span>
               <h2 className="text-headline-md font-headline-md text-2xl text-primary font-bold">
-                Bàn Ăn &amp; Hệ Cấu Kiện Bếp
+                {lang === "VN" ? "Bàn Ăn & Hệ Cấu Kiện Bếp" : "Dining Tables & Kitchen Joinery"}
               </h2>
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-xs text-outline uppercase font-semibold">Chất gỗ:</span>
+              <span className="text-xs text-outline uppercase font-semibold">
+                {lang === "VN" ? "Chất gỗ:" : "Timber:"}
+              </span>
               <select
                 value={selectedWood}
                 onChange={(e) => setSelectedWood(e.target.value)}
                 className="bg-surface-container-lowest border border-outline-variant text-label-sm uppercase py-1 px-3 text-xs focus:outline-none"
               >
-                <option value="all">Tất cả gỗ</option>
-                <option value="sồi">Gỗ Sồi Trắng</option>
-                <option value="óc chó">Gỗ Óc Chó</option>
-                <option value="teak">Gỗ Teak</option>
+                <option value="all">{lang === "VN" ? "Tất cả gỗ" : "All Timber"}</option>
+                <option value="sồi">{lang === "VN" ? "Gỗ Sồi Trắng FAS" : "White Oak FAS"}</option>
+                <option value="óc chó">{lang === "VN" ? "Gỗ Óc Chó Walnut" : "American Walnut"}</option>
+                <option value="teak">{lang === "VN" ? "Gỗ Teak Kháng Nước" : "Waterproof Teak"}</option>
               </select>
             </div>
           </div>
@@ -296,11 +304,11 @@ export default function DiningKitchenPage() {
                   <div className="p-space-md pt-0 border-t border-outline-variant/30 mt-4 flex items-center justify-between">
                     <div>
                       <span className="font-headline-sm text-lg text-primary font-bold block">
-                        {p.price.toLocaleString("vi-VN")} đ
+                        {p.price.toLocaleString(lang === "VN" ? "vi-VN" : "en-US")} {t.common.currency}
                       </span>
                       {p.originalPrice && (
                         <span className="text-xs text-outline line-through">
-                          {p.originalPrice.toLocaleString("vi-VN")} đ
+                          {p.originalPrice.toLocaleString(lang === "VN" ? "vi-VN" : "en-US")} {t.common.currency}
                         </span>
                       )}
                     </div>
@@ -326,7 +334,7 @@ export default function DiningKitchenPage() {
                       className="px-4 py-2 border border-primary text-primary hover:bg-primary hover:text-on-primary text-xs uppercase tracking-wider font-semibold transition-colors flex items-center gap-1.5"
                     >
                       <span className="material-symbols-outlined text-sm">shopping_bag</span>
-                      Thêm vào giỏ
+                      {lang === "VN" ? "Thêm vào giỏ" : "Add to Bag"}
                     </button>
                   </div>
                 </article>
@@ -339,13 +347,17 @@ export default function DiningKitchenPage() {
         <section className="bg-surface-container-low border-t border-outline-variant/40 py-space-2xl">
           <div className="max-w-7xl mx-auto px-space-md sm:px-space-lg lg:px-margin text-center max-w-3xl space-y-4">
             <span className="text-label-sm font-label-sm text-outline uppercase tracking-widest text-xs block">
-              DỊCH VỤ THIẾT KẾ ĐẢO BẾP MAY ĐO
+              {lang === "VN" ? "DỊCH VỤ THIẾT KẾ ĐẢO BẾP MAY ĐO" : "BESPOKE KITCHEN ISLAND SERVICE"}
             </span>
             <h2 className="text-headline-md font-headline-md text-2xl sm:text-3xl text-primary font-bold">
-              May Đo Đảo Bếp &amp; Hệ Tủ Theo Hiện Trạng Kiến Trúc
+              {lang === "VN"
+                ? "May Đo Đảo Bếp & Hệ Tủ Theo Hiện Trạng Kiến Trúc"
+                : "Custom Kitchen Islands & Architectural Cabinetry"}
             </h2>
             <p className="text-body-md text-on-surface-variant text-sm sm:text-base leading-relaxed">
-              Mỗi gia đình có một thói quen nấu nướng và đón tiếp bạn bè khác nhau. Komorebi cung cấp dịch vụ khảo sát kích thước tận nơi, dựng bản vẽ 3D đảo bếp kết hợp bồn rửa âm đá tự nhiên và phụ kiện đóng mở giảm chấn Blum / Hafele.
+              {lang === "VN"
+                ? "Mỗi gia đình có một thói quen nấu nướng và đón tiếp bạn bè khác nhau. Komorebi cung cấp dịch vụ khảo sát kích thước tận nơi, dựng bản vẽ 3D đảo bếp kết hợp bồn rửa âm đá tự nhiên và phụ kiện đóng mở giảm chấn Blum / Hafele."
+                : "Every home has unique culinary traditions and hospitality rituals. Komorebi provides on-site surveys, bespoke 3D kitchen island renderings, natural stone undermount sinks, and Blum / Hafele soft-close hardware."}
             </p>
             <div className="pt-2">
               <button
@@ -353,7 +365,7 @@ export default function DiningKitchenPage() {
                 onClick={() => setIsConsultationOpen(true)}
                 className="px-8 py-3.5 bg-primary text-on-primary text-label-md font-label-md uppercase tracking-wider hover:bg-[#27272a] transition-all inline-flex items-center gap-2"
               >
-                <span>Đăng ký khảo sát gian bếp</span>
+                <span>{lang === "VN" ? "Đăng ký khảo sát gian bếp" : "Book Kitchen Survey"}</span>
                 <span className="material-symbols-outlined text-sm">arrow_forward</span>
               </button>
             </div>

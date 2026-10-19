@@ -1,15 +1,16 @@
 "use client";
 
 import React, { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import SafeImage from "@/components/SafeImage";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ConsultationModal from "@/components/ConsultationModal";
 import { useCart } from "@/context/CartContext";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function WishlistPage() {
+  const { lang, t } = useLanguage();
   const {
     wishlist,
     removeFromWishlist,
@@ -26,7 +27,12 @@ export default function WishlistPage() {
     return item.category === selectedCategory;
   });
 
-  const categories = ["all", "Phòng Khách", "Phòng Ăn", "Phòng Ngủ"];
+  const categories = [
+    { key: "all", label: lang === "VN" ? `Tất cả (${wishlist.length})` : `All (${wishlist.length})` },
+    { key: "Phòng Khách", label: lang === "VN" ? "Phòng Khách" : "Living Room" },
+    { key: "Phòng Ăn", label: lang === "VN" ? "Phòng Ăn" : "Dining Room" },
+    { key: "Phòng Ngủ", label: lang === "VN" ? "Phòng Ngủ" : "Bedroom" },
+  ];
 
   return (
     <>
@@ -38,10 +44,10 @@ export default function WishlistPage() {
           <div className="max-w-7xl mx-auto px-space-md sm:px-space-lg lg:px-margin py-4">
             <nav className="flex items-center gap-2 text-label-md font-label-md text-on-surface-variant text-xs sm:text-sm">
               <Link href="/" className="hover:text-primary transition-colors">
-                Trang chủ
+                {t.cart.breadcrumbHome}
               </Link>
               <span className="material-symbols-outlined text-sm text-outline">chevron_right</span>
-              <span className="text-primary font-bold">Danh sách yêu thích &amp; Độc bản</span>
+              <span className="text-primary font-bold">{t.wishlist.title}</span>
             </nav>
           </div>
         </section>
@@ -57,10 +63,12 @@ export default function WishlistPage() {
                 </span>
               </div>
               <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-primary tracking-tight font-headline-lg uppercase">
-                Tác Phẩm Yêu Thích Của Quý Khách
+                {t.wishlist.title}
               </h1>
               <p className="text-on-surface-variant text-sm sm:text-base mt-2 max-w-2xl leading-relaxed">
-                Nơi lưu giữ các tác phẩm nội thất mộc bản do quý khách chọn lọc. Dễ dàng đối chiếu vân gỗ, kích thước và chuyển sang giỏ hàng để hoàn thiện không gian sống.
+                {lang === "VN"
+                  ? "Nơi lưu giữ các tác phẩm nội thất mộc bản do quý khách chọn lọc. Dễ dàng đối chiếu vân gỗ, kích thước và chuyển sang giỏ hàng để hoàn thiện không gian sống."
+                  : "Curated collection of handcrafted solid wood pieces saved for your home. Compare timber textures and effortlessly move to bag."}
               </p>
             </div>
 
@@ -73,14 +81,14 @@ export default function WishlistPage() {
                   className="px-5 py-3 bg-primary text-on-primary text-xs sm:text-sm font-semibold uppercase tracking-wider rounded-xl hover:bg-[#27272a] transition-all flex items-center gap-2 shadow-sm"
                 >
                   <span className="material-symbols-outlined text-base">add_shopping_cart</span>
-                  <span>Chuyển tất cả ({wishlist.length}) vào giỏ</span>
+                  <span>{t.wishlist.addAllToCart(wishlist.length)}</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsConsultationOpen(true)}
                   className="px-5 py-3 border border-primary text-primary text-xs sm:text-sm font-semibold uppercase tracking-wider rounded-xl hover:bg-surface-container transition-all"
                 >
-                  Tư vấn phối cảnh 3D
+                  {t.nav.consultationBtn}
                 </button>
               </div>
             )}
@@ -91,20 +99,20 @@ export default function WishlistPage() {
             <div className="flex flex-wrap items-center justify-between gap-4 py-4 border-b border-outline-variant/40 mt-2">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-xs text-outline uppercase mr-2 font-semibold">
-                  Lọc theo không gian:
+                  {lang === "VN" ? "Lọc theo không gian:" : "Filter by Space:"}
                 </span>
                 {categories.map((cat) => (
                   <button
-                    key={cat}
+                    key={cat.key}
                     type="button"
-                    onClick={() => setSelectedCategory(cat)}
+                    onClick={() => setSelectedCategory(cat.key)}
                     className={`px-3 py-1.5 text-xs uppercase tracking-wider rounded-lg transition-colors border ${
-                      selectedCategory === cat
+                      selectedCategory === cat.key
                         ? "bg-primary text-on-primary border-primary font-bold shadow-2xs"
                         : "bg-surface-container-lowest text-on-surface border-outline-variant hover:border-primary"
                     }`}
                   >
-                    {cat === "all" ? `Tất cả (${wishlist.length})` : cat}
+                    {cat.label}
                   </button>
                 ))}
               </div>
@@ -115,7 +123,7 @@ export default function WishlistPage() {
                 className="text-xs text-outline hover:text-error transition-colors flex items-center gap-1"
               >
                 <span className="material-symbols-outlined text-sm">delete_sweep</span>
-                <span>Xóa toàn bộ danh sách</span>
+                <span>{t.wishlist.clearAll}</span>
               </button>
             </div>
           )}
@@ -129,10 +137,10 @@ export default function WishlistPage() {
                 </div>
                 <div className="space-y-1">
                   <h3 className="font-headline-sm text-xl font-bold text-primary">
-                    Danh mục yêu thích đang trống
+                    {t.wishlist.emptyTitle}
                   </h3>
                   <p className="text-on-surface-variant max-w-md mx-auto text-sm leading-relaxed">
-                    Khám phá các bộ sưu tập nội thất Wabi-sabi và nhấn vào biểu tượng trái tim để lưu lại những tác phẩm tâm đắc nhất.
+                    {t.wishlist.emptyDesc}
                   </p>
                 </div>
                 <div className="pt-4 flex flex-wrap justify-center gap-3">
@@ -140,25 +148,29 @@ export default function WishlistPage() {
                     href="/bo-suu-tap"
                     className="px-6 py-3 bg-primary text-on-primary text-xs uppercase tracking-wider font-semibold hover:bg-[#27272a] transition-all"
                   >
-                    Khám phá Bộ Sưu Tập
+                    {t.wishlist.exploreBtn}
                   </Link>
                   <Link
                     href="/phong-khach"
                     className="px-6 py-3 border border-primary text-primary text-xs uppercase tracking-wider font-semibold hover:bg-surface-container transition-all"
                   >
-                    Nội thất Phòng Khách
+                    {t.nav.livingRoom}
                   </Link>
                 </div>
               </div>
             ) : filteredItems.length === 0 ? (
               <div className="py-16 text-center text-outline bg-surface-container-lowest border border-outline-variant">
-                <p>Không có tác phẩm nào thuộc danh mục "{selectedCategory}".</p>
+                <p>
+                  {lang === "VN"
+                    ? `Không có tác phẩm nào thuộc danh mục "${selectedCategory}".`
+                    : `No items found in category "${selectedCategory}".`}
+                </p>
                 <button
                   type="button"
                   onClick={() => setSelectedCategory("all")}
                   className="mt-3 text-xs uppercase font-bold text-primary underline"
                 >
-                  Xem lại tất cả
+                  {lang === "VN" ? "Xem lại tất cả" : "View all"}
                 </button>
               </div>
             ) : (
@@ -193,8 +205,8 @@ export default function WishlistPage() {
                         type="button"
                         onClick={() => removeFromWishlist(item.id)}
                         className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/95 backdrop-blur-sm flex items-center justify-center border border-outline-variant/60 text-error hover:bg-error hover:text-white transition-colors"
-                        title="Bỏ khỏi yêu thích"
-                        aria-label="Xóa tác phẩm"
+                        title={t.wishlist.removeBtn}
+                        aria-label={t.wishlist.removeBtn}
                       >
                         <span className="material-symbols-outlined text-[18px]">favorite</span>
                       </button>
@@ -224,11 +236,11 @@ export default function WishlistPage() {
                       <div className="flex items-center justify-between pt-4 mt-3 border-t border-outline-variant/30">
                         <div>
                           <span className="font-headline-sm text-base text-primary font-bold block">
-                            {item.price.toLocaleString("vi-VN")} đ
+                            {item.price.toLocaleString(lang === "VN" ? "vi-VN" : "en-US")} {t.common.currency}
                           </span>
                           {item.originalPrice && (
                             <span className="text-xs text-outline line-through">
-                              {item.originalPrice.toLocaleString("vi-VN")} đ
+                              {item.originalPrice.toLocaleString(lang === "VN" ? "vi-VN" : "en-US")} {t.common.currency}
                             </span>
                           )}
                         </div>
@@ -248,10 +260,10 @@ export default function WishlistPage() {
                             })
                           }
                           className="px-3.5 py-2 bg-primary text-on-primary text-xs font-semibold uppercase tracking-wider rounded-xl hover:bg-[#27272a] transition-all flex items-center gap-1.5 shadow-sm active:scale-95"
-                          title="Thêm vào giỏ hàng"
+                          title={t.wishlist.addToCartBtn}
                         >
                           <span className="material-symbols-outlined text-sm">shopping_bag</span>
-                          <span>Thêm vào giỏ</span>
+                          <span>{t.wishlist.addToCartBtn}</span>
                         </button>
                       </div>
                     </div>
