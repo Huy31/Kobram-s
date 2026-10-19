@@ -64,9 +64,16 @@ CREATE TABLE IF NOT EXISTS users (
     phone VARCHAR(50),
     full_name VARCHAR(255) NOT NULL,
     studio_name VARCHAR(255),
+    company VARCHAR(255),
     password_hash VARCHAR(255),
     role VARCHAR(50) DEFAULT 'client', -- 'client', 'architect', 'admin'
     is_fsc_certified TINYINT(1) DEFAULT 1,
+    dob DATE,
+    gender VARCHAR(20) DEFAULT 'Nam',
+    tax_id VARCHAR(50),
+    preferred_wood VARCHAR(255) DEFAULT 'Gỗ Sồi Trắng Bắc Mỹ (White Oak)',
+    care_frequency VARCHAR(255) DEFAULT 'Mỗi 6 tháng (Komorebi Khuyến nghị)',
+    addresses JSON,
     avatar_url VARCHAR(500),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP

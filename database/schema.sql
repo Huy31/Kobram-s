@@ -79,12 +79,30 @@ CREATE TABLE IF NOT EXISTS public.profiles (
     phone TEXT,
     full_name TEXT,
     studio_name TEXT,
+    company TEXT,
     role TEXT DEFAULT 'client' CHECK (role IN ('client', 'architect', 'admin')),
     is_fsc_certified BOOLEAN DEFAULT TRUE,
+    dob DATE,
+    gender TEXT DEFAULT 'Nam',
+    tax_id TEXT,
+    fav_styles TEXT[] DEFAULT ARRAY[]::TEXT[],
+    preferred_wood TEXT DEFAULT 'Gỗ Sồi Trắng Bắc Mỹ (White Oak)',
+    care_frequency TEXT DEFAULT 'Mỗi 6 tháng (Komorebi Khuyến nghị)',
+    addresses JSONB DEFAULT '[]'::jsonb,
     avatar_url TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Cập nhật bổ sung cột nếu bảng đã tồn tại từ trước trong Supabase:
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS company TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS dob DATE;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS gender TEXT DEFAULT 'Nam';
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS tax_id TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS fav_styles TEXT[] DEFAULT ARRAY[]::TEXT[];
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS preferred_wood TEXT DEFAULT 'Gỗ Sồi Trắng Bắc Mỹ (White Oak)';
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS care_frequency TEXT DEFAULT 'Mỗi 6 tháng (Komorebi Khuyến nghị)';
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS addresses JSONB DEFAULT '[]'::jsonb;
 
 CREATE TRIGGER set_profiles_updated_at
     BEFORE UPDATE ON public.profiles
@@ -175,15 +193,20 @@ CREATE TABLE IF NOT EXISTS public.showrooms (
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-    INSERT INTO public.profiles (id, email, phone, full_name, studio_name, role)
+    INSERT INTO public.profiles (id, email, phone, full_name, studio_name, company, role, avatar_url)
     VALUES (
         NEW.id,
         NEW.email,
         COALESCE(NEW.raw_user_meta_data->>'phone', ''),
         COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'name', ''),
         COALESCE(NEW.raw_user_meta_data->>'studio_name', ''),
-        COALESCE(NEW.raw_user_meta_data->>'role', 'client')
-    );
+        COALESCE(NEW.raw_user_meta_data->>'company', ''),
+        COALESCE(NEW.raw_user_meta_data->>'role', 'client'),
+        COALESCE(NEW.raw_user_meta_data->>'avatar_url', NEW.raw_user_meta_data->>'picture', '')
+    )
+    ON CONFLICT (id) DO UPDATE SET
+        full_name = COALESCE(NULLIF(EXCLUDED.full_name, ''), public.profiles.full_name),
+        avatar_url = COALESCE(NULLIF(EXCLUDED.avatar_url, ''), public.profiles.avatar_url);
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
