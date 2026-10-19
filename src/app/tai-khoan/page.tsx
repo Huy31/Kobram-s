@@ -57,6 +57,12 @@ export default function AccountProfilePage() {
 
     supabase.auth.getUser().then(async ({ data }) => {
       const currentUser = data?.user;
+      const savedRole =
+        typeof window !== "undefined"
+          ? localStorage.getItem("komorebi_current_role") ||
+            localStorage.getItem("komorebi_login_role")
+          : null;
+
       if (currentUser) {
         setUser(currentUser);
         if (currentUser.email) setProfileEmail(currentUser.email);
@@ -75,12 +81,17 @@ export default function AccountProfilePage() {
           );
         }
 
+        const rawPic = currentUser.user_metadata?.picture;
         const avatar =
-          currentUser.user_metadata?.avatar_url || currentUser.user_metadata?.picture;
+          currentUser.user_metadata?.avatar_url ||
+          (typeof rawPic === "string" ? rawPic : rawPic?.data?.url);
         if (avatar) setProfileAvatar(avatar);
 
-        // Chức danh mặc định là Khách hàng khi đăng nhập
-        setProfileRole("Khách hàng");
+        // Mặc định phân định chức danh: nếu là tài khoản kiến trúc sư thì chức danh thay đổi, ngược lại mặc định là Khách hàng
+        const metaRole = currentUser.user_metadata?.role;
+        const isArchitect =
+          metaRole === "architect" || savedRole === "architect";
+        setProfileRole(isArchitect ? "Kiến trúc sư" : "Khách hàng");
 
         // Fetch DB profile and orders if present
         try {
@@ -102,13 +113,26 @@ export default function AccountProfilePage() {
               );
             }
             if (dbProfile.role) {
-              setProfileRole(
+              const assignedRole =
                 dbProfile.role === "architect"
                   ? "Kiến trúc sư"
                   : dbProfile.role === "admin"
                   ? "Quản trị viên"
-                  : "Khách hàng"
-              );
+                  : savedRole === "architect"
+                  ? "Kiến trúc sư"
+                  : "Khách hàng";
+              setProfileRole(assignedRole);
+              if (savedRole === "architect" && dbProfile.role !== "architect") {
+                await supabase
+                  .from("profiles")
+                  .update({ role: "architect", updated_at: new Date().toISOString() })
+                  .eq("id", currentUser.id);
+              }
+            } else if (isArchitect) {
+              setProfileRole("Kiến trúc sư");
+              await supabase
+                .from("profiles")
+                .upsert({ id: currentUser.id, role: "architect", updated_at: new Date().toISOString() });
             }
             if (dbProfile.phone) {
               setProfilePhone(dbProfile.phone);
@@ -129,6 +153,14 @@ export default function AccountProfilePage() {
             if (dbProfile.tax_id) setProfileTax(dbProfile.tax_id);
             if (dbProfile.preferred_wood) setPreferredWood(dbProfile.preferred_wood);
             if (dbProfile.care_frequency) setCareFreq(dbProfile.care_frequency);
+          } else if (isArchitect) {
+            await supabase.from("profiles").upsert({
+              id: currentUser.id,
+              email: currentUser.email,
+              full_name: metaName,
+              role: "architect",
+              updated_at: new Date().toISOString(),
+            });
           }
         } catch (e) {
           // Ignore if table not yet migrated
@@ -140,6 +172,8 @@ export default function AccountProfilePage() {
           setIsLoadingOrders(false);
         });
       } else {
+        // Tài khoản vãng lai hoặc demo
+        setProfileRole(savedRole === "architect" ? "Kiến trúc sư" : "Khách hàng");
         // Fetch guest or public orders
         getUserOrders().then((ordList) => {
           if (ordList) setOrders(ordList);
@@ -158,9 +192,21 @@ export default function AccountProfilePage() {
             currentUser.user_metadata?.full_name ||
             currentUser.user_metadata?.name;
           if (metaName) setProfileName(metaName);
+          const rawPic = currentUser.user_metadata?.picture;
           const avatar =
-            currentUser.user_metadata?.avatar_url || currentUser.user_metadata?.picture;
-          setProfileRole("Khách hàng");
+            currentUser.user_metadata?.avatar_url ||
+            (typeof rawPic === "string" ? rawPic : rawPic?.data?.url);
+          if (avatar) setProfileAvatar(avatar);
+
+          const savedRole =
+            typeof window !== "undefined"
+              ? localStorage.getItem("komorebi_current_role") ||
+                localStorage.getItem("komorebi_login_role")
+              : null;
+          const isArch =
+            currentUser.user_metadata?.role === "architect" ||
+            savedRole === "architect";
+          setProfileRole(isArch ? "Kiến trúc sư" : "Khách hàng");
         }
       }
     );
@@ -251,6 +297,10 @@ export default function AccountProfilePage() {
     try {
       const supabase = createClient();
       await supabase.auth.signOut();
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("komorebi_current_role");
+        localStorage.removeItem("komorebi_login_role");
+      }
       showToast("Đã đăng xuất thành công khỏi tài khoản.");
       router.push("/dang-nhap");
     } catch (error) {
@@ -392,25 +442,36 @@ export default function AccountProfilePage() {
                   </h1>
                   {user ? (
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 border border-emerald-600/30 text-emerald-800 text-[11px] font-bold uppercase tracking-wider rounded-md bg-emerald-50">
-                      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24">
-                        <path
-                          fill="#4285F4"
-                          d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                        />
-                        <path
-                          fill="#34A853"
-                          d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                        />
-                        <path
-                          fill="#FBBC05"
-                          d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
-                        />
-                        <path
-                          fill="#EA4335"
-                          d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
-                        />
-                      </svg>
-                      Google Verified
+                      {user.app_metadata?.provider === "facebook" ? (
+                        <>
+                          <svg className="w-3.5 h-3.5 fill-[#1877F2]" viewBox="0 0 24 24">
+                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                          </svg>
+                          Facebook Verified
+                        </>
+                      ) : (
+                        <>
+                          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24">
+                            <path
+                              fill="#4285F4"
+                              d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                            />
+                            <path
+                              fill="#34A853"
+                              d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                            />
+                            <path
+                              fill="#FBBC05"
+                              d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                            />
+                            <path
+                              fill="#EA4335"
+                              d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                            />
+                          </svg>
+                          Google Verified
+                        </>
+                      )}
                     </span>
                   ) : (
                     <span className="px-2.5 py-0.5 border border-primary text-primary text-[11px] font-bold uppercase tracking-wider rounded-md bg-surface-container-low">
@@ -418,9 +479,20 @@ export default function AccountProfilePage() {
                     </span>
                   )}
                 </div>
-                <p className="text-body-md text-on-surface-variant mt-1 text-sm sm:text-base font-medium">
-                  {profileRole}
-                </p>
+                <div className="flex items-center gap-2 mt-1">
+                  <span
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-bold uppercase tracking-wider ${
+                      profileRole.includes("Kiến trúc")
+                        ? "bg-amber-100/90 text-amber-900 border border-amber-300"
+                        : "bg-stone-100 text-stone-800 border border-stone-300"
+                    }`}
+                  >
+                    <span className="material-symbols-outlined text-[15px]">
+                      {profileRole.includes("Kiến trúc") ? "architecture" : "person"}
+                    </span>
+                    {profileRole}
+                  </span>
+                </div>
                 <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2 text-outline text-xs tracking-wider uppercase font-medium">
                   <span className="flex items-center gap-1.5">
                     <span className="w-2 h-2 bg-emerald-600 rounded-full"></span>
@@ -441,7 +513,11 @@ export default function AccountProfilePage() {
                   Hạng Thành Viên
                 </span>
                 <span className="text-lg sm:text-xl text-primary font-bold tracking-tight">
-                  {user ? "HỘI VIÊN TIÊU CHUẨN" : "KHÁCH HÀNG"}
+                  {profileRole.includes("Kiến trúc")
+                    ? "ĐỐI TÁC KIẾN TRÚC SƯ"
+                    : user
+                    ? "HỘI VIÊN TIÊU CHUẨN"
+                    : "KHÁCH HÀNG"}
                 </span>
               </div>
               <div className="flex items-center gap-2">
@@ -526,29 +602,37 @@ export default function AccountProfilePage() {
               </p>
             </div>
 
-            {/* Privilege 4: Tư vấn KTS riêng */}
+            {/* Privilege 4: Tư vấn KTS riêng hoặc Đặc quyền KTS */}
             <div className="p-4 bg-surface-container-low/70 border border-outline-variant/50 flex flex-col justify-between rounded-xl">
               <div>
                 <div className="flex justify-between items-start text-secondary">
-                  <span className="text-xs uppercase tracking-wider font-semibold">KTS Cố Vấn Riêng</span>
-                  <span className="material-symbols-outlined text-[20px] text-primary">architecture</span>
+                  <span className="text-xs uppercase tracking-wider font-semibold">
+                    {profileRole.includes("Kiến trúc") ? "Chính Sách Đối Tác" : "KTS Cố Vấn Riêng"}
+                  </span>
+                  <span className="material-symbols-outlined text-[20px] text-primary">
+                    {profileRole.includes("Kiến trúc") ? "handyman" : "architecture"}
+                  </span>
                 </div>
                 <div className="mt-2">
-                  <span className="text-base font-bold text-primary block truncate">KTS. Kenzo Murata</span>
-                  <span className="text-xs text-outline">Komorebi Saigon Studio</span>
+                  <span className="text-base font-bold text-primary block truncate">
+                    {profileRole.includes("Kiến trúc") ? "Chiết Khấu Dự Án 15%" : "KTS. Kenzo Murata"}
+                  </span>
+                  <span className="text-xs text-outline">
+                    {profileRole.includes("Kiến trúc") ? "Đặc quyền KTS chủ trì" : "Komorebi Saigon Studio"}
+                  </span>
                 </div>
               </div>
               <div className="mt-3 pt-3 border-t border-outline-variant/30 flex items-center justify-between">
                 <span className="text-[11px] text-emerald-700 font-semibold uppercase flex items-center gap-1">
                   <span className="w-1.5 h-1.5 bg-emerald-600 rounded-full"></span>
-                  Trực tuyến
+                  {profileRole.includes("Kiến trúc") ? "Đang áp dụng" : "Trực tuyến"}
                 </span>
                 <button
                   type="button"
                   onClick={() => setIsConsultMurataOpen(true)}
                   className="text-xs uppercase tracking-wider underline hover:text-primary font-bold"
                 >
-                  Đặt lịch hẹn
+                  {profileRole.includes("Kiến trúc") ? "Xem catalog" : "Đặt lịch hẹn"}
                 </button>
               </div>
             </div>
@@ -1010,7 +1094,16 @@ export default function AccountProfilePage() {
                           id="input-role"
                           required
                           value={profileRole}
-                          onChange={(e) => setProfileRole(e.target.value)}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setProfileRole(val);
+                            if (typeof window !== "undefined") {
+                              localStorage.setItem(
+                                "komorebi_current_role",
+                                val.includes("Kiến trúc") ? "architect" : "client"
+                              );
+                            }
+                          }}
                         >
                           <option value="Khách hàng">Khách hàng (Cá nhân / Gia đình)</option>
                           <option value="Khách hàng thân thiết">Khách hàng thân thiết</option>
