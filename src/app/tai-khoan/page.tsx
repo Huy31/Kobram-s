@@ -34,13 +34,22 @@ export default function AccountProfilePage() {
   const [isLoadingOrders, setIsLoadingOrders] = useState<boolean>(true);
   const [profileAvatar, setProfileAvatar] = useState<string>("/images/stitch1-img-1.jpg");
 
-  // Profile data state
-  const [profileName, setProfileName] = useState("Trần Minh Khang");
-  const [profileRole, setProfileRole] = useState("Kiến trúc sư Trưởng / VIP Platinum");
-  const [profileEmail, setProfileEmail] = useState("minhkhang.arch@komorebi-atelier.vn");
-  const [profilePhone, setProfilePhone] = useState("+84 908 123 456");
-  const [profileCompany, setProfileCompany] = useState("Khang Architecture & Partners");
-  const [profileDob, setProfileDob] = useState("1988-11-26");
+  // Profile data state (Mặc định cho khách hàng thực tế)
+  const [profileName, setProfileName] = useState("Khách hàng");
+  const [profileRole, setProfileRole] = useState("Khách hàng");
+  const [profileEmail, setProfileEmail] = useState("");
+  const [profilePhone, setProfilePhone] = useState("");
+  const [profileCompany, setProfileCompany] = useState("");
+  const [profileDob, setProfileDob] = useState("");
+  const [profileGender, setProfileGender] = useState("Nam");
+  const [profileTax, setProfileTax] = useState("");
+  const [favStyles, setFavStyles] = useState<string[]>([
+    "Wabi-Sabi tối giản",
+    "Japandi đương đại",
+    "Nội thất mộng ghép Kigumi",
+  ]);
+  const [preferredWood, setPreferredWood] = useState("Gỗ Sồi Trắng Bắc Mỹ (White Oak)");
+  const [careFreq, setCareFreq] = useState("Mỗi 6 tháng (Komorebi Khuyến nghị)");
 
   // Supabase Auth Sync
   useEffect(() => {
@@ -55,11 +64,23 @@ export default function AccountProfilePage() {
           currentUser.user_metadata?.full_name ||
           currentUser.user_metadata?.name ||
           (currentUser.email ? currentUser.email.split("@")[0] : null);
-        if (metaName) setProfileName(metaName);
+        if (metaName) {
+          setProfileName(metaName);
+          setAddresses((prev) =>
+            prev.map((addr) =>
+              addr.id === "addr-1" && addr.recipient === "Khách hàng"
+                ? { ...addr, recipient: metaName }
+                : addr
+            )
+          );
+        }
 
         const avatar =
           currentUser.user_metadata?.avatar_url || currentUser.user_metadata?.picture;
         if (avatar) setProfileAvatar(avatar);
+
+        // Chức danh mặc định là Khách hàng khi đăng nhập
+        setProfileRole("Khách hàng");
 
         // Fetch DB profile and orders if present
         try {
@@ -70,11 +91,44 @@ export default function AccountProfilePage() {
             .maybeSingle();
 
           if (dbProfile) {
-            if (dbProfile.full_name) setProfileName(dbProfile.full_name);
-            if (dbProfile.role) setProfileRole(dbProfile.role);
-            if (dbProfile.phone) setProfilePhone(dbProfile.phone);
-            if (dbProfile.company) setProfileCompany(dbProfile.company);
+            if (dbProfile.full_name) {
+              setProfileName(dbProfile.full_name);
+              setAddresses((prev) =>
+                prev.map((addr) =>
+                  addr.id === "addr-1"
+                    ? { ...addr, recipient: dbProfile.full_name }
+                    : addr
+                )
+              );
+            }
+            if (dbProfile.role) {
+              setProfileRole(
+                dbProfile.role === "architect"
+                  ? "Kiến trúc sư"
+                  : dbProfile.role === "admin"
+                  ? "Quản trị viên"
+                  : "Khách hàng"
+              );
+            }
+            if (dbProfile.phone) {
+              setProfilePhone(dbProfile.phone);
+              setAddresses((prev) =>
+                prev.map((addr) =>
+                  addr.id === "addr-1"
+                    ? { ...addr, phone: dbProfile.phone }
+                    : addr
+                )
+              );
+            }
+            if (dbProfile.studio_name || dbProfile.company) {
+              setProfileCompany(dbProfile.studio_name || dbProfile.company);
+            }
             if (dbProfile.avatar_url) setProfileAvatar(dbProfile.avatar_url);
+            if (dbProfile.dob) setProfileDob(dbProfile.dob);
+            if (dbProfile.gender) setProfileGender(dbProfile.gender);
+            if (dbProfile.tax_id) setProfileTax(dbProfile.tax_id);
+            if (dbProfile.preferred_wood) setPreferredWood(dbProfile.preferred_wood);
+            if (dbProfile.care_frequency) setCareFreq(dbProfile.care_frequency);
           }
         } catch (e) {
           // Ignore if table not yet migrated
@@ -106,7 +160,7 @@ export default function AccountProfilePage() {
           if (metaName) setProfileName(metaName);
           const avatar =
             currentUser.user_metadata?.avatar_url || currentUser.user_metadata?.picture;
-          if (avatar) setProfileAvatar(avatar);
+          setProfileRole("Khách hàng");
         }
       }
     );
@@ -123,21 +177,21 @@ export default function AccountProfilePage() {
   const [addresses, setAddresses] = useState<AddressItem[]>([
     {
       id: "addr-1",
-      name: "Villa Thảo Điền",
+      name: "Villa Thảo Điền (Tư gia chính)",
       isDefault: true,
-      recipient: "KTS. Trần Minh Khang",
-      phone: "+84 908 123 456",
-      address: "Số 28 Đường Giang Văn Minh, Phường Thảo Điền, TP. Thủ Đức, TP. Hồ Chí Minh",
-      notes: "Thang máy tải hàng rộng 2.4m, sẵn mặt bằng lắp mộng.",
+      recipient: profileName || "Khách hàng",
+      phone: profilePhone || "",
+      address: "18 Đường số 42, Phường Thảo Điền, TP. Thủ Đức, TP. Hồ Chí Minh",
+      notes: "Thang máy tải hàng rộng 2.4m, sẵn mặt bằng lắp mộng không đinh.",
     },
     {
       id: "addr-2",
-      name: "Studio Thiết Kế Komorebi",
+      name: "Văn phòng thiết kế K-Studio",
       isDefault: false,
-      recipient: "Trần Minh Khang - Khang Studio",
-      phone: "+84 908 123 456",
-      address: "Tầng 4, 158 Pasteur, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh",
-      notes: "Nhận hàng mẫu phôi gỗ Teak & Catalog",
+      recipient: "Bộ phận Tiếp Nhận Dự Án",
+      phone: "",
+      address: "102 Lê Thánh Tôn, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh",
+      notes: "Tiếp nhận phôi gỗ mẫu Teak & catalog vật liệu hoàn thiện.",
     },
   ]);
 
@@ -183,8 +237,8 @@ export default function AccountProfilePage() {
 
   // New address form state
   const [newAddrName, setNewAddrName] = useState("");
-  const [newAddrRecipient, setNewAddrRecipient] = useState("Trần Minh Khang");
-  const [newAddrPhone, setNewAddrPhone] = useState("+84 908 123 456");
+  const [newAddrRecipient, setNewAddrRecipient] = useState("");
+  const [newAddrPhone, setNewAddrPhone] = useState("");
   const [newAddrDetail, setNewAddrDetail] = useState("");
   const [newAddrNotes, setNewAddrNotes] = useState("");
 
@@ -215,7 +269,18 @@ export default function AccountProfilePage() {
           full_name: profileName,
           phone: profilePhone,
           company: profileCompany,
-          role: profileRole,
+          studio_name: profileCompany,
+          role:
+            profileRole === "Kiến trúc sư" || profileRole.includes("Kiến trúc")
+              ? "architect"
+              : profileRole === "Quản trị viên"
+              ? "admin"
+              : "client",
+          dob: profileDob || null,
+          gender: profileGender || null,
+          tax_id: profileTax || null,
+          preferred_wood: preferredWood,
+          care_frequency: careFreq,
           updated_at: new Date().toISOString(),
         });
         await supabase.auth.updateUser({
@@ -227,6 +292,17 @@ export default function AccountProfilePage() {
       console.error("Profile save error:", err);
       showToast("Hồ sơ cá nhân đã được lưu!");
     }
+  };
+
+  const toggleFavStyle = (style: string) => {
+    setFavStyles((prev) =>
+      prev.includes(style) ? prev.filter((s) => s !== style) : [...prev, style]
+    );
+  };
+
+  const handleDeleteAddress = (id: string) => {
+    setAddresses((prev) => prev.filter((a) => a.id !== id));
+    showToast("Đã xóa địa chỉ thành công.");
   };
 
   const handleAddAddress = (e: React.FormEvent) => {
@@ -348,7 +424,9 @@ export default function AccountProfilePage() {
                 <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2 text-outline text-xs tracking-wider uppercase font-medium">
                   <span className="flex items-center gap-1.5">
                     <span className="w-2 h-2 bg-emerald-600 rounded-full"></span>
-                    Thành viên từ 10/2023
+                    {user?.created_at
+                      ? `Thành viên từ ${new Date(user.created_at).toLocaleDateString("vi-VN", { month: "2-digit", year: "numeric" })}`
+                      : "Thành viên Komorebi"}
                   </span>
                   <span>•</span>
                   <span className="text-on-surface-variant">Chi nhánh cố vấn: Thảo Điền, TP. Thủ Đức</span>
@@ -360,10 +438,10 @@ export default function AccountProfilePage() {
             <div className="flex flex-row md:flex-col items-start md:items-end justify-between w-full md:w-auto gap-3 pt-3 md:pt-0 border-t md:border-t-0 border-outline-variant/40">
               <div className="text-left md:text-right">
                 <span className="text-xs text-outline uppercase tracking-wider block">
-                  Hạng Định Danh Cấp Cao
+                  Hạng Thành Viên
                 </span>
                 <span className="text-lg sm:text-xl text-primary font-bold tracking-tight">
-                  {user ? "GOOGLE VIP ATELIER" : "PLATINUM ATELIER"}
+                  {user ? "HỘI VIÊN TIÊU CHUẨN" : "KHÁCH HÀNG"}
                 </span>
               </div>
               <div className="flex items-center gap-2">
@@ -802,164 +880,516 @@ export default function AccountProfilePage() {
           </div>
         )}
 
-        {/* ==================== TAB CONTENT 2: HỒ SƠ & SỔ ĐỊA CHỈ ==================== */}
+        {/* ==================== TAB CONTENT 2: THÔNG TIN CÁ NHÂN & ĐỊA CHỈ GIAO NHẬN ==================== */}
         {activeTab === "tab-2" && (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start animate-in fade-in">
-            {/* Form chỉnh sửa thông tin cá nhân (7 Columns) */}
-            <div className="lg:col-span-7 bg-surface-container-lowest border border-outline-variant/60 p-5 sm:p-6 lg:p-8 space-y-6 rounded-2xl sm:rounded-3xl shadow-sm">
-              <div className="flex items-center justify-between pb-4 border-b border-outline-variant/30">
-                <div>
-                  <h3 className="text-lg sm:text-xl font-bold text-primary tracking-tight">Hồ Sơ Định Danh Khách Hàng</h3>
-                  <p className="text-xs text-outline mt-0.5">Dữ liệu được mã hóa chuẩn kiến trúc bảo mật Komorebi Circle.</p>
-                </div>
-                <span className="material-symbols-outlined text-[24px] text-primary">badge</span>
+          <div className="space-y-6 sm:space-y-8 animate-in fade-in">
+            {/* Header Title */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-outline-variant/40 gap-2">
+              <div>
+                <span className="text-xs uppercase tracking-wider text-outline block font-semibold">
+                  Komorebi Circle • Atelier Member Profile
+                </span>
+                <h2 className="text-xl sm:text-2xl font-headline font-bold text-primary tracking-tight flex items-center gap-2 mt-0.5">
+                  <span className="material-symbols-outlined text-[24px]">badge</span>
+                  Hồ Sơ Cá Nhân &amp; Quản Lý Thông Tin Hội Viên
+                </h2>
               </div>
-
-              <form onSubmit={handleSaveProfile} className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs uppercase tracking-wider text-outline mb-1 font-semibold">
-                      Họ và tên đầy đủ *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={profileName}
-                      onChange={(e) => setProfileName(e.target.value)}
-                      className="w-full border border-outline-variant bg-surface px-3 py-2.5 text-primary text-sm focus:border-primary focus:outline-none rounded-xl"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs uppercase tracking-wider text-outline mb-1 font-semibold">
-                      Chức danh / Nghề nghiệp
-                    </label>
-                    <input
-                      type="text"
-                      value={profileRole}
-                      onChange={(e) => setProfileRole(e.target.value)}
-                      className="w-full border border-outline-variant bg-surface px-3 py-2.5 text-primary text-sm focus:border-primary focus:outline-none rounded-xl"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs uppercase tracking-wider text-outline mb-1 font-semibold">
-                      Địa chỉ Email liên lạc *
-                    </label>
-                    <input
-                      type="email"
-                      required
-                      value={profileEmail}
-                      onChange={(e) => setProfileEmail(e.target.value)}
-                      className="w-full border border-outline-variant bg-surface px-3 py-2.5 text-primary text-sm focus:border-primary focus:outline-none rounded-xl"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs uppercase tracking-wider text-outline mb-1 font-semibold">
-                      Số điện thoại *
-                    </label>
-                    <input
-                      type="tel"
-                      required
-                      value={profilePhone}
-                      onChange={(e) => setProfilePhone(e.target.value)}
-                      className="w-full border border-outline-variant bg-surface px-3 py-2.5 text-primary text-sm focus:border-primary focus:outline-none rounded-xl"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs uppercase tracking-wider text-outline mb-1 font-semibold">
-                      Công ty / Văn phòng Kiến Trúc
-                    </label>
-                    <input
-                      type="text"
-                      value={profileCompany}
-                      onChange={(e) => setProfileCompany(e.target.value)}
-                      className="w-full border border-outline-variant bg-surface px-3 py-2.5 text-primary text-sm focus:border-primary focus:outline-none rounded-xl"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs uppercase tracking-wider text-outline mb-1 font-semibold">
-                      Ngày sinh (Quà tri ân niên khoá)
-                    </label>
-                    <input
-                      type="date"
-                      value={profileDob}
-                      onChange={(e) => setProfileDob(e.target.value)}
-                      className="w-full border border-outline-variant bg-surface px-3 py-2.5 text-primary text-sm focus:border-primary focus:outline-none rounded-xl"
-                    />
-                  </div>
-                </div>
-
-                <div className="pt-3 border-t border-outline-variant/30 flex items-center justify-end gap-3">
-                  <button
-                    type="submit"
-                    className="px-6 py-3 bg-primary text-white text-xs uppercase tracking-wider font-bold hover:bg-[#27272a] transition-all active:scale-95 flex items-center gap-2 rounded-xl shadow-md"
-                  >
-                    <span className="material-symbols-outlined text-[18px]">check_circle</span>
-                    Lưu thông tin hồ sơ
-                  </button>
-                </div>
-              </form>
+              <div className="flex items-center gap-2">
+                <span className="px-2.5 py-1 bg-surface-container-high text-primary font-mono text-[11px] font-bold border border-outline-variant rounded-md">
+                  {user ? `MÃ HỘI VIÊN #${user.id.slice(0, 8).toUpperCase()}` : "KOMOREBI CIRCLE ELITE #KM-8821"}
+                </span>
+              </div>
             </div>
 
-            {/* Quản lý địa chỉ giao nhận (5 Columns) */}
-            <div className="lg:col-span-5 space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-outline-variant/30">
-                <h3 className="text-lg font-bold text-primary tracking-tight">Sổ Địa Chỉ Giao Nhận</h3>
-                <button
-                  type="button"
-                  onClick={() => setIsAddAddressOpen(true)}
-                  className="text-primary text-xs uppercase tracking-wider underline flex items-center gap-1 hover:text-outline font-bold"
-                >
-                  <span className="material-symbols-outlined text-[16px]">add</span> Thêm địa chỉ mới
-                </button>
-              </div>
-
-              {addresses.map((addr) => (
-                <div
-                  key={addr.id}
-                  className={`p-5 bg-surface-container-lowest border rounded-2xl relative shadow-sm ${
-                    addr.isDefault ? "border-primary" : "border-outline-variant/60"
-                  }`}
-                >
-                  <div className="flex justify-between items-start">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs uppercase tracking-wider font-bold text-primary">{addr.name}</span>
-                      {addr.isDefault && (
-                        <span className="bg-primary text-white text-[10px] font-bold uppercase px-2 py-0.5 rounded-md tracking-wider">
-                          Địa chỉ chính
-                        </span>
-                      )}
+            <form className="space-y-6 sm:space-y-8" onSubmit={handleSaveProfile}>
+              {/* Section Avatar */}
+              <section className="bg-surface-container-lowest border border-primary p-4 sm:p-6 rounded-2xl shadow-sm">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 sm:gap-6">
+                  <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 text-center sm:text-left">
+                    <div className="relative flex-shrink-0">
+                      <div className="w-20 h-20 sm:w-24 sm:h-24 p-1 border-2 border-primary bg-surface overflow-hidden rounded-2xl shadow-sm relative">
+                        <Image
+                          src={profileAvatar}
+                          alt={profileName}
+                          fill
+                          sizes="100px"
+                          className="object-cover rounded-xl"
+                        />
+                      </div>
+                      <span className="absolute -bottom-1 -right-1 bg-primary text-white text-[9px] font-mono font-bold px-1.5 py-0.5 uppercase rounded">
+                        {user ? "AUTH" : "ELITE"}
+                      </span>
                     </div>
-                    <span className="material-symbols-outlined text-primary text-[20px]">
-                      {addr.isDefault ? "home_pin" : "apartment"}
+                    <div>
+                      <div className="flex items-center gap-2 justify-center sm:justify-start flex-wrap">
+                        <h3 className="text-lg sm:text-xl font-headline font-bold text-primary">
+                          {profileName}
+                        </h3>
+                        <span className="px-2 py-0.5 bg-primary text-surface-container-lowest text-[10px] uppercase tracking-wider font-semibold rounded">
+                          {user ? "Hội viên tiêu chuẩn" : "VIP Platinum"}
+                        </span>
+                      </div>
+                      <p className="text-xs sm:text-sm text-secondary mt-0.5 font-medium">
+                        {profileRole}
+                      </p>
+                      <p className="text-[11px] text-outline mt-1">
+                        Định dạng hợp lệ: JPG, PNG, WEBP (Tối đa 5.0 MB, chuẩn tỉ lệ 1:1 vuông hoặc 4:5).
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                    <label className="px-3.5 py-2 border border-primary text-primary text-xs uppercase tracking-wider hover:bg-primary hover:text-white transition-colors flex items-center gap-1.5 active:scale-95 cursor-pointer font-bold rounded-xl shadow-sm">
+                      <span className="material-symbols-outlined text-[16px]">upload</span>
+                      Tải ảnh mới
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const url = URL.createObjectURL(file);
+                            setProfileAvatar(url);
+                            showToast("Đã tải ảnh đại diện mới xem trước!");
+                          }
+                        }}
+                      />
+                    </label>
+                    <button
+                      className="px-3.5 py-2 border border-outline-variant text-secondary text-xs uppercase tracking-wider hover:border-primary hover:text-primary transition-colors flex items-center gap-1.5 active:scale-95 font-semibold rounded-xl"
+                      type="button"
+                      onClick={() => {
+                        setProfileAvatar("/images/stitch1-img-1.jpg");
+                        showToast("Đã đặt lại ảnh đại diện mặc định.");
+                      }}
+                    >
+                      <span className="material-symbols-outlined text-[16px]">delete</span>
+                      Xóa ảnh
+                    </button>
+                  </div>
+                </div>
+              </section>
+
+              {/* 2 Columns Grid: 1. Thông Tin Định Danh Cơ Bản & 2. Thông Tin Liên Hệ & Xác Thực */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                {/* Col 1: 1. Thông Tin Định Danh Cơ Bản */}
+                <div className="lg:col-span-6 bg-surface-container-lowest border border-outline-variant/60 p-5 sm:p-6 space-y-4 rounded-2xl shadow-sm">
+                  <div className="flex items-center justify-between pb-3 border-b border-outline-variant/30">
+                    <div className="flex items-center gap-2">
+                      <span className="material-symbols-outlined text-[20px] text-primary">person</span>
+                      <h3 className="text-base sm:text-lg font-headline font-bold text-primary tracking-tight">
+                        1. Thông Tin Định Danh Cơ Bản
+                      </h3>
+                    </div>
+                    <span className="text-[10px] font-mono text-outline uppercase tracking-wider font-semibold">
+                      BẮT BUỘC
                     </span>
                   </div>
-
-                  <p className="text-xs text-primary font-bold mt-2">{addr.recipient} ({addr.phone})</p>
-                  <p className="text-xs text-on-surface-variant mt-1 leading-relaxed">{addr.address}</p>
-
-                  <div className="text-[11px] text-outline mt-3 pt-2 border-t border-outline-variant/30 flex justify-between items-center">
-                    <span className="truncate max-w-[65%]">{addr.notes}</span>
-                    <div className="flex gap-2">
-                      {!addr.isDefault && (
-                        <button
-                          type="button"
-                          onClick={() => handleSetDefaultAddress(addr.id)}
-                          className="text-primary hover:underline font-bold"
+                  <div className="space-y-4 pt-1">
+                    <div>
+                      <label className="block text-xs uppercase tracking-wider text-secondary mb-1 font-semibold">
+                        Họ và tên đầy đủ *
+                      </label>
+                      <input
+                        className="w-full border border-outline-variant bg-surface px-3 py-2.5 text-primary text-sm focus:border-primary focus:outline-none rounded-xl"
+                        id="input-fullname"
+                        required
+                        type="text"
+                        value={profileName}
+                        onChange={(e) => setProfileName(e.target.value)}
+                        placeholder="Vd: Nguyễn Văn A"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs uppercase tracking-wider text-secondary mb-1 font-semibold">
+                        Danh xưng / Chức vụ chuyên môn *
+                      </label>
+                      <div className="relative">
+                        <select
+                          className="w-full border border-outline-variant bg-surface px-3 py-2.5 text-primary text-sm focus:border-primary focus:outline-none rounded-xl"
+                          id="input-role"
+                          required
+                          value={profileRole}
+                          onChange={(e) => setProfileRole(e.target.value)}
                         >
-                          Đặt mặc định
-                        </button>
-                      )}
+                          <option value="Khách hàng">Khách hàng (Cá nhân / Gia đình)</option>
+                          <option value="Khách hàng thân thiết">Khách hàng thân thiết</option>
+                          <option value="Kiến trúc sư">Kiến trúc sư / Thiết kế nội thất</option>
+                          <option value="Chủ đầu tư">Chủ đầu tư / Đối tác dự án</option>
+                          {profileRole === "Quản trị viên" && (
+                            <option value="Quản trị viên">Quản trị viên hệ thống</option>
+                          )}
+                        </select>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-xs uppercase tracking-wider text-secondary mb-1 font-semibold">
+                        Mã định danh hội viên độc quyền
+                      </label>
+                      <div className="flex items-center">
+                        <input
+                          className="w-full border border-outline-variant/60 bg-surface-container-high px-3 py-2.5 font-mono text-primary text-sm font-bold focus:outline-none cursor-not-allowed rounded-l-xl"
+                          readOnly
+                          type="text"
+                          value={user ? `KOMOREBI-ID #${user.id.slice(0, 8).toUpperCase()}` : "KOMOREBI CIRCLE ELITE #KM-8821"}
+                        />
+                        <span className="-ml-px px-3 py-2.5 bg-primary text-surface-container-lowest text-xs uppercase tracking-widest flex items-center gap-1 flex-shrink-0 font-bold rounded-r-xl">
+                          <span className="material-symbols-outlined text-[14px]">lock</span>
+                          Khoá
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-outline mt-1">
+                        Mã định danh độc bản gắn liền chuỗi bảo dưỡng và chứng thư bảo hành mộng gỗ.
+                      </p>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs uppercase tracking-wider text-secondary mb-1 font-semibold">
+                          Ngày sinh
+                        </label>
+                        <input
+                          className="w-full border border-outline-variant bg-surface px-3 py-2.5 text-primary text-sm focus:border-primary focus:outline-none rounded-xl"
+                          id="input-dob"
+                          type="date"
+                          value={profileDob}
+                          onChange={(e) => setProfileDob(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs uppercase tracking-wider text-secondary mb-1 font-semibold">
+                          Giới tính
+                        </label>
+                        <select
+                          className="w-full border border-outline-variant bg-surface px-3 py-2.5 text-primary text-sm focus:border-primary focus:outline-none rounded-xl"
+                          value={profileGender}
+                          onChange={(e) => setProfileGender(e.target.value)}
+                        >
+                          <option value="Nam">Nam</option>
+                          <option value="Nữ">Nữ</option>
+                          <option value="Khác">Khác / Không tiết lộ</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
+
+                {/* Col 2: 2. Thông Tin Liên Hệ & Xác Thực */}
+                <div className="lg:col-span-6 bg-surface-container-lowest border border-outline-variant/60 p-5 sm:p-6 space-y-4 rounded-2xl shadow-sm">
+                  <div className="flex items-center justify-between pb-3 border-b border-outline-variant/30">
+                    <div className="flex items-center gap-2">
+                      <span className="material-symbols-outlined text-[20px] text-primary">contact_mail</span>
+                      <h3 className="text-base sm:text-lg font-headline font-bold text-primary tracking-tight">
+                        2. Thông Tin Liên Hệ &amp; Xác Thực
+                      </h3>
+                    </div>
+                    <span className="text-[10px] font-mono text-outline uppercase tracking-wider font-semibold">
+                      BẢO MẬT 256-BIT
+                    </span>
+                  </div>
+                  <div className="space-y-4 pt-1">
+                    <div>
+                      <div className="flex justify-between items-center mb-1">
+                        <label className="text-xs uppercase tracking-wider text-secondary font-semibold">
+                          Địa chỉ Email *
+                        </label>
+                        <span className="inline-flex items-center gap-1 text-[10px] uppercase text-emerald-800 font-bold px-2 py-0.5 bg-emerald-50 border border-emerald-200 rounded">
+                          <span className="material-symbols-outlined text-[12px]">verified</span>
+                          {user ? "Đã xác thực / Verified" : "Chờ xác thực"}
+                        </span>
+                      </div>
+                      <input
+                        className="w-full border border-outline-variant bg-surface px-3 py-2.5 text-primary text-sm focus:border-primary focus:outline-none font-mono rounded-xl"
+                        id="input-email"
+                        required
+                        type="email"
+                        value={profileEmail}
+                        onChange={(e) => setProfileEmail(e.target.value)}
+                        placeholder="email@example.com"
+                      />
+                    </div>
+                    <div>
+                      <div className="flex justify-between items-center mb-1">
+                        <label className="text-xs uppercase tracking-wider text-secondary font-semibold">
+                          Số điện thoại cá nhân
+                        </label>
+                        <span className="inline-flex items-center gap-1 text-[10px] uppercase text-primary font-bold px-2 py-0.5 bg-neutral-100 border border-outline-variant rounded">
+                          <span className="material-symbols-outlined text-[12px]">link</span>
+                          Liên kết Zalo &amp; SMS
+                        </span>
+                      </div>
+                      <input
+                        className="w-full border border-outline-variant bg-surface px-3 py-2.5 text-primary text-sm focus:border-primary focus:outline-none font-mono rounded-xl"
+                        id="input-phone"
+                        type="tel"
+                        value={profilePhone}
+                        onChange={(e) => setProfilePhone(e.target.value)}
+                        placeholder="Vd: 0908 123 456"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs uppercase tracking-wider text-secondary mb-1 font-semibold">
+                        Căn cước công dân / Mã số thuế cá nhân
+                      </label>
+                      <input
+                        className="w-full border border-outline-variant bg-surface px-3 py-2.5 text-primary text-sm focus:border-primary focus:outline-none font-mono rounded-xl"
+                        id="input-tax"
+                        type="text"
+                        value={profileTax}
+                        onChange={(e) => setProfileTax(e.target.value)}
+                        placeholder="Tùy chọn: Nhập CCCD hoặc MST cá nhân"
+                      />
+                      <p className="text-[11px] text-outline mt-1">
+                        Dùng cho mục đích xuất hóa đơn điện tử VAT dự án may đo nội thất và bảo hiểm hợp đồng.
+                      </p>
+                    </div>
+                    <div>
+                      <label className="block text-xs uppercase tracking-wider text-secondary mb-1 font-semibold">
+                        Văn phòng kiến trúc / Pháp nhân đại diện
+                      </label>
+                      <input
+                        className="w-full border border-outline-variant bg-surface px-3 py-2.5 text-primary text-sm focus:border-primary focus:outline-none rounded-xl"
+                        id="input-company"
+                        type="text"
+                        value={profileCompany}
+                        onChange={(e) => setProfileCompany(e.target.value)}
+                        placeholder="Tùy chọn cho đối tác / KTS / Doanh nghiệp"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Section 3: 3. Sở Thích & Không Gian Sống Quan Tâm (Komorebi Preference) */}
+              <section className="bg-surface-container-lowest border border-outline-variant/60 p-5 sm:p-6 space-y-4 rounded-2xl shadow-sm">
+                <div className="flex items-center justify-between pb-3 border-b border-outline-variant/30">
+                  <div className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-[20px] text-primary">style</span>
+                    <h3 className="text-base sm:text-lg font-headline font-bold text-primary tracking-tight">
+                      3. Sở Thích &amp; Không Gian Sống Quan Tâm (Komorebi Preference)
+                    </h3>
+                  </div>
+                  <span className="text-xs uppercase text-outline font-semibold">
+                    Tuỳ biến gợi ý vật liệu
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-1">
+                  {/* Col 1: Phong cách thiết kế yêu thích */}
+                  <div className="space-y-2">
+                    <span className="text-xs uppercase tracking-wider text-secondary block font-bold">
+                      Phong cách thiết kế yêu thích
+                    </span>
+                    <div className="space-y-1.5">
+                      {[
+                        "Wabi-Sabi tối giản",
+                        "Japandi đương đại",
+                        "Gỗ nguyên khối Rustic",
+                        "Nội thất mộng ghép Kigumi",
+                      ].map((style) => (
+                        <label
+                          key={style}
+                          className="flex items-center gap-2 text-sm text-primary cursor-pointer p-1.5 hover:bg-surface rounded-lg transition-colors"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={favStyles.includes(style)}
+                            onChange={() => toggleFavStyle(style)}
+                            className="text-primary focus:ring-0 rounded"
+                          />
+                          <span className="font-medium">{style}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Col 2: Dòng gỗ chủ đạo ưu tiên */}
+                  <div className="space-y-2">
+                    <span className="text-xs uppercase tracking-wider text-secondary block font-bold">
+                      Dòng gỗ chủ đạo ưu tiên
+                    </span>
+                    <div className="space-y-1.5">
+                      {[
+                        "Gỗ Sồi Trắng Bắc Mỹ (White Oak)",
+                        "Gỗ Teak già Lào tự nhiên",
+                        "Gỗ Óc Chó Đen (Walnut Bắc Mỹ)",
+                      ].map((wood) => (
+                        <label
+                          key={wood}
+                          className="flex items-center gap-2 text-sm text-primary cursor-pointer p-1.5 hover:bg-surface rounded-lg transition-colors"
+                        >
+                          <input
+                            type="radio"
+                            name="preferred_wood"
+                            checked={preferredWood === wood}
+                            onChange={() => setPreferredWood(wood)}
+                            className="text-primary focus:ring-0"
+                          />
+                          <span className="font-medium">{wood}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Col 3: Tần suất bảo dưỡng sáp mong muốn */}
+                  <div className="space-y-2">
+                    <span className="text-xs uppercase tracking-wider text-secondary block font-bold">
+                      Tần suất bảo dưỡng sáp mong muốn
+                    </span>
+                    <div className="space-y-1.5">
+                      {[
+                        "Mỗi 6 tháng (Komorebi Khuyến nghị)",
+                        "Mỗi 12 tháng (Hàng năm)",
+                      ].map((freq) => (
+                        <label
+                          key={freq}
+                          className="flex items-center gap-2 text-sm text-primary cursor-pointer p-1.5 hover:bg-surface rounded-lg transition-colors"
+                        >
+                          <input
+                            type="radio"
+                            name="care_freq"
+                            checked={careFreq === freq}
+                            onChange={() => setCareFreq(freq)}
+                            className="text-primary focus:ring-0"
+                          />
+                          <span className="font-medium">{freq}</span>
+                        </label>
+                      ))}
+                    </div>
+                    <div className="p-3 bg-surface border border-outline-variant/40 text-[11px] text-secondary mt-2 rounded-xl">
+                      Chế độ bảo dưỡng sáp định kỳ giúp cân bằng độ ẩm 10-12% và kéo dài tuổi thọ mộng gỗ trên 20 năm.
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              {/* Section 4: 4. Sổ Địa Chỉ Giao Nhận Công Trình & Tư Gia */}
+              <section className="bg-surface-container-lowest border border-outline-variant/60 p-5 sm:p-6 space-y-4 rounded-2xl shadow-sm">
+                <div className="flex flex-wrap items-center justify-between pb-3 border-b border-outline-variant/30 gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-[20px] text-primary">pin_drop</span>
+                    <div>
+                      <h3 className="text-base sm:text-lg font-headline font-bold text-primary tracking-tight">
+                        4. Sổ Địa Chỉ Giao Nhận Công Trình &amp; Tư Gia
+                      </h3>
+                      <p className="text-xs text-secondary mt-0.5">
+                        Quản lý vị trí bàn giao cấu kiện gỗ, lối thang tải và ghi chú mặt bằng lắp đặt.
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    className="px-3.5 py-1.5 border border-primary text-primary text-xs uppercase tracking-wider hover:bg-primary hover:text-white transition-colors flex items-center gap-1 active:scale-95 font-bold rounded-xl shadow-sm"
+                    type="button"
+                    onClick={() => setIsAddAddressOpen(true)}
+                  >
+                    <span className="material-symbols-outlined text-[16px]">add</span>
+                    Thêm địa chỉ công trình mới
+                  </button>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+                  {addresses.map((addr) => (
+                    <div
+                      key={addr.id}
+                      className={`border-2 p-4 sm:p-5 relative flex flex-col justify-between rounded-2xl shadow-sm ${
+                        addr.isDefault
+                          ? "border-primary bg-surface-container-lowest"
+                          : "border-outline-variant/60 bg-surface-container-lowest"
+                      }`}
+                    >
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-start">
+                          <div className="flex items-center gap-2">
+                            <h4 className="text-xs uppercase tracking-wider font-bold text-primary">
+                              {addr.name}
+                            </h4>
+                            {addr.isDefault && (
+                              <span className="bg-primary text-surface-container-lowest text-[9px] uppercase px-2 py-0.5 tracking-wider font-bold rounded">
+                                Mặc định
+                              </span>
+                            )}
+                          </div>
+                          <span className="material-symbols-outlined text-primary text-[20px]">
+                            {addr.isDefault ? "home_pin" : "apartment"}
+                          </span>
+                        </div>
+                        <p className="text-xs text-primary font-bold">
+                          {addr.recipient} {addr.phone ? `(${addr.phone})` : ""}
+                        </p>
+                        <p className="text-xs text-secondary leading-relaxed">
+                          {addr.address}
+                        </p>
+                        <div className="p-2.5 bg-surface border border-outline-variant/30 text-[11px] text-on-surface-variant rounded-xl">
+                          Lưu ý kỹ thuật: {addr.notes}
+                        </div>
+                      </div>
+                      <div className="mt-3 pt-2.5 border-t border-outline-variant/30 flex justify-between items-center text-[11px] uppercase tracking-wider font-semibold">
+                        {addr.isDefault ? (
+                          <span className="text-primary font-bold">Địa chỉ nhận gỗ chính</span>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => handleSetDefaultAddress(addr.id)}
+                            className="text-secondary hover:text-primary hover:underline"
+                          >
+                            Đặt làm mặc định
+                          </button>
+                        )}
+                        <div className="flex items-center gap-3">
+                          <button
+                            type="button"
+                            onClick={() => showToast(`Địa chỉ "${addr.name}" đã được lưu trữ trong danh bạ.`)}
+                            className="text-primary hover:underline"
+                          >
+                            Chi tiết
+                          </button>
+                          {!addr.isDefault && (
+                            <>
+                              <span className="text-outline-variant">•</span>
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteAddress(addr.id)}
+                                className="text-secondary hover:text-red-600"
+                              >
+                                Xóa
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              {/* Bottom Action Plaque */}
+              <div className="bg-surface-container-low border border-outline-variant/50 p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 rounded-2xl">
+                <div className="flex items-center gap-3">
+                  <span className="material-symbols-outlined text-[24px] text-primary">sync_saved_locally</span>
+                  <div className="text-left">
+                    <p className="text-xs sm:text-sm text-primary font-bold">
+                      Tự động đồng bộ thẻ hội viên Apple Wallet &amp; Google Wallet
+                    </p>
+                    <p className="text-[11px] text-secondary">
+                      Thông tin cá nhân được mã hóa và bảo vệ nghiêm ngặt theo tiêu chuẩn bảo mật dữ liệu GDPR &amp; Komorebi Atelier Charter.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+                  <button
+                    className="px-5 py-2.5 border border-outline text-secondary text-xs uppercase tracking-wider hover:border-primary hover:text-primary transition-colors active:scale-95 font-semibold rounded-xl"
+                    type="button"
+                    onClick={() => showToast("Đã hoàn tác các thay đổi trên form hồ sơ.")}
+                  >
+                    Hủy thay đổi
+                  </button>
+                  <button
+                    className="px-6 py-2.5 bg-primary text-surface-container-lowest text-xs uppercase tracking-wider font-bold hover:bg-[#27272a] transition-all active:scale-95 flex items-center gap-2 shadow-md rounded-xl"
+                    type="submit"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">check_circle</span>
+                    Lưu cập nhật hồ sơ
+                  </button>
+                </div>
+              </div>
+            </form>
           </div>
         )}
 
