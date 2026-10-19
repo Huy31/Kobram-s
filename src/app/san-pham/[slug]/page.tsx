@@ -33,8 +33,8 @@ async function ProductContent({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  await params;
-  return <ProductDetailPage />;
+  const resolvedParams = await params;
+  return <ProductDetailPage initialSlug={resolvedParams.slug} />;
 }
 
 export default function GenericProductPage(props: {

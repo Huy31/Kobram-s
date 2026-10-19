@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ConsultationModal from "@/components/ConsultationModal";
 import { useCart } from "@/context/CartContext";
+import { getProductsByCategory } from "@/services/productService";
 
 export default function CuratedCollectionsPage() {
   const { addToCart, showToast } = useCart();
@@ -46,6 +47,21 @@ export default function CuratedCollectionsPage() {
       image: "/images/curated-9.jpg",
     },
   ];
+
+  const [accessories, setAccessories] = useState(curatedAccessories);
+
+  useEffect(() => {
+    getProductsByCategory("cat-collection", curatedAccessories, (item) => ({
+      id: item.id,
+      sku: item.sku,
+      title: item.title,
+      price: item.price,
+      material: item.material,
+      image: item.image,
+    })).then((res) => {
+      if (res && res.length > 0) setAccessories(res);
+    });
+  }, []);
 
   return (
     <>
@@ -302,7 +318,7 @@ export default function CuratedCollectionsPage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {curatedAccessories.map((acc) => (
+              {accessories.map((acc) => (
                 <div
                   key={acc.id}
                   className="border border-outline-variant bg-surface-container-lowest flex flex-col justify-between group hover:border-primary transition-colors"

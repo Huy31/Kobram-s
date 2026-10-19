@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Header from "@/components/Header";
@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import ConsultationModal from "@/components/ConsultationModal";
 import ShowroomModal from "@/components/ShowroomModal";
 import { useCart } from "@/context/CartContext";
+import { getProductBySlug, DbProduct } from "@/services/productService";
 
 const galleryImages = [
   {
@@ -63,8 +64,10 @@ const sizeOptions = [
   },
 ];
 
-export default function ProductDetailPage() {
+export default function ProductDetailPage({ initialSlug = "kura-lounge-chair" }: { initialSlug?: string }) {
   const { addToCart, showToast, toggleWishlist, isWishlisted } = useCart();
+  const [product, setProduct] = useState<DbProduct | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedWood, setSelectedWood] = useState(woodOptions[0]);
   const [selectedUpholstery, setSelectedUpholstery] = useState(upholsteryOptions[0]);
@@ -81,27 +84,74 @@ export default function ProductDetailPage() {
   const [isWoodComparisonOpen, setIsWoodComparisonOpen] = useState(false);
   const [isARModalOpen, setIsARModalOpen] = useState(false);
 
-  // Dynamic price calculation
-  const basePrice = 14800000;
+  // Fetch product from database
+  useEffect(() => {
+    setIsLoading(true);
+    getProductBySlug(initialSlug).then((dbItem) => {
+      if (dbItem) {
+        setProduct(dbItem);
+      }
+      setIsLoading(false);
+    });
+  }, [initialSlug]);
+
+  // Dynamic price calculation from DB
+  const basePrice = product?.price || 14800000;
   const currentPrice = basePrice + selectedWood.priceExtra;
-  const originalPrice = Math.round(currentPrice / 0.9);
+  const originalPrice = product?.original_price || Math.round(currentPrice / 0.9);
   const monthlyInstallment = Math.round(currentPrice / 12);
+
+  const productTitle = product?.title || "Ghế Thư Giãn Gỗ Sồi Kura Lounge Chair";
+  const productSku = product?.sku || "KL-LOU-01";
+  const productDesc =
+    product?.description ||
+    "Thiết kế tối giản lấy cảm hứng từ phong vị trà đạo Kyoto và đường nét uốn lượn Scandinavian. Ghế sở hữu độ ngả 105° chuẩn công thái học nâng đỡ toàn diện cột sống.";
+  const productMaterial = product?.material || "Gỗ Sồi Trắng Bắc Mỹ • Da Bò Sáp Ý";
+  const productDimensions = product?.dimensions || "Dài 840 x Rộng 760 x Cao 780 mm";
+  const productTag = product?.tag || "Chế tác độc bản 2025";
+
+  // Category navigation info
+  const categoryLabel =
+    product?.category_id === "cat-bedroom"
+      ? "Phòng ngủ"
+      : product?.category_id === "cat-dining"
+      ? "Phòng bếp"
+      : "Phòng khách";
+  const categoryLink =
+    product?.category_id === "cat-bedroom"
+      ? "/phong-ngu"
+      : product?.category_id === "cat-dining"
+      ? "/phong-bep"
+      : "/phong-khach";
+
+  const images =
+    product?.gallery && product.gallery.length > 0
+      ? product.gallery
+      : [
+          {
+            id: "front",
+            label: "Chính diện",
+            src: product?.image || "/images/product-kura-chair.jpg",
+            desc: "Góc nhìn chính diện phô diễn tỷ lệ hình học cân bằng và lưng tựa mộng sồi.",
+          },
+          ...galleryImages.slice(1),
+        ];
 
   const handleAddToCart = () => {
     addToCart({
-      id: "product-kura-chair",
-      sku: "KL-LOU-01",
-      title: "Ghế Thư Giãn Gỗ Sồi Kura Lounge Chair",
+      id: product?.id || "product-kura-chair",
+      sku: productSku,
+      title: productTitle,
       subtitle: `${selectedWood.name} • ${selectedUpholstery.name} (${selectedUpholstery.color})`,
       price: currentPrice,
       originalPrice: originalPrice,
-      image: galleryImages[selectedImageIndex].src,
+      image: images[selectedImageIndex]?.src || product?.image || "/images/product-kura-chair.jpg",
       quantity: 1,
       options: {
         wood: selectedWood.name,
         upholstery: `${selectedUpholstery.name} - ${selectedUpholstery.color}`,
         size: `${selectedSize.title}: ${selectedSize.desc}`,
-        notes: "Chế tác độc bản Atelier Kyoto 2025",
+        notes: "Chế tác độc bản Atelier Komorebi 2025",
       },
     });
   };
@@ -117,13 +167,11 @@ export default function ProductDetailPage() {
             Trang chủ
           </Link>
           <span className="material-symbols-outlined text-xs sm:text-sm text-outline flex-shrink-0">chevron_right</span>
-          <Link href="/#phong-khach" className="hover:text-primary transition-colors flex-shrink-0">
-            Phòng khách
+          <Link href={categoryLink} className="hover:text-primary transition-colors flex-shrink-0">
+            {categoryLabel}
           </Link>
           <span className="material-symbols-outlined text-xs sm:text-sm text-outline flex-shrink-0">chevron_right</span>
-          <span className="hover:text-primary transition-colors flex-shrink-0">Ghế thư giãn</span>
-          <span className="material-symbols-outlined text-xs sm:text-sm text-outline flex-shrink-0">chevron_right</span>
-          <span className="text-primary font-bold flex-shrink-0">Kura Lounge Chair</span>
+          <span className="text-primary font-bold flex-shrink-0">{productTitle}</span>
         </nav>
 
         {/* 2-COLUMN MAIN PRODUCT INTERACTION */}
@@ -133,8 +181,8 @@ export default function ProductDetailPage() {
             {/* Main Stage Image */}
             <div className="relative aspect-[4/3] sm:aspect-[5/4] bg-surface-container overflow-hidden border border-outline-variant group shadow-sm rounded-2xl lg:rounded-3xl">
               <Image
-                src={galleryImages[selectedImageIndex].src}
-                alt={galleryImages[selectedImageIndex].label}
+                src={images[selectedImageIndex]?.src || product?.image || "/images/product-kura-chair.jpg"}
+                alt={images[selectedImageIndex]?.label || productTitle}
                 fill
                 sizes="(max-width: 1024px) 100vw, 58vw"
                 className="object-cover group-hover:scale-103 transition-transform duration-500 rounded-2xl lg:rounded-3xl"
@@ -143,7 +191,7 @@ export default function ProductDetailPage() {
 
               {/* Tag Top Left */}
               <span className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-primary text-on-primary text-[10px] sm:text-label-sm font-label-sm px-2 sm:px-2.5 py-0.5 sm:py-1 tracking-wider uppercase font-bold shadow-sm rounded-md">
-                Chế tác độc bản 2025
+                {productTag}
               </span>
 
               {/* Label Bottom Left */}
@@ -172,13 +220,13 @@ export default function ProductDetailPage() {
               </div>
             </div>
 
-            {/* 4 Thumbnails */}
+            {/* Thumbnails */}
             <div className="grid grid-cols-4 gap-3 sm:gap-4">
-              {galleryImages.map((img, idx) => {
+              {images.map((img, idx) => {
                 const isSelected = selectedImageIndex === idx;
                 return (
                   <button
-                    key={img.id}
+                    key={img.id || idx}
                     type="button"
                     onClick={() => setSelectedImageIndex(idx)}
                     className={`relative block w-full aspect-square border transition-all text-left group overflow-hidden rounded-xl ${
@@ -259,11 +307,11 @@ export default function ProductDetailPage() {
               </div>
 
               <h1 className="text-headline-lg font-headline-lg text-2xl sm:text-3xl text-primary font-bold tracking-tight">
-                Ghế Thư Giãn Gỗ Sồi Kura Lounge Chair
+                {productTitle}
               </h1>
 
               <p className="text-body-md font-body-md text-on-surface-variant mt-2 leading-relaxed">
-                Thiết kế tối giản lấy cảm hứng từ phong vị trà đạo Kyoto và đường nét uốn lượn Scandinavian. Ghế sở hữu độ ngả 105° chuẩn công thái học nâng đỡ toàn diện cột sống.
+                {productDesc}
               </p>
             </div>
 
@@ -466,21 +514,21 @@ export default function ProductDetailPage() {
 
                 <button
                   type="button"
-                  onClick={() => toggleWishlist("kura-lounge-chair")}
+                  onClick={() => toggleWishlist(product?.slug || product?.id || initialSlug)}
                   className={`w-12 sm:w-14 min-w-[48px] sm:min-w-[56px] border flex items-center justify-center transition-all rounded-xl ${
-                    isWishlisted("kura-lounge-chair")
+                    isWishlisted(product?.slug || product?.id || initialSlug)
                       ? "border-red-600 bg-red-50 text-red-600"
                       : "border-primary text-primary hover:bg-surface-container"
                   }`}
                   title={
-                    isWishlisted("kura-lounge-chair")
+                    isWishlisted(product?.slug || product?.id || initialSlug)
                       ? "Bỏ khỏi danh sách yêu thích"
                       : "Lưu vào danh sách yêu thích"
                   }
                   aria-label="Yêu thích"
                 >
                   <span className="material-symbols-outlined text-xl sm:text-2xl">
-                    {isWishlisted("kura-lounge-chair") ? "favorite" : "favorite_border"}
+                    {isWishlisted(product?.slug || product?.id || initialSlug) ? "favorite" : "favorite_border"}
                   </span>
                 </button>
               </div>
@@ -532,23 +580,23 @@ export default function ProductDetailPage() {
                   <div className="p-4 bg-surface-container-lowest text-body-sm space-y-2 border-t border-outline-variant/40">
                     <div className="grid grid-cols-2 gap-2 py-1 border-b border-outline-variant/20">
                       <span className="text-outline">Kích thước tổng thể:</span>
-                      <strong className="text-right text-primary">Dài 840 x Rộng 760 x Cao 780 mm</strong>
+                      <strong className="text-right text-primary">{productDimensions}</strong>
                     </div>
                     <div className="grid grid-cols-2 gap-2 py-1 border-b border-outline-variant/20">
-                      <span className="text-outline">Chiều cao mặt ngồi:</span>
-                      <strong className="text-right text-primary">390 mm</strong>
+                      <span className="text-outline">Chất liệu chính:</span>
+                      <strong className="text-right text-primary">{productMaterial}</strong>
                     </div>
                     <div className="grid grid-cols-2 gap-2 py-1 border-b border-outline-variant/20">
-                      <span className="text-outline">Độ sâu lòng đệm:</span>
-                      <strong className="text-right text-primary">560 mm</strong>
+                      <span className="text-outline">Mã sản phẩm (SKU):</span>
+                      <strong className="text-right text-primary font-mono">{productSku}</strong>
                     </div>
                     <div className="grid grid-cols-2 gap-2 py-1 border-b border-outline-variant/20">
                       <span className="text-outline">Tải trọng thử nghiệm:</span>
                       <strong className="text-right text-primary">180 kg (Tiêu chuẩn JIS S 1021)</strong>
                     </div>
                     <div className="grid grid-cols-2 gap-2 py-1">
-                      <span className="text-outline">Trọng lượng ghế nguyên khối:</span>
-                      <strong className="text-right text-primary">19.5 kg</strong>
+                      <span className="text-outline">Trọng lượng hoàn thiện:</span>
+                      <strong className="text-right text-primary">19.5 kg (Mộng mộc nguyên bản)</strong>
                     </div>
                   </div>
                 )}
