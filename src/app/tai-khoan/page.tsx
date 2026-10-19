@@ -9,6 +9,7 @@ import Footer from "@/components/Footer";
 import ConsultationModal from "@/components/ConsultationModal";
 import { useCart } from "@/context/CartContext";
 import { createClient } from "@/utils/supabase/client";
+import { getUserOrders } from "@/services/productService";
 import type { User } from "@supabase/supabase-js";
 
 type TabId = "tab-1" | "tab-2" | "tab-3" | "tab-4" | "tab-5";
@@ -25,10 +26,12 @@ interface AddressItem {
 
 export default function AccountProfilePage() {
   const router = useRouter();
-  const { addToCart, showToast } = useCart();
+  const { addToCart, showToast, wishlist, removeFromWishlist } = useCart();
   const [activeTab, setActiveTab] = useState<TabId>("tab-1");
   const [isConsultationOpen, setIsConsultationOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [orders, setOrders] = useState<any[]>([]);
+  const [isLoadingOrders, setIsLoadingOrders] = useState<boolean>(true);
   const [profileAvatar, setProfileAvatar] = useState<string>("/images/stitch1-img-1.jpg");
 
   // Profile data state
@@ -58,7 +61,7 @@ export default function AccountProfilePage() {
           currentUser.user_metadata?.avatar_url || currentUser.user_metadata?.picture;
         if (avatar) setProfileAvatar(avatar);
 
-        // Fetch DB profile if present
+        // Fetch DB profile and orders if present
         try {
           const { data: dbProfile } = await supabase
             .from("profiles")
@@ -76,6 +79,18 @@ export default function AccountProfilePage() {
         } catch (e) {
           // Ignore if table not yet migrated
         }
+
+        // Fetch user orders from DB
+        getUserOrders(currentUser.id).then((ordList) => {
+          if (ordList) setOrders(ordList);
+          setIsLoadingOrders(false);
+        });
+      } else {
+        // Fetch guest or public orders
+        getUserOrders().then((ordList) => {
+          if (ordList) setOrders(ordList);
+          setIsLoadingOrders(false);
+        });
       }
     });
 
@@ -404,16 +419,16 @@ export default function AccountProfilePage() {
             <div className="p-4 bg-surface-container-low/70 border border-outline-variant/50 flex flex-col justify-between rounded-xl">
               <div>
                 <div className="flex justify-between items-start text-secondary">
-                  <span className="text-xs uppercase tracking-wider font-semibold">Đơn Hàng Đã Bàn Giao</span>
+                  <span className="text-xs uppercase tracking-wider font-semibold">Đơn Hàng Ghi Nhận</span>
                   <span className="material-symbols-outlined text-[20px] text-primary">inventory_2</span>
                 </div>
                 <div className="mt-2 flex items-baseline gap-1.5">
-                  <span className="text-2xl sm:text-3xl font-bold text-primary font-headline-md">6</span>
+                  <span className="text-2xl sm:text-3xl font-bold text-primary font-headline-md">{orders.length}</span>
                   <span className="text-xs text-secondary font-bold">dự án</span>
                 </div>
               </div>
               <p className="text-xs text-on-surface-variant mt-3 pt-3 border-t border-outline-variant/30 leading-relaxed">
-                Tổng giá trị sưu tập: <strong className="text-primary font-bold">186.000.000đ</strong>.
+                Tổng giá trị: <strong className="text-primary font-bold">{orders.reduce((sum, o) => sum + (Number(o.total_amount) || 0), 0).toLocaleString("vi-VN")}đ</strong>.
               </p>
             </div>
 
@@ -529,7 +544,7 @@ export default function AccountProfilePage() {
               <span className={`w-1.5 h-1.5 rounded-full ${activeTab === "tab-5" ? "bg-primary" : "bg-transparent"}`} />
               <span>Yêu thích (Wishlist)</span>
               <span className="text-[10px] bg-primary text-on-primary px-1.5 py-0.5 rounded-full font-bold">
-                {wishlistItems.length}
+                {wishlist.length}
               </span>
             </button>
           </div>
@@ -548,155 +563,92 @@ export default function AccountProfilePage() {
                 <span className="text-xs text-outline uppercase tracking-wider">Cập nhật 15 phút trước</span>
               </div>
 
-              {/* ĐƠN HÀNG 1: Đang vận chuyển */}
-              <article className="border border-primary bg-surface-container-lowest p-5 sm:p-6 rounded-2xl sm:rounded-3xl shadow-sm relative">
-                <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-outline-variant/30">
-                  <div>
-                    <span className="text-xs text-outline uppercase tracking-wider block">Mã đơn kiến trúc</span>
-                    <h3 className="text-lg sm:text-xl font-bold text-primary tracking-tight">#KM-2025-089</h3>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="inline-block w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse"></span>
-                    <span className="px-3 py-1 bg-primary text-surface-container-lowest text-xs uppercase tracking-wider font-bold rounded-md">
-                      Đang vận chuyển &amp; lắp đặt
-                    </span>
-                  </div>
+              {orders.length === 0 ? (
+                <div className="border border-outline-variant/60 bg-surface-container-lowest p-8 text-center rounded-2xl sm:rounded-3xl shadow-sm">
+                  <span className="material-symbols-outlined text-4xl text-outline mb-2">inventory_2</span>
+                  <h3 className="text-base font-bold text-primary">Chưa có đơn hàng nào</h3>
+                  <p className="text-xs text-on-surface-variant mt-1 max-w-md mx-auto">
+                    Khi quý khách tiến hành đặt mua sản phẩm trên website, thông tin và lộ trình chế tác thực tế sẽ được cập nhật tại đây.
+                  </p>
+                  <Link
+                    href="/#phong-khach"
+                    className="inline-block mt-4 px-6 py-2.5 bg-primary text-white text-xs uppercase tracking-wider font-bold rounded-xl hover:bg-[#27272a] transition-all"
+                  >
+                    Khám phá sản phẩm
+                  </Link>
                 </div>
+              ) : (
+                orders.map((ord: any) => {
+                  const firstItem = ord.order_items?.[0];
+                  const statusText =
+                    ord.order_status === "completed"
+                      ? "Đã Bàn Giao & Nghiệm Thu"
+                      : ord.order_status === "shipping"
+                      ? "Đang Vận Chuyển & Lắp Đặt"
+                      : ord.order_status === "manufacturing"
+                      ? "Đang Gia Công Tại Xưởng"
+                      : "Đã Tiếp Nhận & Lên Bản Vẽ";
 
-                {/* Product Details Row */}
-                <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 my-5 items-center">
-                  <div className="sm:col-span-4 aspect-[4/3] bg-surface-container border border-outline-variant/40 overflow-hidden rounded-xl relative">
-                    <Image
-                      src="/images/stitch1-img-2.jpg"
-                      alt="Bàn Ăn Gỗ Sồi Mori Extendable"
-                      fill
-                      sizes="300px"
-                      className="object-cover grayscale contrast-125 rounded-xl"
-                    />
-                  </div>
-                  <div className="sm:col-span-8 space-y-2">
-                    <h4 className="text-base sm:text-lg text-primary font-bold">
-                      Bàn Ăn Gỗ Sồi Mori Extendable + 06 Ghế Kigumi Classic
-                    </h4>
-                    <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
-                      Vật liệu: Gỗ sồi trắng Bắc Mỹ (FSC Certified), dầu thực vật Rubio Monocoat nguyên bản. Khớp mộng âm dương không đinh kim loại.
-                    </p>
-                    <div className="text-xs text-on-surface-variant pt-1 font-medium">
-                      Địa điểm: <span className="font-bold text-primary">Villa Thảo Điền, P. Thảo Điền, TP. Thủ Đức</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Logistics Plaque */}
-                <div className="p-4 bg-surface-container-low border border-outline-variant/50 space-y-1.5 rounded-xl">
-                  <div className="flex items-start gap-2.5">
-                    <span className="material-symbols-outlined text-[20px] text-primary mt-0.5">precision_manufacturing</span>
-                    <div>
-                      <p className="text-xs sm:text-sm font-bold text-primary">
-                        Đội ngũ kỹ thuật đang chuyển phách gỗ và phụ kiện đến công trình.
-                      </p>
-                      <p className="text-xs text-on-surface-variant mt-0.5">
-                        Dự kiến có mặt tại hiện trường lúc <strong className="text-primary font-bold">14:00 hôm nay</strong> (Trưởng nhóm lắp đặt: Nguyễn Văn Bình - Bậc thợ 4/4).
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* CTA Actions */}
-                <div className="mt-5 flex flex-wrap gap-3 pt-4 border-t border-outline-variant/30 justify-between items-center">
-                  <div className="text-primary text-xs sm:text-sm">
-                    Tổng giá trị: <span className="text-lg sm:text-xl font-bold">78.500.000đ</span>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setIsTrackingOpen(true)}
-                      className="px-4 py-2.5 border border-primary text-primary text-xs uppercase tracking-wider hover:bg-primary hover:text-white transition-all flex items-center gap-1.5 active:scale-95 rounded-xl font-bold"
-                    >
-                      <span className="material-symbols-outlined text-[16px]">location_on</span>
-                      Theo dõi thợ lắp đặt
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setActiveTab("tab-4")}
-                      className="px-4 py-2.5 border border-outline text-on-surface-variant text-xs uppercase tracking-wider hover:border-primary hover:text-primary transition-colors flex items-center gap-1.5 active:scale-95 rounded-xl font-semibold"
-                    >
-                      <span className="material-symbols-outlined text-[16px]">architecture</span>
-                      Xem bản vẽ lắp ghép
-                    </button>
-                  </div>
-                </div>
-              </article>
-
-              {/* ĐƠN HÀNG 2: Đã bàn giao */}
-              <article className="border border-outline-variant/60 bg-surface-container-lowest p-5 sm:p-6 rounded-2xl sm:rounded-3xl shadow-sm">
-                <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-outline-variant/30">
-                  <div>
-                    <span className="text-xs text-outline uppercase tracking-wider block">Mã đơn kiến trúc</span>
-                    <h3 className="text-lg sm:text-xl font-bold text-primary tracking-tight">#KM-2024-512</h3>
-                  </div>
-                  <span className="px-3 py-1 border border-outline text-on-surface-variant text-xs uppercase tracking-wider font-semibold rounded-md">
-                    Đã Bàn Giao &amp; Ký Biên Bản Cố Định
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 my-5 items-center">
-                  <div className="sm:col-span-4 aspect-[4/3] bg-surface-container border border-outline-variant/40 overflow-hidden rounded-xl relative">
-                    <Image
-                      src="/images/stitch1-img-3.jpg"
-                      alt="Bộ sofa gỗ sồi Mori"
-                      fill
-                      sizes="300px"
-                      className="object-cover grayscale contrast-125 rounded-xl"
-                    />
-                  </div>
-                  <div className="sm:col-span-8 space-y-2">
-                    <h4 className="text-base sm:text-lg text-primary font-bold">
-                      Sofa Gỗ Sồi Mori 3 Chỗ + Bàn Trà Tròn Low Table
-                    </h4>
-                    <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
-                      Bàn giao hoàn tất: 18/11/2024. Đã phủ lớp tinh dầu sáp ong hữu cơ bảo vệ thớ sợi sồi lần 1.
-                    </p>
-                    {/* Chứng thư FSC */}
-                    <div className="flex items-center gap-3 pt-1">
-                      <div className="w-10 h-10 border border-primary flex items-center justify-center bg-surface-container-low rounded-lg flex-shrink-0">
-                        <span className="material-symbols-outlined text-2xl text-primary">qr_code_2</span>
+                  return (
+                    <article key={ord.id} className="border border-primary bg-surface-container-lowest p-5 sm:p-6 rounded-2xl sm:rounded-3xl shadow-sm relative">
+                      <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-outline-variant/30">
+                        <div>
+                          <span className="text-xs text-outline uppercase tracking-wider block">Mã đơn kiến trúc</span>
+                          <h3 className="text-lg sm:text-xl font-bold text-primary tracking-tight">#{ord.order_code}</h3>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="inline-block w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse"></span>
+                          <span className="px-3 py-1 bg-primary text-surface-container-lowest text-xs uppercase tracking-wider font-bold rounded-md">
+                            {statusText}
+                          </span>
+                        </div>
                       </div>
-                      <div>
-                        <span className="text-xs uppercase tracking-wider text-primary font-bold block">
-                          Chứng thư gỗ bền vững FSC-C10928
-                        </span>
-                        <span className="text-[11px] text-outline">
-                          Quét để truy xuất nguồn gốc rừng tự nhiên trồng tại Oregon.
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
 
-                <div className="mt-5 flex flex-wrap gap-3 pt-4 border-t border-outline-variant/30 justify-between items-center">
-                  <div className="text-xs sm:text-sm text-on-surface-variant">
-                    Đã thanh toán: <span className="text-base sm:text-lg font-bold text-primary">107.500.000đ</span>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    <button
-                      type="button"
-                      onClick={() => handleOpenMaintenance("Sofa Gỗ Sồi Mori 3 Chỗ + Bàn Trà Low Table")}
-                      className="px-4 py-2.5 border border-primary text-primary text-xs uppercase tracking-wider hover:bg-primary hover:text-white transition-colors flex items-center gap-1.5 active:scale-95 rounded-xl font-bold"
-                    >
-                      <span className="material-symbols-outlined text-[16px]">spa</span>
-                      Yêu cầu dưỡng sáp ong định kỳ
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => showToast("Đã tải hóa đơn điện tử VAT định dạng PDF (#KM-2024-512) thành công!")}
-                      className="px-4 py-2.5 border border-outline-variant text-on-surface-variant text-xs uppercase tracking-wider hover:border-primary hover:text-primary transition-colors active:scale-95 rounded-xl font-semibold"
-                    >
-                      Xem hóa đơn VAT điện tử
-                    </button>
-                  </div>
-                </div>
-              </article>
+                      <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 my-5 items-center">
+                        <div className="sm:col-span-4 aspect-[4/3] bg-surface-container border border-outline-variant/40 overflow-hidden rounded-xl relative">
+                          <Image
+                            src={firstItem?.product_image || "/images/living-1.jpg"}
+                            alt={firstItem?.product_title || "Sản phẩm Komorebi"}
+                            fill
+                            sizes="300px"
+                            className="object-cover rounded-xl"
+                          />
+                        </div>
+                        <div className="sm:col-span-8 space-y-2">
+                          <h4 className="text-base sm:text-lg text-primary font-bold">
+                            {firstItem?.product_title || "Đơn hàng nội thất Komorebi"}
+                            {ord.order_items?.length > 1 ? ` (+ ${ord.order_items.length - 1} tác phẩm khác)` : ""}
+                          </h4>
+                          <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
+                            {firstItem?.selected_wood ? `Vật liệu: ${firstItem.selected_wood}. ` : ""}
+                            {firstItem?.selected_upholstery ? `Hoàn thiện: ${firstItem.selected_upholstery}. ` : ""}
+                            {ord.order_note || "Chế tác thủ công theo tiêu chuẩn mộng mộc Kigumi."}
+                          </p>
+                          <div className="text-xs text-on-surface-variant pt-1 font-medium">
+                            Địa điểm giao nhận: <span className="font-bold text-primary">{ord.shipping_address}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="mt-5 flex flex-wrap gap-3 pt-4 border-t border-outline-variant/30 justify-between items-center">
+                        <div className="text-primary text-xs sm:text-sm">
+                          Tổng giá trị: <span className="text-lg sm:text-xl font-bold">{Number(ord.total_amount).toLocaleString("vi-VN")} đ</span>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setIsTrackingOpen(true)}
+                            className="px-4 py-2.5 border border-primary text-primary text-xs uppercase tracking-wider hover:bg-primary hover:text-white transition-all flex items-center gap-1.5 active:scale-95 rounded-xl font-bold"
+                          >
+                            <span className="material-symbols-outlined text-[16px]">location_on</span>
+                            Theo dõi tiến độ
+                          </button>
+                        </div>
+                      </div>
+                    </article>
+                  );
+                })
+              )}
             </div>
 
             {/* Cột Phải: Sổ Bảo Hành & Quick Settings (4 Columns) */}
@@ -1289,24 +1241,24 @@ export default function AccountProfilePage() {
                 </p>
               </div>
               <span className="text-xs text-outline uppercase tracking-wider">
-                Đang lưu {wishlistItems.length} tác phẩm
+                Đang lưu {wishlist.length} tác phẩm
               </span>
             </div>
 
-            {wishlistItems.length === 0 ? (
+            {wishlist.length === 0 ? (
               <div className="py-16 text-center space-y-3 bg-surface-container-lowest border border-outline-variant/60 rounded-2xl">
                 <span className="material-symbols-outlined text-4xl text-outline">favorite_border</span>
                 <p className="text-sm text-on-surface-variant">Danh sách yêu thích của bạn đang trống.</p>
                 <Link
                   href="/"
-                  className="inline-block px-6 py-2.5 bg-primary text-white text-xs uppercase tracking-wider font-bold rounded-xl"
+                  className="inline-block px-6 py-2.5 bg-primary text-white text-xs uppercase tracking-wider font-bold rounded-xl hover:bg-[#27272a] transition-all"
                 >
                   Khám phá bộ sưu tập mộc bản
                 </Link>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {wishlistItems.map((item) => (
+                {wishlist.map((item) => (
                   <div
                     key={item.id}
                     className="border border-outline-variant/60 bg-surface-container-lowest p-5 flex flex-col justify-between rounded-2xl shadow-sm"
@@ -1318,23 +1270,20 @@ export default function AccountProfilePage() {
                           alt={item.title}
                           fill
                           sizes="350px"
-                          className="object-cover grayscale hover:scale-105 transition-transform duration-300 rounded-xl"
+                          className="object-cover hover:scale-105 transition-transform duration-300 rounded-xl"
                         />
                         <button
                           type="button"
-                          onClick={() => handleRemoveWishlist(item.id)}
+                          onClick={() => removeFromWishlist(item.id)}
                           className="absolute top-2 right-2 w-8 h-8 bg-surface-container-lowest/90 border border-outline-variant/40 flex items-center justify-center text-primary hover:text-red-600 transition-colors rounded-lg shadow-sm"
                           title="Xóa khỏi yêu thích"
                         >
                           <span className="material-symbols-outlined text-[18px]">close</span>
                         </button>
-                        <span className="absolute bottom-2 left-2 bg-primary text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded">
-                          {item.status}
-                        </span>
                       </div>
-                      <span className="text-[11px] text-outline uppercase tracking-wider">{item.category}</span>
+                      <span className="text-[11px] text-outline uppercase tracking-wider">{item.category || "Mộc bản"}</span>
                       <h4 className="text-base font-bold text-primary mt-1">{item.title}</h4>
-                      <p className="text-xs text-on-surface-variant mt-1 leading-relaxed">{item.desc}</p>
+                      <p className="text-xs text-on-surface-variant mt-1 leading-relaxed">{item.material || item.subtitle || ""}</p>
                       <div className="mt-3 text-lg font-bold text-primary font-headline-md">
                         {item.price.toLocaleString("vi-VN")} đ
                       </div>
@@ -1343,7 +1292,18 @@ export default function AccountProfilePage() {
                     <div className="pt-4 mt-4 border-t border-outline-variant/30 flex gap-2">
                       <button
                         type="button"
-                        onClick={() => handleAddWishlistToCart(item)}
+                        onClick={() => {
+                          addToCart({
+                            id: item.id,
+                            sku: item.sku,
+                            title: item.title,
+                            subtitle: item.subtitle,
+                            price: item.price,
+                            image: item.image,
+                            quantity: 1,
+                          });
+                          showToast("Đã thêm tác phẩm vào giỏ hàng!");
+                        }}
                         className="flex-1 py-2.5 bg-primary text-white text-xs uppercase tracking-wider font-bold hover:bg-[#27272a] transition-colors rounded-xl shadow-sm"
                       >
                         Thêm giỏ hàng
