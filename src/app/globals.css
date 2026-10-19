@@ -1,0 +1,224 @@
+@import "tailwindcss";
+
+@theme {
+  --breakpoint-xs: 30rem;
+  --color-primary: #09090b;
+  --color-on-primary: #ffffff;
+  --color-background: #fafafa;
+  --color-surface: #ffffff;
+  --color-surface-bright: #fafafa;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f4f4f5;
+  --color-surface-container: #f0f0f2;
+  --color-surface-container-high: #e4e4e7;
+  --color-surface-container-highest: #d4d4d8;
+  --color-on-surface: #18181b;
+  --color-on-surface-variant: #71717a;
+  --color-outline: #78767b;
+  --color-outline-variant: #e4e4e7;
+  --color-secondary: #71717a;
+  --color-error: #ba1a1a;
+
+  --font-display: "Space Grotesk", sans-serif;
+  --font-headline: "Space Grotesk", sans-serif;
+  --font-body: "Plus Jakarta Sans", "Hanken Grotesk", sans-serif;
+  --font-space: "Space Grotesk", sans-serif;
+  --font-jakarta: "Plus Jakarta Sans", sans-serif;
+}
+
+:root {
+  --font-space-grotesk: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-hanken: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-jakarta: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+body {
+  background-color: #fafafa;
+  color: #18181b;
+  font-family: var(--font-jakarta), var(--font-hanken), sans-serif;
+  overflow-x: hidden;
+  width: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+img {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* Material Symbols Outlined Icon styling */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined' !important;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+  vertical-align: middle;
+}
+
+/* Custom Scrollbar for Luxury Monochromatic Aesthetic */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f9f9f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #c8c5ca;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #78767b;
+}
+
+/* Design System Spacing Utilities & Desktop Optimization */
+.px-margin {
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+@media (min-width: 768px) {
+  .px-margin {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+@media (min-width: 1024px) {
+  .px-margin {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+}
+@media (min-width: 1280px) {
+  .px-margin {
+    padding-left: 4rem;
+    padding-right: 4rem;
+  }
+}
+@media (min-width: 1536px) {
+  .px-margin {
+    padding-left: 5rem;
+    padding-right: 5rem;
+  }
+}
+
+/* Expansive Desktop Container Scaling (Laptop, 1080p, 2K & 4K displays) */
+@media (min-width: 1280px) {
+  .max-w-7xl {
+    max-width: 1380px !important;
+  }
+}
+@media (min-width: 1440px) {
+  .max-w-7xl {
+    max-width: 1440px !important;
+  }
+}
+@media (min-width: 1536px) {
+  .max-w-7xl {
+    max-width: 1560px !important;
+  }
+}
+@media (min-width: 1920px) {
+  .max-w-7xl {
+    max-width: 1720px !important;
+  }
+}
+
+.px-space-md { padding-left: 1rem; padding-right: 1rem; }
+.px-space-lg { padding-left: 1.5rem; padding-right: 1.5rem; }
+.py-space-sm { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+.py-space-md { padding-top: 1rem; padding-bottom: 1rem; }
+.py-space-lg { padding-top: 2rem; padding-bottom: 2rem; }
+.py-space-xl { padding-top: 3.5rem; padding-bottom: 3.5rem; }
+.py-space-2xl { padding-top: 5rem; padding-bottom: 5rem; }
+
+@media (min-width: 1280px) {
+  .py-space-xl { padding-top: 4.5rem; padding-bottom: 4.5rem; }
+  .py-space-2xl { padding-top: 6.5rem; padding-bottom: 6.5rem; }
+}
+
+.gap-space-xs { gap: 0.25rem; }
+.gap-space-sm { gap: 0.5rem; }
+.gap-space-md { gap: 1rem; }
+.gap-space-lg { gap: 1.5rem; }
+.gap-space-xl { gap: 2.5rem; }
+
+/* Font Family Overrides */
+.font-space, .font-headline-lg, .font-headline-md, .font-headline-sm, .font-display-lg, .font-label-lg, .font-label-md, .font-label-sm {
+  font-family: var(--font-space-grotesk);
+}
+.font-body-lg, .font-body-md, .font-body-sm {
+  font-family: var(--font-jakarta), var(--font-hanken), sans-serif;
+}
+
+/* Desktop Interaction Enhancements */
+@media (hover: hover) and (pointer: fine) {
+  a, button, select, input[type="checkbox"], input[type="radio"], [role="button"] {
+    cursor: pointer;
+  }
+}
+
+/* Hide scrollbar for clean mobile horizontal swipe */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Off-canvas Drawer & Modal Animations */
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-slide-in-right {
+  animation: slideInFromRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-slide-in-left {
+  animation: slideInFromLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+
