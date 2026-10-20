@@ -483,13 +483,17 @@ export default function HomePage() {
                     {/* Heart button */}
                     <button
                       type="button"
-                      onClick={() => toggleWishlist(product.id)}
-                      className={`absolute top-3 right-3 w-8 h-8 rounded-full bg-white/95 backdrop-blur-sm flex items-center justify-center border border-outline-variant/60 transition-colors ${
-                        wishlisted ? "text-error" : "text-on-surface-variant hover:text-primary"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        toggleWishlist(product.id);
+                      }}
+                      className={`absolute top-3 right-3 z-10 w-9 h-9 sm:w-8 sm:h-8 rounded-full bg-white/95 backdrop-blur-sm flex items-center justify-center border border-outline-variant/60 transition-all cursor-pointer active:scale-90 shadow-sm ${
+                        wishlisted ? "text-red-500" : "text-on-surface-variant hover:text-primary"
                       }`}
                       aria-label="Wishlist"
                     >
-                      <span className="material-symbols-outlined text-[18px]">
+                      <span className="material-symbols-outlined text-[18px] pointer-events-none">
                         {wishlisted ? "favorite" : "favorite_border"}
                       </span>
                     </button>

@@ -199,16 +199,20 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
             {/* Wishlist */}
             <button
               type="button"
-              onClick={openWishlist}
+              id="btn-header-wishlist"
+              onClick={(e) => {
+                e.preventDefault();
+                openWishlist();
+              }}
               aria-label={lang === "VN" ? "Danh sách yêu thích" : "Wishlist"}
-              className="p-2 text-on-surface hover:text-primary transition-colors relative active:scale-95 group rounded-full hover:bg-surface-container-low"
+              className="min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center p-2 text-on-surface hover:text-primary transition-colors relative active:scale-95 group rounded-full hover:bg-surface-container-low cursor-pointer"
               title={lang === "VN" ? "Danh sách tác phẩm yêu thích" : "Curated wishlist"}
             >
-              <span className="material-symbols-outlined text-[20px] sm:text-[22px] group-hover:scale-110 transition-transform">
+              <span className="material-symbols-outlined text-[20px] sm:text-[22px] group-hover:scale-110 transition-transform pointer-events-none">
                 favorite
               </span>
               {wishlistCount > 0 && (
-                <span className="absolute top-0.5 right-0.5 sm:top-1 sm:right-1 w-4 h-4 bg-primary text-on-primary text-[10px] font-bold rounded-full flex items-center justify-center">
+                <span className="absolute top-0.5 right-0.5 sm:top-1 sm:right-1 w-4 h-4 bg-primary text-on-primary text-[10px] font-bold rounded-full flex items-center justify-center pointer-events-none">
                   {wishlistCount}
                 </span>
               )}
@@ -217,21 +221,20 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
             {/* Cart link */}
             <Link
               href="/gio-hang"
+              id="btn-header-cart"
               aria-label={lang === "VN" ? "Giỏ hàng" : "Shopping cart"}
-              className={`p-2 flex items-center gap-1.5 transition-colors relative active:scale-95 rounded-xl ${
+              className={`min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center p-2 transition-colors relative active:scale-95 group rounded-full hover:bg-surface-container-low cursor-pointer ${
                 pathname === "/gio-hang"
                   ? "text-primary font-bold bg-surface-container-low"
-                  : "text-on-surface hover:text-primary hover:bg-surface-container-low"
+                  : "text-on-surface hover:text-primary"
               }`}
+              title={lang === "VN" ? `Giỏ hàng (${itemCount})` : `Shopping cart (${itemCount})`}
             >
-              <span className="material-symbols-outlined text-[20px] sm:text-[22px]">
+              <span className="material-symbols-outlined text-[20px] sm:text-[22px] group-hover:scale-110 transition-transform pointer-events-none">
                 shopping_bag
               </span>
-              <span className="text-label-md font-label-md hidden xl:inline font-semibold">
-                {lang === "VN" ? "Giỏ hàng" : "Cart"} ({itemCount})
-              </span>
               {itemCount > 0 && (
-                <span className="xl:hidden absolute top-0.5 right-0.5 sm:top-1 sm:right-1 w-4 h-4 bg-primary text-on-primary text-[10px] font-bold rounded-full flex items-center justify-center">
+                <span className="absolute top-0.5 right-0.5 sm:top-1 sm:right-1 w-4 h-4 bg-primary text-on-primary text-[10px] font-bold rounded-full flex items-center justify-center pointer-events-none">
                   {itemCount}
                 </span>
               )}
@@ -406,6 +409,100 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
                       );
                     })}
                   </nav>
+                </div>
+
+                {/* Member & Wishlist Quick Actions on Mobile */}
+                <div className="mt-4 pt-3 border-t border-outline-variant/50">
+                  <span className="text-[10px] uppercase font-mono tracking-widest text-outline block mb-2 font-semibold">
+                    {lang === "VN" ? "Dịch Vụ & Bộ Sưu Tập" : "Services & Curations"}
+                  </span>
+                  <div className="grid grid-cols-2 gap-2">
+                    {/* Mục Yêu Thích Button */}
+                    <button
+                      type="button"
+                      id="btn-sidebar-wishlist"
+                      onClick={() => {
+                        setSidebarOpen(false);
+                        openWishlist();
+                      }}
+                      className="p-3 bg-surface-container-low hover:bg-surface-container border border-outline-variant/60 rounded-xl flex items-center justify-between text-left transition-all active:scale-95 group cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="material-symbols-outlined text-[20px] text-primary group-hover:scale-110 transition-transform">
+                          favorite
+                        </span>
+                        <div>
+                          <span className="text-xs font-bold text-primary block leading-tight">
+                            {lang === "VN" ? "Yêu Thích" : "Wishlist"}
+                          </span>
+                          <span className="text-[10px] text-outline">
+                            {wishlistCount} {lang === "VN" ? "tác phẩm" : "pieces"}
+                          </span>
+                        </div>
+                      </div>
+                      <span className="text-[10px] font-bold px-1.5 py-0.5 bg-primary text-white rounded-full">
+                        {wishlistCount}
+                      </span>
+                    </button>
+
+                    {/* Giỏ Hàng Link */}
+                    <Link
+                      href="/gio-hang"
+                      onClick={() => setSidebarOpen(false)}
+                      className="p-3 bg-surface-container-low hover:bg-surface-container border border-outline-variant/60 rounded-xl flex items-center justify-between text-left transition-all active:scale-95 group"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="material-symbols-outlined text-[20px] text-primary group-hover:scale-110 transition-transform">
+                          shopping_bag
+                        </span>
+                        <div>
+                          <span className="text-xs font-bold text-primary block leading-tight">
+                            {lang === "VN" ? "Giỏ Hàng" : "Cart"}
+                          </span>
+                          <span className="text-[10px] text-outline">
+                            {itemCount} {lang === "VN" ? "món" : "items"}
+                          </span>
+                        </div>
+                      </div>
+                      <span className="text-[10px] font-bold px-1.5 py-0.5 bg-primary text-white rounded-full">
+                        {itemCount}
+                      </span>
+                    </Link>
+                  </div>
+
+                  {/* Tài khoản / Đăng nhập Link */}
+                  <Link
+                    href={user ? "/tai-khoan" : "/dang-nhap"}
+                    onClick={() => setSidebarOpen(false)}
+                    className="mt-2 p-3 bg-surface-container-low hover:bg-surface-container border border-outline-variant/60 rounded-xl flex items-center justify-between transition-all active:scale-95 group"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      {user?.user_metadata?.avatar_url ? (
+                        <img
+                          src={user.user_metadata.avatar_url}
+                          alt="Avatar"
+                          className="w-6 h-6 rounded-full object-cover border border-outline-variant"
+                        />
+                      ) : (
+                        <span className="material-symbols-outlined text-[20px] text-primary">
+                          {user ? "account_circle" : "person"}
+                        </span>
+                      )}
+                      <div>
+                        <span className="text-xs font-bold text-primary block leading-tight">
+                          {user
+                            ? (user.user_metadata?.full_name || user.email)
+                            : (lang === "VN" ? "Đăng Nhập Thành Viên" : "Member Sign In")}
+                        </span>
+                        <span className="text-[10px] text-outline">
+                          {user ? "Komorebi Circle Member" : (lang === "VN" ? "Tích điểm & Ưu đãi mộc bản" : "Perks & Privileges")}
+                        </span>
+                      </div>
+                    </div>
+                    <span className="material-symbols-outlined text-sm text-outline group-hover:text-primary group-hover:translate-x-0.5 transition-all">
+                      arrow_forward
+                    </span>
+                  </Link>
                 </div>
               </div>
 

@@ -701,7 +701,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       {children}
       {/* Global Toast Notification */}
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-primary text-on-primary px-5 py-3.5 shadow-2xl border border-outline-variant/30 animate-in fade-in slide-in-from-bottom-3 duration-200">
+        <div className="fixed bottom-6 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-md z-[9999] flex items-center gap-3 bg-primary text-on-primary px-5 py-3.5 shadow-2xl rounded-2xl border border-outline-variant/30 animate-in fade-in slide-in-from-bottom-3 duration-200 pointer-events-none">
           <span className="material-symbols-outlined text-base">check_circle</span>
           <span className="text-body-sm font-medium tracking-wide">{toast}</span>
         </div>

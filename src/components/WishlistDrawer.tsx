@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import SafeImage from "@/components/SafeImage";
@@ -9,6 +10,7 @@ import { useLanguage } from "@/context/LanguageContext";
 
 export default function WishlistDrawer() {
   const { t } = useLanguage();
+  const [mounted, setMounted] = useState(false);
   const {
     wishlist,
     isWishlistOpen,
@@ -18,6 +20,10 @@ export default function WishlistDrawer() {
     addToCart,
     moveAllWishlistToCart,
   } = useCart();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Close drawer on Escape key
   useEffect(() => {
@@ -42,10 +48,10 @@ export default function WishlistDrawer() {
     };
   }, [isWishlistOpen]);
 
-  if (!isWishlistOpen) return null;
+  if (!mounted || !isWishlistOpen) return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex justify-end animate-in fade-in duration-200">
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex justify-end animate-fade-in">
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
@@ -55,7 +61,7 @@ export default function WishlistDrawer() {
 
       {/* Drawer Container */}
       <aside
-        className="relative z-10 w-full max-w-md sm:max-w-lg bg-surface-container-lowest h-full shadow-2xl border-l border-outline-variant rounded-l-3xl flex flex-col overflow-hidden animate-in slide-in-from-right duration-300"
+        className="relative z-10 w-full max-w-md sm:max-w-lg bg-surface-container-lowest h-screen sm:h-[100dvh] shadow-2xl border-l border-outline-variant flex flex-col justify-between overflow-hidden animate-slide-in-right"
         role="dialog"
         aria-modal="true"
         aria-label="Danh sách tác phẩm yêu thích"
@@ -260,6 +266,7 @@ export default function WishlistDrawer() {
           </div>
         )}
       </aside>
-    </div>
+    </div>,
+    document.body
   );
 }

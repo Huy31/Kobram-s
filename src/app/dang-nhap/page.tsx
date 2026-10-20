@@ -323,11 +323,26 @@ export default function LoginPage() {
       return;
     }
 
-    // Ghi nhớ role được chọn trước khi chuyển hướng OAuth
-    if (typeof window !== "undefined") {
-      localStorage.setItem("komorebi_current_role", role);
-      localStorage.setItem("komorebi_login_role", role);
+    // Ghi nhớ role được chọn trước khi chuyển hướng OAuth (an toàn tuyệt đối cho Safari Private Browsing)
+    try {
+      if (typeof window !== "undefined") {
+        localStorage.setItem("komorebi_current_role", role);
+        localStorage.setItem("komorebi_login_role", role);
+      }
+    } catch (storageErr) {
+      console.warn("Storage restricted or private mode:", storageErr);
     }
+
+    const origin = typeof window !== "undefined" ? window.location.origin : "";
+    const redirectUrl = `${origin}/auth/callback?next=/tai-khoan`;
+    const supabaseUrl =
+      process.env.NEXT_PUBLIC_SUPABASE_URL ||
+      "https://royxrfnawhapkhttbyca.supabase.co";
+
+    // Direct OAuth URL fallback nếu thư viện JS hoặc trình duyệt mobile chặn popup/async navigation
+    const directFallbackUrl = `${supabaseUrl}/auth/v1/authorize?provider=${provider.toLowerCase()}&redirect_to=${encodeURIComponent(
+      redirectUrl
+    )}`;
 
     if (provider === "Google") {
       try {
@@ -337,7 +352,7 @@ export default function LoginPage() {
         const { data, error } = await supabase.auth.signInWithOAuth({
           provider: "google",
           options: {
-            redirectTo: `${window.location.origin}/auth/callback?next=/tai-khoan`,
+            redirectTo: redirectUrl,
             queryParams: {
               access_type: "offline",
               prompt: "consent",
@@ -346,23 +361,24 @@ export default function LoginPage() {
         });
 
         if (error) {
-          showToast(`Google error: ${error.message}`);
-          setIsGoogleLoading(false);
+          console.warn("Google signInWithOAuth error, using direct URL:", error.message);
+          window.location.href = directFallbackUrl;
           return;
         }
 
         if (data?.url) {
-          window.location.assign(data.url);
           window.location.href = data.url;
+          return;
         }
 
-        // Safety fallback: reset loading after 6s in case redirect is delayed or cancelled
+        window.location.href = directFallbackUrl;
+      } catch (err: any) {
+        console.warn("Google OAuth catch error, redirecting directly:", err);
+        window.location.href = directFallbackUrl;
+      } finally {
         setTimeout(() => {
           setIsGoogleLoading(false);
-        }, 6000);
-      } catch (err: any) {
-        showToast(`Google error: ${err?.message || "Lỗi không xác định"}`);
-        setIsGoogleLoading(false);
+        }, 5000);
       }
       return;
     }
@@ -375,28 +391,29 @@ export default function LoginPage() {
         const { data, error } = await supabase.auth.signInWithOAuth({
           provider: "facebook",
           options: {
-            redirectTo: `${window.location.origin}/auth/callback?next=/tai-khoan`,
+            redirectTo: redirectUrl,
           },
         });
 
         if (error) {
-          showToast(`Facebook error: ${error.message}`);
-          setIsFacebookLoading(false);
+          console.warn("Facebook signInWithOAuth error, using direct URL:", error.message);
+          window.location.href = directFallbackUrl;
           return;
         }
 
         if (data?.url) {
-          window.location.assign(data.url);
           window.location.href = data.url;
+          return;
         }
 
-        // Safety fallback: reset loading after 6s in case redirect is delayed or cancelled
+        window.location.href = directFallbackUrl;
+      } catch (err: any) {
+        console.warn("Facebook OAuth catch error, redirecting directly:", err);
+        window.location.href = directFallbackUrl;
+      } finally {
         setTimeout(() => {
           setIsFacebookLoading(false);
-        }, 6000);
-      } catch (err: any) {
-        showToast(`Facebook error: ${err?.message || "Lỗi không xác định"}`);
-        setIsFacebookLoading(false);
+        }, 5000);
       }
       return;
     }
@@ -593,7 +610,7 @@ export default function LoginPage() {
         </section>
 
         {/* RIGHT PANEL: High-End Interactive Authentication Card (5 Cols Desktop) */}
-        <section className="lg:col-span-5 bg-white flex flex-col justify-between p-4 sm:p-8 lg:p-12 overflow-y-visible lg:overflow-y-auto">
+        <section className="lg:col-span-5 bg-white flex flex-col justify-between p-4 sm:p-8 lg:p-12 overflow-y-visible lg:overflow-y-auto relative z-10">
           <div className="w-full max-w-md mx-auto my-0 lg:my-auto space-y-4 sm:space-y-5">
             {/* Role Persona Selector (Personal vs Architect/Partner) */}
             <div className="w-full border border-[#E4E4E7] p-1 bg-[#F4F4F5] flex items-center gap-1 rounded-xl">
@@ -687,18 +704,23 @@ export default function LoginPage() {
                 {/* Google */}
                 <button
                   type="button"
+                  id="btn-sso-google"
                   disabled={isGoogleLoading}
-                  onClick={() => handleSSO("Google")}
-                  className={`flex items-center justify-center gap-1.5 min-h-[44px] py-2 sm:py-2.5 px-1.5 sm:px-3 border border-[#E4E4E7] hover:border-[#4285F4] bg-white hover:bg-[#F4F4F5] transition-all group rounded-xl touch-manipulation cursor-pointer select-none active:scale-95 ${
-                    isGoogleLoading ? "opacity-60 cursor-wait" : ""
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleSSO("Google");
+                  }}
+                  className={`flex items-center justify-center gap-1.5 min-h-[46px] py-2.5 px-1.5 sm:px-3 border border-[#E4E4E7] hover:border-[#4285F4] bg-white hover:bg-[#F4F4F5] transition-all group rounded-xl cursor-pointer select-none active:scale-95 ${
+                    isGoogleLoading ? "opacity-70 cursor-wait" : ""
                   }`}
                   title={curr.googleTitle}
+                  aria-label="Đăng nhập bằng Google"
                 >
                   {isGoogleLoading ? (
-                    <span className="w-4 h-4 border-2 border-[#4285F4] border-t-transparent rounded-full animate-spin pointer-events-none"></span>
+                    <span className="w-4 h-4 border-2 border-[#4285F4] border-t-transparent rounded-full animate-spin"></span>
                   ) : (
                     <svg
-                      className="w-4 h-4 flex-shrink-0 group-hover:scale-110 transition-transform pointer-events-none"
+                      className="w-4 h-4 flex-shrink-0 group-hover:scale-110 transition-transform"
                       viewBox="0 0 24 24"
                     >
                       <path
@@ -719,50 +741,68 @@ export default function LoginPage() {
                       />
                     </svg>
                   )}
-                  <span className="text-[11px] sm:text-xs uppercase font-semibold text-[#4285F4] pointer-events-none">
-                    {isGoogleLoading ? (lang === "VN" ? "Đang kết nối..." : "Connecting...") : "Google"}
+                  <span className="text-[11px] sm:text-xs uppercase font-semibold text-[#4285F4]">
+                    {isGoogleLoading
+                      ? lang === "VN"
+                        ? "Đang kết nối..."
+                        : "Connecting..."
+                      : "Google"}
                   </span>
                 </button>
 
                 {/* Facebook */}
                 <button
                   type="button"
+                  id="btn-sso-facebook"
                   disabled={isFacebookLoading}
-                  onClick={() => handleSSO("Facebook")}
-                  className={`flex items-center justify-center gap-1.5 min-h-[44px] py-2 sm:py-2.5 px-1.5 sm:px-3 border border-[#E4E4E7] hover:border-[#1877F2] bg-white hover:bg-[#F4F4F5] transition-all group rounded-xl touch-manipulation cursor-pointer select-none active:scale-95 ${
-                    isFacebookLoading ? "opacity-60 cursor-wait" : ""
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleSSO("Facebook");
+                  }}
+                  className={`flex items-center justify-center gap-1.5 min-h-[46px] py-2.5 px-1.5 sm:px-3 border border-[#E4E4E7] hover:border-[#1877F2] bg-white hover:bg-[#F4F4F5] transition-all group rounded-xl cursor-pointer select-none active:scale-95 ${
+                    isFacebookLoading ? "opacity-70 cursor-wait" : ""
                   }`}
                   title={curr.facebookTitle}
+                  aria-label="Đăng nhập bằng Facebook"
                 >
                   {isFacebookLoading ? (
-                    <span className="w-4 h-4 border-2 border-[#1877F2] border-t-transparent rounded-full animate-spin pointer-events-none"></span>
+                    <span className="w-4 h-4 border-2 border-[#1877F2] border-t-transparent rounded-full animate-spin"></span>
                   ) : (
                     <svg
-                      className="w-4 h-4 fill-[#1877F2] group-hover:scale-110 transition-transform flex-shrink-0 pointer-events-none"
+                      className="w-4 h-4 fill-[#1877F2] group-hover:scale-110 transition-transform flex-shrink-0"
                       viewBox="0 0 24 24"
                     >
                       <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                     </svg>
                   )}
-                  <span className="text-[11px] sm:text-xs uppercase font-semibold text-[#1877F2] pointer-events-none">
-                    {isFacebookLoading ? (lang === "VN" ? "Đang kết nối..." : "Connecting...") : "Facebook"}
+                  <span className="text-[11px] sm:text-xs uppercase font-semibold text-[#1877F2]">
+                    {isFacebookLoading
+                      ? lang === "VN"
+                        ? "Đang kết nối..."
+                        : "Connecting..."
+                      : "Facebook"}
                   </span>
                 </button>
 
                 {/* ArchID (Tạm khóa) */}
                 <button
                   type="button"
-                  onClick={() => handleSSO("ArchID", true)}
-                  className="flex items-center justify-center gap-1 min-h-[44px] py-2 sm:py-2.5 px-1 sm:px-2.5 border border-dashed border-[#D4D4D8] bg-[#F4F4F5]/90 opacity-60 cursor-not-allowed hover:bg-[#EAEAEA] transition-all rounded-xl relative touch-manipulation select-none"
+                  id="btn-sso-archid"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleSSO("ArchID", true);
+                  }}
+                  className="flex items-center justify-center gap-1 min-h-[46px] py-2.5 px-1 sm:px-2.5 border border-dashed border-[#D4D4D8] bg-[#F4F4F5]/90 opacity-60 cursor-not-allowed hover:bg-[#EAEAEA] transition-all rounded-xl relative select-none"
                   title={curr.archIdTitle}
+                  aria-label="Cổng ArchID (Đang bảo trì)"
                 >
-                  <span className="material-symbols-outlined text-[15px] sm:text-[17px] text-[#71717A] pointer-events-none">
+                  <span className="material-symbols-outlined text-[15px] sm:text-[17px] text-[#71717A]">
                     architecture
                   </span>
-                  <span className="text-[11px] sm:text-xs uppercase font-semibold text-[#71717A] pointer-events-none">
+                  <span className="text-[11px] sm:text-xs uppercase font-semibold text-[#71717A]">
                     ArchID
                   </span>
-                  <span className="material-symbols-outlined text-[12px] text-[#A1A1AA] ml-0.5 pointer-events-none">
+                  <span className="material-symbols-outlined text-[12px] text-[#A1A1AA] ml-0.5">
                     lock
                   </span>
                 </button>
