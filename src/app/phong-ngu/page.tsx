@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ConsultationModal from "@/components/ConsultationModal";
 import SafeImage from "@/components/SafeImage";
+import HeartButton from "@/components/HeartButton";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { getProductsByCategory } from "@/services/productService";
@@ -312,22 +313,17 @@ export default function BedroomPage() {
                         {displayTag}
                       </span>
 
-                      <button
-                        type="button"
+                      <HeartButton
+                        isLiked={wishlisted}
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
                           toggleWishlist(p.id);
                         }}
-                        className={`absolute top-3 right-3 z-10 p-2 bg-white/90 backdrop-blur-sm rounded-full transition-all cursor-pointer active:scale-90 shadow-sm ${
-                          wishlisted ? "text-red-500" : "text-outline hover:text-primary"
-                        }`}
-                        aria-label="Yêu thích"
-                      >
-                        <span className="material-symbols-outlined text-[18px] pointer-events-none">
-                          {wishlisted ? "favorite" : "favorite_border"}
-                        </span>
-                      </button>
+                        className="absolute top-3 right-3 z-20"
+                        size="sm"
+                        ariaLabel={`Yêu thích ${p.title}`}
+                      />
                     </div>
 
                     <div className="p-space-md space-y-2">
