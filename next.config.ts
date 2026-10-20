@@ -18,7 +18,14 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  allowedDevOrigins: ["192.168.1.15", "localhost:3000", "127.0.0.1:3000"],
+  allowedDevOrigins: [
+    "localhost:3000",
+    "127.0.0.1:3000",
+    "192.168.1.14",
+    "192.168.1.14:3000",
+    "192.168.1.15",
+    "192.168.1.15:3000",
+  ],
   turbopack: {
     rules: {
       "*.css": {
