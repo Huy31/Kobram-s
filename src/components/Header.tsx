@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { createClient } from "@/utils/supabase/client";
+import { ExpandingSearchDock } from "@/components/ui/expanding-search-dock-shadcnui";
 
 interface HeaderProps {
   onOpenConsultation?: () => void;
@@ -17,7 +18,6 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
   const { itemCount, wishlistCount, openWishlist } = useCart();
   const { lang, setLang } = useLanguage();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const [mounted, setMounted] = useState(false);
   const [user, setUser] = useState<any>(null);
 
@@ -148,17 +148,11 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
             <span>Komorebi Living</span>
           </Link>
 
-          {/* Quick search on desktop */}
-          <div className="hidden lg:flex items-center relative">
-            <span className="material-symbols-outlined absolute left-3.5 text-outline text-lg pointer-events-none">
-              search
-            </span>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={lang === "VN" ? "Tìm sản phẩm, chất liệu..." : "Search products, timber..."}
-              className="pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-full text-body-sm font-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:border-primary w-44 xl:w-60 transition-all focus:bg-white focus:w-56 xl:focus:w-72"
+          {/* Nút tìm kiếm nằm ngay bên phải Komorebi Living */}
+          <div className="flex items-center ml-1 sm:ml-2">
+            <ExpandingSearchDock
+              align="left"
+              placeholder={lang === "VN" ? "Tìm kiếm sản phẩm, chất liệu gỗ..." : "Search products, timber..."}
             />
           </div>
         </div>
@@ -205,16 +199,20 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
             {/* Wishlist */}
             <button
               type="button"
-              onClick={openWishlist}
+              id="btn-header-wishlist"
+              onClick={(e) => {
+                e.preventDefault();
+                openWishlist();
+              }}
               aria-label={lang === "VN" ? "Danh sách yêu thích" : "Wishlist"}
-              className="p-2 text-on-surface hover:text-primary transition-colors relative active:scale-95 group rounded-full hover:bg-surface-container-low"
+              className="min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center p-2 text-on-surface hover:text-primary transition-colors relative active:scale-95 group rounded-full hover:bg-surface-container-low cursor-pointer"
               title={lang === "VN" ? "Danh sách tác phẩm yêu thích" : "Curated wishlist"}
             >
-              <span className="material-symbols-outlined text-[20px] sm:text-[22px] group-hover:scale-110 transition-transform">
+              <span className="material-symbols-outlined text-[20px] sm:text-[22px] group-hover:scale-110 transition-transform pointer-events-none">
                 favorite
               </span>
               {wishlistCount > 0 && (
-                <span className="absolute top-0.5 right-0.5 sm:top-1 sm:right-1 w-4 h-4 bg-primary text-on-primary text-[10px] font-bold rounded-full flex items-center justify-center">
+                <span className="absolute top-0.5 right-0.5 sm:top-1 sm:right-1 w-4 h-4 bg-primary text-on-primary text-[10px] font-bold rounded-full flex items-center justify-center pointer-events-none">
                   {wishlistCount}
                 </span>
               )}
@@ -223,21 +221,20 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
             {/* Cart link */}
             <Link
               href="/gio-hang"
+              id="btn-header-cart"
               aria-label={lang === "VN" ? "Giỏ hàng" : "Shopping cart"}
-              className={`p-2 flex items-center gap-1.5 transition-colors relative active:scale-95 rounded-xl ${
+              className={`min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center p-2 transition-colors relative active:scale-95 group rounded-full hover:bg-surface-container-low cursor-pointer ${
                 pathname === "/gio-hang"
                   ? "text-primary font-bold bg-surface-container-low"
-                  : "text-on-surface hover:text-primary hover:bg-surface-container-low"
+                  : "text-on-surface hover:text-primary"
               }`}
+              title={lang === "VN" ? `Giỏ hàng (${itemCount})` : `Shopping cart (${itemCount})`}
             >
-              <span className="material-symbols-outlined text-[20px] sm:text-[22px]">
+              <span className="material-symbols-outlined text-[20px] sm:text-[22px] group-hover:scale-110 transition-transform pointer-events-none">
                 shopping_bag
               </span>
-              <span className="text-label-md font-label-md hidden xl:inline font-semibold">
-                {lang === "VN" ? "Giỏ hàng" : "Cart"} ({itemCount})
-              </span>
               {itemCount > 0 && (
-                <span className="xl:hidden absolute top-0.5 right-0.5 sm:top-1 sm:right-1 w-4 h-4 bg-primary text-on-primary text-[10px] font-bold rounded-full flex items-center justify-center">
+                <span className="absolute top-0.5 right-0.5 sm:top-1 sm:right-1 w-4 h-4 bg-primary text-on-primary text-[10px] font-bold rounded-full flex items-center justify-center pointer-events-none">
                   {itemCount}
                 </span>
               )}
@@ -349,31 +346,13 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
               </div>
 
               {/* Scrollable Content */}
-              <div className="flex-1 overflow-y-auto px-5 sm:px-6 py-5 space-y-6">
-                {/* Search Inside Sidebar */}
-                <div className="relative">
-                  <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-lg pointer-events-none">
-                    search
-                  </span>
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder={
-                      lang === "VN"
-                        ? "Tìm bàn ghế, sofa, giường ngủ..."
-                        : "Search tables, sofas, zen beds..."
-                    }
-                    className="w-full pl-10 pr-4 py-2.5 bg-surface-container-low border border-outline-variant rounded-xl text-body-sm text-primary placeholder:text-outline focus:outline-none focus:border-primary focus:bg-white transition-colors"
-                  />
-                </div>
-
+              <div className="flex-1 overflow-y-auto px-5 sm:px-6 py-5 flex flex-col">
                 {/* Core Navigation Items */}
-                <div>
-                  <span className="text-[10px] uppercase font-mono tracking-widest text-outline block mb-3 font-semibold">
+                <div className="flex-1 flex flex-col">
+                  <span className="text-[10px] uppercase font-mono tracking-widest text-outline block mb-2 sm:mb-3 font-semibold">
                     {lang === "VN" ? "Danh Mục Không Gian" : "Space Categories"}
                   </span>
-                  <nav className="space-y-1.5">
+                  <nav className="flex-1 flex flex-col justify-between gap-2 sm:gap-3 py-1">
                     {navLinks.map((link) => {
                       const isActive = pathname === link.href;
                       return (
@@ -381,28 +360,30 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
                           key={link.label}
                           href={link.href}
                           onClick={() => setSidebarOpen(false)}
-                          className={`group px-3.5 py-3 rounded-2xl flex items-center justify-between transition-all ${
+                          className={`group px-4 py-3.5 sm:py-4.5 rounded-2xl flex items-center justify-between transition-all flex-1 min-h-[58px] sm:min-h-[66px] border ${
                             isActive
-                              ? "bg-primary text-on-primary shadow-sm"
-                              : "hover:bg-surface-container-low text-on-surface hover:text-primary"
+                              ? "bg-primary text-on-primary border-primary shadow-sm"
+                              : "border-transparent bg-surface-container-low/60 hover:bg-surface-container-low text-on-surface hover:text-primary hover:border-outline-variant/60"
                           }`}
                         >
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-3.5">
                             <span
-                              className={`material-symbols-outlined text-[20px] ${
+                              className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center transition-colors ${
                                 isActive
-                                  ? "text-on-primary"
-                                  : "text-outline group-hover:text-primary"
+                                  ? "bg-white/15 text-on-primary"
+                                  : "bg-surface-container text-outline group-hover:text-primary group-hover:bg-white shadow-2xs"
                               }`}
                             >
-                              {link.icon}
+                              <span className="material-symbols-outlined text-[22px] sm:text-[24px]">
+                                {link.icon}
+                              </span>
                             </span>
                             <div>
                               <span className="font-headline-sm font-bold text-sm sm:text-base block">
                                 {link.label}
                               </span>
                               <span
-                                className={`text-[11px] block mt-0.5 line-clamp-1 ${
+                                className={`text-[11px] sm:text-xs block mt-0.5 line-clamp-1 ${
                                   isActive
                                     ? "text-white/80"
                                     : "text-on-surface-variant"
@@ -414,13 +395,15 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
                           </div>
 
                           <span
-                            className={`material-symbols-outlined text-sm transition-transform duration-200 ${
+                            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
                               isActive
-                                ? "text-on-primary"
+                                ? "bg-white/20 text-on-primary"
                                 : "text-outline group-hover:text-primary group-hover:translate-x-1"
                             }`}
                           >
-                            arrow_forward
+                            <span className="material-symbols-outlined text-sm">
+                              arrow_forward
+                            </span>
                           </span>
                         </Link>
                       );
@@ -428,109 +411,98 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
                   </nav>
                 </div>
 
-                {/* Special Features & Services */}
-                <div className="pt-3 border-t border-outline-variant/40">
-                  <span className="text-[10px] uppercase font-mono tracking-widest text-outline block mb-3 font-semibold">
-                    {lang === "VN" ? "Tuyển Chọn & Dịch Vụ" : "Curated & Services"}
+                {/* Member & Wishlist Quick Actions on Mobile */}
+                <div className="mt-4 pt-3 border-t border-outline-variant/50">
+                  <span className="text-[10px] uppercase font-mono tracking-widest text-outline block mb-2 font-semibold">
+                    {lang === "VN" ? "Dịch Vụ & Bộ Sưu Tập" : "Services & Curations"}
                   </span>
-                  <div className="space-y-1 text-body-sm">
-                    {/* Ghế Kura Featured Link */}
-                    <Link
-                      href="/san-pham/kura-lounge-chair"
-                      onClick={() => setSidebarOpen(false)}
-                      className="p-3 rounded-xl flex items-center justify-between hover:bg-surface-container-low text-on-surface hover:text-primary transition-colors group"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <span className="material-symbols-outlined text-[20px] text-primary">
-                          star
-                        </span>
-                        <span className="text-sm font-semibold">
-                          {lang === "VN"
-                            ? "Tác Phẩm Tiêu Biểu: Ghế Kura"
-                            : "Iconic Piece: Kura Lounge Chair"}
-                        </span>
-                      </div>
-                      <span className="px-2 py-0.5 bg-primary text-on-primary text-[10px] uppercase font-bold rounded-md">
-                        Hot
-                      </span>
-                    </Link>
-
-                    {/* Wishlist Link */}
+                  <div className="grid grid-cols-2 gap-2">
+                    {/* Mục Yêu Thích Button */}
                     <button
                       type="button"
+                      id="btn-sidebar-wishlist"
                       onClick={() => {
                         setSidebarOpen(false);
                         openWishlist();
                       }}
-                      className="w-full p-3 rounded-xl flex items-center justify-between hover:bg-surface-container-low text-on-surface hover:text-primary transition-colors text-left"
+                      className="p-3 bg-surface-container-low hover:bg-surface-container border border-outline-variant/60 rounded-xl flex items-center justify-between text-left transition-all active:scale-95 group cursor-pointer"
                     >
-                      <div className="flex items-center gap-2.5">
-                        <span className="material-symbols-outlined text-[20px] text-outline">
+                      <div className="flex items-center gap-2">
+                        <span className="material-symbols-outlined text-[20px] text-primary group-hover:scale-110 transition-transform">
                           favorite
                         </span>
-                        <span className="text-sm font-medium">
-                          {lang === "VN" ? "Tác Phẩm Yêu Thích" : "Curated Wishlist"}
-                        </span>
+                        <div>
+                          <span className="text-xs font-bold text-primary block leading-tight">
+                            {lang === "VN" ? "Yêu Thích" : "Wishlist"}
+                          </span>
+                          <span className="text-[10px] text-outline">
+                            {wishlistCount} {lang === "VN" ? "tác phẩm" : "pieces"}
+                          </span>
+                        </div>
                       </div>
-                      <span className="px-2 py-0.5 bg-surface-container text-xs font-bold font-mono rounded-md">
-                        {wishlistCount} {lang === "VN" ? "món" : "items"}
+                      <span className="text-[10px] font-bold px-1.5 py-0.5 bg-primary text-white rounded-full">
+                        {wishlistCount}
                       </span>
                     </button>
 
-                    {/* Account Link */}
-                    <Link
-                      href={user ? "/tai-khoan" : "/dang-nhap"}
-                      onClick={() => setSidebarOpen(false)}
-                      className="p-3 rounded-xl flex items-center justify-between hover:bg-surface-container-low text-on-surface hover:text-primary transition-colors"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        {user?.user_metadata?.avatar_url ? (
-                          <img
-                            src={user.user_metadata.avatar_url}
-                            alt="Avatar"
-                            className="w-5 h-5 rounded-full object-cover border border-outline-variant"
-                          />
-                        ) : (
-                          <span className="material-symbols-outlined text-[20px] text-outline">
-                            person
-                          </span>
-                        )}
-                        <span className="text-sm font-medium">
-                          {user
-                            ? (lang === "VN"
-                                ? `Chào, ${user.user_metadata?.full_name || user.email}`
-                                : `Hello, ${user.user_metadata?.full_name || user.email}`)
-                            : (lang === "VN"
-                                ? "Komorebi Circle • Đăng nhập"
-                                : "Komorebi Circle • Sign In")}
-                        </span>
-                      </div>
-                      <span className="text-[10px] uppercase font-mono tracking-wider text-outline font-bold">
-                        {user
-                          ? (lang === "VN" ? "Đã đăng nhập" : "Active")
-                          : (lang === "VN" ? "Đăng nhập" : "Sign In")}
-                      </span>
-                    </Link>
-
-                    {/* Cart Link */}
+                    {/* Giỏ Hàng Link */}
                     <Link
                       href="/gio-hang"
                       onClick={() => setSidebarOpen(false)}
-                      className="p-3 rounded-xl flex items-center justify-between hover:bg-surface-container-low text-primary font-bold transition-colors"
+                      className="p-3 bg-surface-container-low hover:bg-surface-container border border-outline-variant/60 rounded-xl flex items-center justify-between text-left transition-all active:scale-95 group"
                     >
-                      <div className="flex items-center gap-2.5">
-                        <span className="material-symbols-outlined text-[20px] text-primary">
+                      <div className="flex items-center gap-2">
+                        <span className="material-symbols-outlined text-[20px] text-primary group-hover:scale-110 transition-transform">
                           shopping_bag
                         </span>
-                        <span className="text-sm">
-                          {lang === "VN" ? "Giỏ Hàng & Thanh Toán" : "Shopping Bag & Checkout"}
-                        </span>
+                        <div>
+                          <span className="text-xs font-bold text-primary block leading-tight">
+                            {lang === "VN" ? "Giỏ Hàng" : "Cart"}
+                          </span>
+                          <span className="text-[10px] text-outline">
+                            {itemCount} {lang === "VN" ? "món" : "items"}
+                          </span>
+                        </div>
                       </div>
-                      <span className="px-2 py-0.5 bg-primary text-on-primary text-xs rounded-md font-mono">
-                        {itemCount} {lang === "VN" ? "món" : "items"}
+                      <span className="text-[10px] font-bold px-1.5 py-0.5 bg-primary text-white rounded-full">
+                        {itemCount}
                       </span>
                     </Link>
                   </div>
+
+                  {/* Tài khoản / Đăng nhập Link */}
+                  <Link
+                    href={user ? "/tai-khoan" : "/dang-nhap"}
+                    onClick={() => setSidebarOpen(false)}
+                    className="mt-2 p-3 bg-surface-container-low hover:bg-surface-container border border-outline-variant/60 rounded-xl flex items-center justify-between transition-all active:scale-95 group"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      {user?.user_metadata?.avatar_url ? (
+                        <img
+                          src={user.user_metadata.avatar_url}
+                          alt="Avatar"
+                          className="w-6 h-6 rounded-full object-cover border border-outline-variant"
+                        />
+                      ) : (
+                        <span className="material-symbols-outlined text-[20px] text-primary">
+                          {user ? "account_circle" : "person"}
+                        </span>
+                      )}
+                      <div>
+                        <span className="text-xs font-bold text-primary block leading-tight">
+                          {user
+                            ? (user.user_metadata?.full_name || user.email)
+                            : (lang === "VN" ? "Đăng Nhập Thành Viên" : "Member Sign In")}
+                        </span>
+                        <span className="text-[10px] text-outline">
+                          {user ? "Komorebi Circle Member" : (lang === "VN" ? "Tích điểm & Ưu đãi mộc bản" : "Perks & Privileges")}
+                        </span>
+                      </div>
+                    </div>
+                    <span className="material-symbols-outlined text-sm text-outline group-hover:text-primary group-hover:translate-x-0.5 transition-all">
+                      arrow_forward
+                    </span>
+                  </Link>
                 </div>
               </div>
 

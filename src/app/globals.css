@@ -17,7 +17,11 @@
   --color-outline: #78767b;
   --color-outline-variant: #e4e4e7;
   --color-secondary: #71717a;
-  --color-error: #ba1a1a;
+  --color-border: #e4e4e7;
+  --color-card: #ffffff;
+  --color-card-foreground: #18181b;
+  --color-muted: #f4f4f5;
+  --color-muted-foreground: #71717a;
 
   --font-display: "Space Grotesk", sans-serif;
   --font-headline: "Space Grotesk", sans-serif;

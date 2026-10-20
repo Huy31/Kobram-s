@@ -270,13 +270,17 @@ export default function DiningKitchenPage() {
 
                       <button
                         type="button"
-                        onClick={() => toggleWishlist(p.id)}
-                        className={`absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm transition-colors ${
-                          wishlisted ? "text-error" : "text-outline hover:text-primary"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          toggleWishlist(p.id);
+                        }}
+                        className={`absolute top-3 right-3 z-10 p-2 bg-white/90 backdrop-blur-sm rounded-full transition-all cursor-pointer active:scale-90 shadow-sm ${
+                          wishlisted ? "text-red-500" : "text-outline hover:text-primary"
                         }`}
                         aria-label="Yêu thích"
                       >
-                        <span className="material-symbols-outlined text-[18px]">
+                        <span className="material-symbols-outlined text-[18px] pointer-events-none">
                           {wishlisted ? "favorite" : "favorite_border"}
                         </span>
                       </button>
