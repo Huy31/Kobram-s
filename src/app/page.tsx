@@ -6,6 +6,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ConsultationModal from "@/components/ConsultationModal";
+import HeartButton from "@/components/HeartButton";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { getFeaturedProducts, submitConsultationToDb } from "@/services/productService";
@@ -481,22 +482,17 @@ export default function HomePage() {
                     </span>
 
                     {/* Heart button */}
-                    <button
-                      type="button"
+                    <HeartButton
+                      isLiked={wishlisted}
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
                         toggleWishlist(product.id);
                       }}
-                      className={`absolute top-3 right-3 z-10 w-9 h-9 sm:w-8 sm:h-8 rounded-full bg-white/95 backdrop-blur-sm flex items-center justify-center border border-outline-variant/60 transition-all cursor-pointer active:scale-90 shadow-sm ${
-                        wishlisted ? "text-red-500" : "text-on-surface-variant hover:text-primary"
-                      }`}
-                      aria-label="Wishlist"
-                    >
-                      <span className="material-symbols-outlined text-[18px] pointer-events-none">
-                        {wishlisted ? "favorite" : "favorite_border"}
-                      </span>
-                    </button>
+                      className="absolute top-3 right-3 z-20"
+                      size="sm"
+                      ariaLabel={`Yêu thích ${displayTitle}`}
+                    />
                   </div>
 
                   {/* Content Info */}

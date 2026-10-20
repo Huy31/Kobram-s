@@ -6,6 +6,7 @@ import SafeImage from "@/components/SafeImage";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ConsultationModal from "@/components/ConsultationModal";
+import HeartButton, { HeartButtonShowcase } from "@/components/HeartButton";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -201,15 +202,13 @@ export default function WishlistPage() {
                         </span>
                       )}
 
-                      <button
-                        type="button"
+                      <HeartButton
+                        isLiked={true}
                         onClick={() => removeFromWishlist(item.id)}
-                        className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/95 backdrop-blur-sm flex items-center justify-center border border-outline-variant/60 text-error hover:bg-error hover:text-white transition-colors"
-                        title={t.wishlist.removeBtn}
-                        aria-label={t.wishlist.removeBtn}
-                      >
-                        <span className="material-symbols-outlined text-[18px]">favorite</span>
-                      </button>
+                        className="absolute top-3 right-3 z-20"
+                        size="sm"
+                        ariaLabel={t.wishlist.removeBtn}
+                      />
                     </div>
 
                     {/* Content Details */}
@@ -271,6 +270,11 @@ export default function WishlistPage() {
                 ))}
               </div>
             )}
+
+            {/* Showcase micro-interaction 4 trạng thái theo hình ảnh thiết kế */}
+            <div className="mt-16">
+              <HeartButtonShowcase />
+            </div>
           </div>
         </section>
       </main>

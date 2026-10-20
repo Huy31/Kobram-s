@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ConsultationModal from "@/components/ConsultationModal";
 import ShowroomModal from "@/components/ShowroomModal";
+import HeartButton from "@/components/HeartButton";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { getProductBySlug, DbProduct } from "@/services/productService";
@@ -617,25 +618,13 @@ export default function ProductDetailPage({ initialSlug = "kura-lounge-chair" }:
                   <span>{t.addToCart}</span>
                 </button>
 
-                <button
-                  type="button"
+                <HeartButton
+                  isLiked={isWishlisted(product?.slug || product?.id || initialSlug)}
                   onClick={() => toggleWishlist(product?.slug || product?.id || initialSlug)}
-                  className={`w-12 sm:w-14 min-w-[48px] sm:min-w-[56px] border flex items-center justify-center transition-all rounded-xl ${
-                    isWishlisted(product?.slug || product?.id || initialSlug)
-                      ? "border-red-600 bg-red-50 text-red-600"
-                      : "border-primary text-primary hover:bg-surface-container"
-                  }`}
-                  title={
-                    isWishlisted(product?.slug || product?.id || initialSlug)
-                      ? "Bỏ khỏi danh sách yêu thích"
-                      : "Lưu vào danh sách yêu thích"
-                  }
-                  aria-label="Yêu thích"
-                >
-                  <span className="material-symbols-outlined text-xl sm:text-2xl">
-                    {isWishlisted(product?.slug || product?.id || initialSlug) ? "favorite" : "favorite_border"}
-                  </span>
-                </button>
+                  className="w-12 sm:w-14 h-12 sm:h-14 min-w-[48px] sm:min-w-[56px] !rounded-xl border border-outline-variant/60 hover:border-red-300"
+                  size="md"
+                  ariaLabel="Yêu thích"
+                />
               </div>
 
               <button
