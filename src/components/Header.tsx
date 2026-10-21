@@ -130,7 +130,7 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
           <button
             type="button"
             onClick={() => setSidebarOpen(true)}
-            className="p-2 sm:px-3 sm:py-2 flex items-center gap-1.5 text-primary bg-surface-container-low hover:bg-primary hover:text-white rounded-xl transition-all active:scale-95 font-medium"
+            className="p-2 sm:px-3 sm:py-2 flex items-center gap-1.5 text-primary bg-surface-container-low hover:bg-primary hover:text-white rounded-xl transition-all active:scale-95 font-medium dark:bg-[#18181c] dark:text-zinc-200 dark:hover:bg-white/10 dark:hover:text-white dark:border dark:border-white/10"
             aria-label={lang === "VN" ? "Mở danh mục điều hướng" : "Open navigation menu"}
             title={lang === "VN" ? "Mở menu danh mục không gian" : "Open space catalog menu"}
           >
@@ -193,9 +193,9 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
           <button
             type="button"
             onClick={onOpenConsultation}
-            className="hidden sm:inline-flex items-center justify-center px-4 py-2 bg-primary text-on-primary text-label-md font-label-md uppercase tracking-wider rounded-xl hover:bg-[#27272a] active:scale-95 transition-all shadow-sm text-xs sm:text-sm font-bold"
+            className="hidden sm:inline-flex items-center justify-center px-4 py-2 btn-consult-header text-label-md font-label-md uppercase tracking-wider rounded-xl active:scale-95 transition-all shadow-sm text-xs sm:text-sm font-bold"
           >
-            {lang === "VN" ? "Tư vấn thiết kế" : "Architect Consult"}
+            <span>{lang === "VN" ? "Tư vấn thiết kế" : "Architect Consult"}</span>
           </button>
 
           {/* Icon buttons */}
@@ -209,14 +209,14 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
                 openWishlist();
               }}
               aria-label={lang === "VN" ? "Danh sách yêu thích" : "Wishlist"}
-              className="min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center p-2 text-on-surface hover:text-primary transition-colors relative active:scale-95 group rounded-full hover:bg-surface-container-low cursor-pointer"
+              className="min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center p-2 text-on-surface hover:text-primary transition-all relative active:scale-95 group rounded-full hover:bg-surface-container-low dark:text-zinc-200 dark:hover:text-white dark:hover:bg-white/10 cursor-pointer"
               title={lang === "VN" ? "Danh sách tác phẩm yêu thích" : "Curated wishlist"}
             >
               <span className="material-symbols-outlined text-[20px] sm:text-[22px] group-hover:scale-110 transition-transform pointer-events-none">
                 favorite
               </span>
               {wishlistCount > 0 && (
-                <span className="absolute top-0.5 right-0.5 sm:top-1 sm:right-1 w-4 h-4 bg-primary text-on-primary text-[10px] font-bold rounded-full flex items-center justify-center pointer-events-none">
+                <span className="absolute top-0.5 right-0.5 sm:top-1 sm:right-1 w-4 h-4 header-badge text-[10px] font-extrabold rounded-full flex items-center justify-center pointer-events-none shadow-sm leading-none">
                   {wishlistCount}
                 </span>
               )}
@@ -227,9 +227,9 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
               href="/gio-hang"
               id="btn-header-cart"
               aria-label={lang === "VN" ? "Giỏ hàng" : "Shopping cart"}
-              className={`min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center p-2 transition-colors relative active:scale-95 group rounded-full hover:bg-surface-container-low cursor-pointer ${
+              className={`min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center p-2 transition-all relative active:scale-95 group rounded-full hover:bg-surface-container-low dark:text-zinc-200 dark:hover:text-white dark:hover:bg-white/10 cursor-pointer ${
                 pathname === "/gio-hang"
-                  ? "text-primary font-bold bg-surface-container-low"
+                  ? "text-primary font-bold bg-surface-container-low dark:bg-white/15 dark:text-white"
                   : "text-on-surface hover:text-primary"
               }`}
               title={lang === "VN" ? `Giỏ hàng (${itemCount})` : `Shopping cart (${itemCount})`}
@@ -238,7 +238,7 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
                 shopping_bag
               </span>
               {itemCount > 0 && (
-                <span className="absolute top-0.5 right-0.5 sm:top-1 sm:right-1 w-4 h-4 bg-primary text-on-primary text-[10px] font-bold rounded-full flex items-center justify-center pointer-events-none">
+                <span className="absolute top-0.5 right-0.5 sm:top-1 sm:right-1 w-4 h-4 header-badge text-[10px] font-extrabold rounded-full flex items-center justify-center pointer-events-none shadow-sm leading-none">
                   {itemCount}
                 </span>
               )}
@@ -248,9 +248,9 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
             <Link
               href={user ? "/tai-khoan" : "/dang-nhap"}
               aria-label={user ? `Hội viên: ${user.user_metadata?.full_name || user.email}` : (lang === "VN" ? "Đăng nhập" : "Sign In")}
-              className={`p-1.5 sm:px-2.5 sm:py-1.5 text-on-surface hover:text-primary transition-colors active:scale-95 rounded-full sm:rounded-xl hover:bg-surface-container-low inline-flex items-center gap-1.5 ${
+              className={`p-1.5 sm:px-2.5 sm:py-1.5 text-on-surface hover:text-primary transition-all active:scale-95 rounded-full sm:rounded-xl hover:bg-surface-container-low dark:text-zinc-200 dark:hover:text-white dark:hover:bg-white/10 inline-flex items-center gap-1.5 group ${
                 pathname === "/tai-khoan" || pathname === "/dang-nhap"
-                  ? "text-primary font-bold bg-surface-container-low"
+                  ? "text-primary font-bold bg-surface-container-low dark:bg-white/15 dark:text-white"
                   : ""
               }`}
               title={user ? `Hội viên: ${user.user_metadata?.full_name || user.email}` : (lang === "VN" ? "Komorebi Circle • Đăng nhập" : "Komorebi Circle • Sign In")}
@@ -259,15 +259,15 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
                 <img
                   src={user.user_metadata.avatar_url}
                   alt="Avatar"
-                  className="w-5 h-5 sm:w-6 sm:h-6 rounded-full object-cover border border-outline-variant"
+                  className="w-5 h-5 sm:w-6 sm:h-6 rounded-full object-cover border border-outline-variant dark:border-white/20"
                 />
               ) : (
-                <span className="material-symbols-outlined text-[20px] sm:text-[22px]">
+                <span className="material-symbols-outlined text-[20px] sm:text-[22px] group-hover:scale-110 transition-transform">
                   {user ? "account_circle" : "person"}
                 </span>
               )}
               {user && (
-                <span className="hidden md:inline text-xs font-semibold max-w-[110px] truncate">
+                <span className="hidden md:inline text-xs font-semibold max-w-[110px] truncate dark:text-zinc-200">
                   {user.user_metadata?.full_name?.split(" ").slice(-1)[0] || (lang === "VN" ? "Hội viên" : "Member")}
                 </span>
               )}
