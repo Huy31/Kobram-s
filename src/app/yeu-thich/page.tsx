@@ -54,19 +54,19 @@ export default function WishlistPage() {
         </section>
 
         {/* HERO HEADER */}
-        <section className="py-space-xl px-space-md lg:px-margin max-w-7xl mx-auto">
+        <section className="py-8 sm:py-12 lg:py-14 px-space-md lg:px-margin max-w-7xl mx-auto">
           <div className="flex flex-col lg:flex-row lg:items-end justify-between pb-6 border-b border-outline-variant gap-4">
             <div>
-              <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-2 mb-3 sm:mb-4">
                 <span className="w-2.5 h-2.5 bg-primary rounded-full"></span>
                 <span className="text-xs uppercase tracking-widest font-mono text-outline">
                   KOMOREBI LIVING ARCHIVE • CURATION
                 </span>
               </div>
-              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-primary tracking-tight font-headline-lg uppercase">
+              <h1 className="font-headline text-2xl sm:text-4xl lg:text-5xl font-bold text-primary uppercase leading-[1.28] sm:leading-[1.3] lg:leading-[1.32] tracking-normal mb-4">
                 {t.wishlist.title}
               </h1>
-              <p className="text-on-surface-variant text-sm sm:text-base mt-2 max-w-2xl leading-relaxed">
+              <p className="text-on-surface-variant text-sm sm:text-base max-w-2xl leading-relaxed font-light">
                 {lang === "VN"
                   ? "Nơi lưu giữ các tác phẩm nội thất mộc bản do quý khách chọn lọc. Dễ dàng đối chiếu vân gỗ, kích thước và chuyển sang giỏ hàng để hoàn thiện không gian sống."
                   : "Curated collection of handcrafted solid wood pieces saved for your home. Compare timber textures and effortlessly move to bag."}

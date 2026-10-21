@@ -685,20 +685,20 @@ export default function ArchitecturalPortfolioPage() {
             }}
           />
 
-          <div className="max-w-7xl mx-auto px-space-md sm:px-space-lg lg:px-margin py-space-xl lg:py-space-2xl relative z-10">
-            <div className="flex items-center gap-2 mb-4">
+          <div className="max-w-7xl mx-auto px-space-md sm:px-space-lg lg:px-margin py-8 sm:py-12 lg:py-16 relative z-10">
+            <div className="flex items-center gap-2 mb-3 sm:mb-4">
               <span className="inline-block w-8 h-[2px] bg-primary"></span>
               <span className="font-label-sm text-label-sm text-secondary uppercase tracking-widest text-xs font-semibold">
                 {t.heroTag}
               </span>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end mb-10">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end mb-12">
               <div className="lg:col-span-8">
-                <h1 className="font-headline text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-primary uppercase leading-[1.1] mb-5">
+                <h1 className="font-headline text-2xl sm:text-4xl lg:text-5xl font-bold text-primary uppercase leading-[1.28] sm:leading-[1.3] lg:leading-[1.32] tracking-normal mb-5 sm:mb-6">
                   {t.heroTitle}
                 </h1>
-                <p className="font-body text-on-surface-variant max-w-3xl text-sm sm:text-base lg:text-lg leading-relaxed font-light">
+                <p className="font-body text-on-surface-variant max-w-3xl text-sm sm:text-base lg:text-lg leading-relaxed font-light mb-6 sm:mb-8">
                   {t.heroDesc}
                 </p>
 

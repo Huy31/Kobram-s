@@ -543,7 +543,7 @@ export default function LoginPage() {
               <span className="material-symbols-outlined text-[15px] sm:text-[16px]">nature</span>
               <span>{curr.heroPhilosophy}</span>
             </p>
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.15] mb-2 sm:mb-4 whitespace-pre-line">
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold tracking-normal leading-[1.28] sm:leading-[1.3] mb-3 sm:mb-5 whitespace-pre-line">
               {curr.heroTitle}
             </h1>
             <p className="text-white/85 max-w-lg font-light leading-relaxed text-xs sm:text-sm lg:text-base">

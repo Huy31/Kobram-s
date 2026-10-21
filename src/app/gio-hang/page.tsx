@@ -153,7 +153,7 @@ export default function CartAndCheckoutPage() {
             <span className="text-label-sm font-label-sm text-outline tracking-widest block mb-1">
               KOMOREBI LIVING — CẤU HÌNH ĐƠN HÀNG #KL-84920
             </span>
-            <h1 className="text-headline-lg font-headline-lg text-2xl sm:text-3xl lg:text-4xl text-primary font-medium tracking-tight">
+            <h1 className="text-headline-lg font-headline-lg text-2xl sm:text-3xl lg:text-4xl text-primary font-medium tracking-normal leading-[1.28]">
               {t.cart.title}
             </h1>
           </div>
