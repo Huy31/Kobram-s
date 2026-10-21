@@ -393,6 +393,16 @@ html.dark .hover\:text-on-primary:hover * {
   color: #09090b !important;
 }
 
+/* Chatbot Widget Empty State in Dark Mode */
+html.dark .chatbot-empty-icon {
+  background-color: #202026 !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+}
+html.dark .chatbot-empty-icon * {
+  color: #ffffff !important;
+}
+
 /* Body & Secondary Text: Bright Zinc-200 for High Legibility (No More Chìm) */
 html.dark .text-on-surface-variant,
 html.dark .text-secondary {
