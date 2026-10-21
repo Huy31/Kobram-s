@@ -1,0 +1,168 @@
+/* Nested Depth Tunnel Card Animation (Adapted from Uiverse for Next.js) */
+
+.tunnel-card {
+  position: relative;
+  width: 100%;
+  min-height: 330px;
+  background-color: #d3d3d3;
+  border-radius: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tunnel-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.16);
+}
+
+/* Layer 1 */
+.tunnel-card .layer-one {
+  width: 92%;
+  height: 94%;
+  background-color: #c0c0c0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 21px;
+  overflow: hidden;
+}
+
+/* Layer 2 */
+.tunnel-card .layer-two {
+  width: 92%;
+  height: 94%;
+  background-color: #9c9c9c;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  border-radius: 18px;
+  transition: opacity 1s ease 0.2s;
+  overflow: hidden;
+}
+
+/* Layer 3 */
+.tunnel-card .layer-three {
+  width: 92%;
+  height: 94%;
+  background-color: #797979;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  border-radius: 16px;
+  transition: opacity 0.9s ease 0.2s;
+  overflow: hidden;
+}
+
+/* Layer 4 */
+.tunnel-card .layer-four {
+  width: 92%;
+  height: 94%;
+  background-color: #5a5a5a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  border-radius: 14px;
+  transition: opacity 0.8s ease 0.2s;
+  overflow: hidden;
+}
+
+/* Layer 5 */
+.tunnel-card .layer-five {
+  width: 92%;
+  height: 94%;
+  background-color: #424242;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  border-radius: 12px;
+  transition: opacity 0.7s ease 0.2s;
+  overflow: hidden;
+}
+
+/* Layer 6 (Innermost chamber) */
+.tunnel-card .layer-six {
+  width: 92%;
+  height: 94%;
+  background-color: #262626;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  border-radius: 10px;
+  transition: opacity 0.6s ease 0.2s;
+  padding: 1.25rem;
+  overflow: hidden;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Hover cascade effects */
+.tunnel-card:hover .layer-two {
+  opacity: 1;
+  transition: opacity 0.4s ease;
+}
+
+.tunnel-card:hover .layer-three {
+  opacity: 1;
+  transition: opacity 0.5s ease;
+}
+
+.tunnel-card:hover .layer-four {
+  opacity: 1;
+  transition: opacity 0.6s ease;
+}
+
+.tunnel-card:hover .layer-five {
+  opacity: 1;
+  transition: opacity 0.7s ease;
+}
+
+.tunnel-card:hover .layer-six {
+  opacity: 1;
+  transition: opacity 0.8s ease;
+}
+
+/* Stage 1 (Front presentation) */
+.tunnel-card .stage-one {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.75rem;
+  opacity: 1;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+}
+
+.tunnel-card:hover .stage-one {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+/* Stage 2 (Deep revealed message) */
+.tunnel-card .stage-two {
+  opacity: 0;
+  transform: translateY(-1.5rem);
+  transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+}
+
+.tunnel-card:hover .stage-two {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.45s;
+}
