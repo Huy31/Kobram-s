@@ -8,6 +8,7 @@ import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { createClient } from "@/utils/supabase/client";
 import { ExpandingSearchDock } from "@/components/ui/expanding-search-dock-shadcnui";
+import ThemeToggle from "@/components/ThemeToggle";
 
 interface HeaderProps {
   onOpenConsultation?: () => void;
@@ -159,6 +160,9 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
 
         {/* Right: Actions Cluster */}
         <div className="flex items-center gap-1.5 sm:gap-3">
+          {/* Day / Night Sky Theme Switch */}
+          <ThemeToggle className="scale-85 sm:scale-95" />
+
           {/* Desktop Lang Switcher */}
           <div className="hidden sm:flex items-center border border-outline-variant p-0.5 bg-surface-container-low text-xs font-semibold rounded-lg">
             <button
@@ -304,7 +308,10 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2.5">
+                <div className="flex items-center gap-2 sm:gap-2.5">
+                  {/* Theme Switch in Sidebar Header */}
+                  <ThemeToggle className="scale-85" />
+
                   {/* Language Switcher in Sidebar Header */}
                   <div className="flex items-center border border-outline-variant p-0.5 bg-surface-container-low text-xs font-semibold rounded-lg">
                     <button

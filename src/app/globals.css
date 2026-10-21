@@ -225,5 +225,107 @@ img {
   animation: fadeIn 0.2s ease-out forwards;
 }
 
+/* ==========================================================================
+   Comprehensive Dark Theme Styles (Active when html.dark)
+   ========================================================================== */
+html.dark {
+  color-scheme: dark;
+}
+
+html.dark body {
+  background-color: #09090b !important;
+  color: #f4f4f5 !important;
+}
+
+/* Background overrides */
+html.dark .bg-\[\#FAFAFA\],
+html.dark .bg-\[\#fafafa\],
+html.dark .bg-background {
+  background-color: #09090b !important;
+}
+
+html.dark .bg-white,
+html.dark .bg-surface,
+html.dark .bg-surface-container-lowest {
+  background-color: #121215 !important;
+}
+
+html.dark .bg-surface-container-low,
+html.dark .bg-muted {
+  background-color: #18181b !important;
+}
+
+html.dark .bg-surface-container {
+  background-color: #202024 !important;
+}
+
+/* Text overrides */
+html.dark .text-primary,
+html.dark .text-\[\#18181B\],
+html.dark .text-\[\#09090b\],
+html.dark .text-\[\#09090B\] {
+  color: #ffffff !important;
+}
+
+html.dark .text-on-surface {
+  color: #f4f4f5 !important;
+}
+
+html.dark .text-on-surface-variant,
+html.dark .text-secondary {
+  color: #a1a1aa !important;
+}
+
+html.dark .text-outline {
+  color: #71717a !important;
+}
+
+/* Borders */
+html.dark .border-outline-variant,
+html.dark .border-border {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+html.dark .border-outline-variant\/30,
+html.dark .border-outline-variant\/40,
+html.dark .border-outline-variant\/50,
+html.dark .border-outline-variant\/60 {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Header in dark mode */
+html.dark header {
+  background-color: rgba(9, 9, 11, 0.88) !important;
+  border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Sidebar Drawer in dark mode */
+html.dark aside[role="dialog"] {
+  background-color: #121215 !important;
+  border-right-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+html.dark aside[role="dialog"] .bg-white {
+  background-color: #121215 !important;
+  border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Search input in dark mode */
+html.dark input[type="text"],
+html.dark input[type="search"] {
+  background-color: #18181b;
+  color: #ffffff;
+}
+
+/* Modals & Popups */
+html.dark div[role="dialog"] > div.bg-surface-container-lowest,
+html.dark div[role="dialog"] > div.bg-white {
+  background-color: #121215 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+
+
+
 
 
