@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import { useLanguage } from "@/context/LanguageContext";
 
 interface Message {
@@ -11,6 +12,7 @@ interface Message {
 }
 
 export default function ChatbotWidget() {
+  const pathname = usePathname();
   const { lang, t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [inputMessage, setInputMessage] = useState("");
@@ -55,6 +57,11 @@ export default function ChatbotWidget() {
       setMessages((prev) => [...prev, aiReply]);
     }, 600);
   };
+
+  // Không hiển thị chatbot trên trang đăng nhập
+  if (pathname === "/dang-nhap" || pathname?.startsWith("/dang-nhap")) {
+    return null;
+  }
 
   return (
     <div className="fixed bottom-5 right-5 z-50 font-sans selection:bg-black selection:text-white">

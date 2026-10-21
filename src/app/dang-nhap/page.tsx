@@ -427,27 +427,27 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F9F9F9] text-[#1A1C1C] flex flex-col justify-between selection:bg-black selection:text-white font-sans">
+    <div className="min-h-screen bg-[#F9F9F9] dark:bg-[#09090b] text-[#1A1C1C] dark:text-[#f4f4f5] flex flex-col justify-between selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black font-sans">
       {/* TOP BRAND HEADER (Linear Portal Shell Navigation) */}
-      <header className="w-full bg-white border-b border-[#E4E4E7] px-4 sm:px-6 lg:px-12 py-3 z-30 transition-all duration-150">
+      <header className="w-full bg-white dark:bg-[#09090b] border-b border-[#E4E4E7] dark:border-[#27272a] px-4 sm:px-6 lg:px-12 py-3 z-30 transition-all duration-150">
         <div className="max-w-[1600px] mx-auto flex items-center justify-between">
           {/* Left: Logo & Back Link */}
           <div className="flex items-center gap-6">
             <Link
               href="/"
-              className="flex items-center gap-1.5 text-black font-headline-md text-xl sm:text-2xl font-bold tracking-tight hover:opacity-85 transition-opacity"
+              className="flex items-center gap-1.5 text-black dark:text-white font-headline-md text-xl sm:text-2xl font-bold tracking-tight hover:opacity-85 transition-opacity"
             >
               <span>Komorebi Living</span>
-              <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 border border-black/20 text-[#71717A] ml-2 tracking-widest hidden sm:inline-block">
+              <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 border border-black/20 dark:border-white/20 text-[#71717A] dark:text-[#a1a1aa] ml-2 tracking-widest hidden sm:inline-block">
                 Studio
               </span>
             </Link>
 
-            <div className="h-4 w-px bg-[#E4E4E7] hidden md:block" />
+            <div className="h-4 w-px bg-[#E4E4E7] dark:bg-[#27272a] hidden md:block" />
 
             <Link
               href="/"
-              className="hidden md:flex items-center gap-1.5 text-[#71717A] hover:text-black transition-colors duration-150 text-xs sm:text-sm group"
+              className="hidden md:flex items-center gap-1.5 text-[#71717A] hover:text-black dark:text-[#a1a1aa] dark:hover:text-white transition-colors duration-150 text-xs sm:text-sm group"
             >
               <span className="material-symbols-outlined text-[18px] group-hover:-translate-x-1 transition-transform duration-200">
                 arrow_back
@@ -460,14 +460,14 @@ export default function LoginPage() {
           <div className="flex items-center gap-2.5 sm:gap-4">
             <ThemeToggle className="scale-85 sm:scale-90" />
             {/* Lang Switcher */}
-            <div className="flex items-center border border-[#E4E4E7] p-0.5 bg-[#F4F4F5] text-xs font-semibold rounded-lg">
+            <div className="flex items-center border border-[#E4E4E7] dark:border-[#27272a] p-0.5 bg-[#F4F4F5] dark:bg-[#18181b] text-xs font-semibold rounded-lg">
               <button
                 type="button"
                 onClick={() => changeLang("VN")}
                 className={`px-2 py-0.5 transition-colors rounded-md ${
                   lang === "VN"
-                    ? "bg-white text-black shadow-xs font-bold"
-                    : "text-[#71717A] hover:text-black"
+                    ? "bg-white text-black shadow-xs font-bold dark:bg-[#27272a] dark:text-white"
+                    : "text-[#71717A] hover:text-black dark:text-[#a1a1aa] dark:hover:text-white"
                 }`}
               >
                 VN
@@ -477,29 +477,29 @@ export default function LoginPage() {
                 onClick={() => changeLang("EN")}
                 className={`px-2 py-0.5 transition-colors rounded-md ${
                   lang === "EN"
-                    ? "bg-white text-black shadow-xs font-bold"
-                    : "text-[#71717A] hover:text-black"
+                    ? "bg-white text-black shadow-xs font-bold dark:bg-[#27272a] dark:text-white"
+                    : "text-[#71717A] hover:text-black dark:text-[#a1a1aa] dark:hover:text-white"
                 }`}
               >
                 EN
               </button>
             </div>
 
-            <div className="h-4 w-px bg-[#E4E4E7]" />
+            <div className="h-4 w-px bg-[#E4E4E7] dark:bg-[#27272a]" />
 
             {/* Member Assistance */}
             <button
               type="button"
               onClick={() => showToast(curr.connectingMemberSupport)}
-              className="flex items-center gap-1.5 text-xs text-[#71717A] hover:text-black transition-colors"
+              className="flex items-center gap-1.5 text-xs text-[#71717A] hover:text-black dark:text-[#a1a1aa] dark:hover:text-white transition-colors"
             >
               <span className="material-symbols-outlined text-[18px]">support_agent</span>
               <span className="hidden sm:inline">{curr.memberHelp}</span>
             </button>
 
             {/* Security Pill */}
-            <div className="hidden lg:flex items-center gap-1 px-2.5 py-1 bg-[#F4F4F5] border border-[#E4E4E7] text-[#71717A] text-[10px] uppercase tracking-wider font-mono rounded-full">
-              <span className="material-symbols-outlined text-[14px] text-black">lock</span>
+            <div className="hidden lg:flex items-center gap-1 px-2.5 py-1 bg-[#F4F4F5] dark:bg-[#18181b] border border-[#E4E4E7] dark:border-[#27272a] text-[#71717A] dark:text-[#a1a1aa] text-[10px] uppercase tracking-wider font-mono rounded-full">
+              <span className="material-symbols-outlined text-[14px] text-black dark:text-white">lock</span>
               <span>{curr.e2eEncrypt}</span>
             </div>
           </div>
@@ -509,7 +509,7 @@ export default function LoginPage() {
       {/* MAIN VIEWPORT CONTAINER: Asymmetric Architectural Editorial Split Screen */}
       <main className="flex-1 w-full max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-12 min-h-0">
         {/* LEFT PANEL: Architectural Brand & Art Immersion (7 Cols Desktop) */}
-        <section className="lg:col-span-7 relative bg-black flex flex-col justify-between p-5 sm:p-10 lg:p-14 border-b lg:border-b-0 lg:border-r border-[#E4E4E7] overflow-hidden text-white min-h-[280px] sm:min-h-[400px] lg:min-h-auto">
+        <section className="lg:col-span-7 relative bg-black flex flex-col justify-between p-5 sm:p-10 lg:p-14 border-b lg:border-b-0 lg:border-r border-[#E4E4E7] dark:border-[#27272a] overflow-hidden text-white min-h-[280px] sm:min-h-[400px] lg:min-h-auto">
           {/* Architectural Background Visual */}
           <div className="absolute inset-0 z-0">
             <Image
@@ -612,17 +612,17 @@ export default function LoginPage() {
         </section>
 
         {/* RIGHT PANEL: High-End Interactive Authentication Card (5 Cols Desktop) */}
-        <section className="lg:col-span-5 bg-white flex flex-col justify-between p-4 sm:p-8 lg:p-12 overflow-y-visible lg:overflow-y-auto relative z-10">
+        <section className="lg:col-span-5 bg-white dark:bg-[#09090b] text-[#18181b] dark:text-[#f4f4f5] flex flex-col justify-between p-4 sm:p-8 lg:p-12 overflow-y-visible lg:overflow-y-auto relative z-10 transition-colors">
           <div className="w-full max-w-md mx-auto my-0 lg:my-auto space-y-4 sm:space-y-5">
             {/* Role Persona Selector (Personal vs Architect/Partner) */}
-            <div className="w-full border border-[#E4E4E7] p-1 bg-[#F4F4F5] flex items-center gap-1 rounded-xl">
+            <div className="w-full border border-[#E4E4E7] dark:border-[#27272a] p-1 bg-[#F4F4F5] dark:bg-[#18181b] flex items-center gap-1 rounded-xl">
               <button
                 type="button"
                 onClick={() => setRole("client")}
                 className={`flex-1 py-1.5 px-1.5 sm:px-2 text-center text-[11px] sm:text-xs font-semibold uppercase tracking-wider transition-all rounded-lg ${
                   role === "client"
-                    ? "bg-white text-black shadow-xs font-bold"
-                    : "text-[#71717A] hover:text-black"
+                    ? "bg-white text-black shadow-xs font-bold dark:bg-[#27272a] dark:text-white"
+                    : "text-[#71717A] hover:text-black dark:text-[#a1a1aa] dark:hover:text-white"
                 }`}
               >
                 <span className="flex items-center justify-center gap-1 sm:gap-1.5 pointer-events-none">
@@ -636,8 +636,8 @@ export default function LoginPage() {
                 onClick={() => setRole("architect")}
                 className={`flex-1 py-1.5 px-1.5 sm:px-2 text-center text-[11px] sm:text-xs font-semibold uppercase tracking-wider transition-all rounded-lg ${
                   role === "architect"
-                    ? "bg-white text-black shadow-xs font-bold"
-                    : "text-[#71717A] hover:text-black"
+                    ? "bg-white text-black shadow-xs font-bold dark:bg-[#27272a] dark:text-white"
+                    : "text-[#71717A] hover:text-black dark:text-[#a1a1aa] dark:hover:text-white"
                 }`}
               >
                 <span className="flex items-center justify-center gap-1 sm:gap-1.5 pointer-events-none">
@@ -648,20 +648,20 @@ export default function LoginPage() {
             </div>
 
             {/* Auth Tabs Header with Animated Line */}
-            <div className="relative border-b border-[#E4E4E7]">
+            <div className="relative border-b border-[#E4E4E7] dark:border-[#27272a]">
               <div className="flex items-center">
                 <button
                   type="button"
                   onClick={() => setAuthMode("signin")}
                   className={`relative flex-1 pb-3 text-center text-sm uppercase tracking-wider transition-colors ${
                     authMode === "signin"
-                      ? "text-black font-bold"
-                      : "text-[#71717A] hover:text-black font-medium"
+                      ? "text-black font-bold dark:text-white"
+                      : "text-[#71717A] hover:text-black font-medium dark:text-[#a1a1aa] dark:hover:text-white"
                   }`}
                 >
                   {curr.signInTab}
                   {authMode === "signin" && (
-                    <span className="absolute bottom-0 left-0 w-full h-[2px] bg-black" />
+                    <span className="absolute bottom-0 left-0 w-full h-[2px] bg-black dark:bg-white" />
                   )}
                 </button>
 
@@ -670,36 +670,36 @@ export default function LoginPage() {
                   onClick={() => setAuthMode("register")}
                   className={`relative flex-1 pb-3 text-center text-sm uppercase tracking-wider transition-colors ${
                     authMode === "register"
-                      ? "text-black font-bold"
-                      : "text-[#71717A] hover:text-black font-medium"
+                      ? "text-black font-bold dark:text-white"
+                      : "text-[#71717A] hover:text-black font-medium dark:text-[#a1a1aa] dark:hover:text-white"
                   }`}
                 >
                   {curr.registerTab}
                   {authMode === "register" && (
-                    <span className="absolute bottom-0 left-0 w-full h-[2px] bg-black" />
+                    <span className="absolute bottom-0 left-0 w-full h-[2px] bg-black dark:bg-white" />
                   )}
                 </button>
               </div>
             </div>
 
             {/* Dynamic Context Badge */}
-            <div className="p-3 bg-[#F4F4F5] border border-[#E4E4E7] flex items-center justify-between text-[#18181B] rounded-xl">
+            <div className="p-3 bg-[#F4F4F5] dark:bg-[#18181b] border border-[#E4E4E7] dark:border-[#27272a] flex items-center justify-between text-[#18181B] dark:text-[#e4e4e7] rounded-xl">
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[18px] text-black">
+                <span className="material-symbols-outlined text-[18px] text-black dark:text-white">
                   {role === "client" ? "verified_user" : "architecture"}
                 </span>
                 <span className="text-xs">
                   {role === "client" ? curr.clientPerk : curr.architectPerk}
                 </span>
               </div>
-              <span className="text-[10px] font-mono text-black uppercase font-bold tracking-widest">
+              <span className="text-[10px] font-mono text-black dark:text-white uppercase font-bold tracking-widest">
                 Komorebi ID
               </span>
             </div>
 
             {/* Social SSO Fast Authentication Grid */}
             <div className="space-y-2">
-              <p className="text-[11px] font-mono uppercase tracking-wider text-[#71717A] text-center">
+              <p className="text-[11px] font-mono uppercase tracking-wider text-[#71717A] dark:text-[#a1a1aa] text-center">
                 {curr.fastSsoTitle}
               </p>
               <div className="grid grid-cols-3 gap-2">
@@ -712,7 +712,7 @@ export default function LoginPage() {
                     e.preventDefault();
                     handleSSO("Google");
                   }}
-                  className={`flex items-center justify-center gap-1.5 min-h-[46px] py-2.5 px-1.5 sm:px-3 border border-[#E4E4E7] hover:border-[#4285F4] bg-white hover:bg-[#F4F4F5] transition-all group rounded-xl cursor-pointer select-none active:scale-95 ${
+                  className={`flex items-center justify-center gap-1.5 min-h-[46px] py-2.5 px-1.5 sm:px-3 border border-[#E4E4E7] dark:border-[#27272a] hover:border-[#4285F4] dark:hover:border-[#4285F4] bg-white dark:bg-[#18181b] hover:bg-[#F4F4F5] dark:hover:bg-[#27272a] transition-all group rounded-xl cursor-pointer select-none active:scale-95 ${
                     isGoogleLoading ? "opacity-70 cursor-wait" : ""
                   }`}
                   title={curr.googleTitle}
@@ -761,7 +761,7 @@ export default function LoginPage() {
                     e.preventDefault();
                     handleSSO("Facebook");
                   }}
-                  className={`flex items-center justify-center gap-1.5 min-h-[46px] py-2.5 px-1.5 sm:px-3 border border-[#E4E4E7] hover:border-[#1877F2] bg-white hover:bg-[#F4F4F5] transition-all group rounded-xl cursor-pointer select-none active:scale-95 ${
+                  className={`flex items-center justify-center gap-1.5 min-h-[46px] py-2.5 px-1.5 sm:px-3 border border-[#E4E4E7] dark:border-[#27272a] hover:border-[#1877F2] dark:hover:border-[#1877F2] bg-white dark:bg-[#18181b] hover:bg-[#F4F4F5] dark:hover:bg-[#27272a] transition-all group rounded-xl cursor-pointer select-none active:scale-95 ${
                     isFacebookLoading ? "opacity-70 cursor-wait" : ""
                   }`}
                   title={curr.facebookTitle}
@@ -794,22 +794,22 @@ export default function LoginPage() {
                     e.preventDefault();
                     handleSSO("ArchID", true);
                   }}
-                  className="flex items-center justify-center gap-1 min-h-[46px] py-2.5 px-1 sm:px-2.5 border border-dashed border-[#D4D4D8] bg-[#F4F4F5]/90 opacity-60 cursor-not-allowed hover:bg-[#EAEAEA] transition-all rounded-xl relative select-none"
+                  className="flex items-center justify-center gap-1 min-h-[46px] py-2.5 px-1 sm:px-2.5 border border-dashed border-[#D4D4D8] dark:border-[#3f3f46] bg-[#F4F4F5]/90 dark:bg-[#18181b]/80 opacity-60 cursor-not-allowed hover:bg-[#EAEAEA] dark:hover:bg-[#27272a] transition-all rounded-xl relative select-none"
                   title={curr.archIdTitle}
                   aria-label="Cổng ArchID (Đang bảo trì)"
                 >
-                  <span className="material-symbols-outlined text-[15px] sm:text-[17px] text-[#71717A]">
+                  <span className="material-symbols-outlined text-[15px] sm:text-[17px] text-[#71717A] dark:text-[#a1a1aa]">
                     architecture
                   </span>
-                  <span className="text-[11px] sm:text-xs uppercase font-semibold text-[#71717A]">
+                  <span className="text-[11px] sm:text-xs uppercase font-semibold text-[#71717A] dark:text-[#a1a1aa]">
                     ArchID
                   </span>
-                  <span className="material-symbols-outlined text-[12px] text-[#A1A1AA] ml-0.5">
+                  <span className="material-symbols-outlined text-[12px] text-[#A1A1AA] dark:text-[#71717a] ml-0.5">
                     lock
                   </span>
                 </button>
               </div>
-              <p className="text-[10.5px] text-[#A1A1AA] text-center flex items-center justify-center gap-1 pt-0.5">
+              <p className="text-[10.5px] text-[#A1A1AA] dark:text-[#a1a1aa] text-center flex items-center justify-center gap-1 pt-0.5">
                 <span className="material-symbols-outlined text-[12px]">info</span>
                 <span>{curr.ssoHint}</span>
               </p>
@@ -817,8 +817,8 @@ export default function LoginPage() {
 
             {/* Divider */}
             <div className="relative flex items-center justify-center py-1">
-              <div className="w-full border-t border-[#E4E4E7]" />
-              <span className="absolute bg-white px-3 text-[11px] font-mono text-[#71717A] uppercase tracking-widest">
+              <div className="w-full border-t border-[#E4E4E7] dark:border-[#27272a]" />
+              <span className="absolute bg-white dark:bg-[#09090b] px-3 text-[11px] font-mono text-[#71717A] dark:text-[#a1a1aa] uppercase tracking-widest">
                 {curr.orContinueWithEmail}
               </span>
             </div>
@@ -828,7 +828,7 @@ export default function LoginPage() {
               {/* Full Name (Register mode only) */}
               {authMode === "register" && (
                 <div>
-                  <label className="block text-xs uppercase tracking-wider text-[#71717A] mb-1 font-medium">
+                  <label className="block text-xs uppercase tracking-wider text-[#71717A] dark:text-[#a1a1aa] mb-1 font-medium">
                     {curr.fullNameLabel}
                   </label>
                   <div className="relative">
@@ -838,9 +838,9 @@ export default function LoginPage() {
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
                       placeholder={curr.fullNamePlaceholder}
-                      className="w-full h-12 bg-white border border-[#E4E4E7] px-3.5 text-xs text-black placeholder:text-[#A1A1AA] focus:border-black rounded-xl focus:outline-none"
+                      className="w-full h-12 bg-white dark:bg-[#18181b] border border-[#E4E4E7] dark:border-[#27272a] px-3.5 text-xs text-black dark:text-white placeholder:text-[#A1A1AA] dark:placeholder:text-[#71717a] focus:border-black dark:focus:border-white rounded-xl focus:outline-none transition-colors"
                     />
-                    <span className="absolute right-3.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-[20px] text-outline">
+                    <span className="absolute right-3.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-[20px] text-outline dark:text-[#a1a1aa]">
                       badge
                     </span>
                   </div>
@@ -850,10 +850,10 @@ export default function LoginPage() {
               {/* Email or Phone */}
               <div>
                 <div className="flex justify-between items-center mb-1">
-                  <label className="text-xs uppercase tracking-wider text-[#71717A] font-medium">
+                  <label className="text-xs uppercase tracking-wider text-[#71717A] dark:text-[#a1a1aa] font-medium">
                     {curr.emailPhoneLabel}
                   </label>
-                  <span className="text-[10px] text-outline font-mono">
+                  <span className="text-[10px] text-outline dark:text-[#71717a] font-mono">
                     {curr.emailPhoneFormat}
                   </span>
                 </div>
@@ -864,9 +864,9 @@ export default function LoginPage() {
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
                     placeholder={curr.emailPhonePlaceholder}
-                    className="w-full h-12 bg-white border border-[#E4E4E7] px-3.5 text-xs text-black placeholder:text-[#A1A1AA] focus:border-black rounded-xl focus:outline-none"
+                    className="w-full h-12 bg-white dark:bg-[#18181b] border border-[#E4E4E7] dark:border-[#27272a] px-3.5 text-xs text-black dark:text-white placeholder:text-[#A1A1AA] dark:placeholder:text-[#71717a] focus:border-black dark:focus:border-white rounded-xl focus:outline-none transition-colors"
                   />
-                  <span className="absolute right-3.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-[20px] text-outline">
+                  <span className="absolute right-3.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-[20px] text-outline dark:text-[#a1a1aa]">
                     alternate_email
                   </span>
                 </div>
@@ -875,7 +875,7 @@ export default function LoginPage() {
               {/* Studio Name (Register + Architect only) */}
               {authMode === "register" && role === "architect" && (
                 <div>
-                  <label className="block text-xs uppercase tracking-wider text-[#71717A] mb-1 font-medium">
+                  <label className="block text-xs uppercase tracking-wider text-[#71717A] dark:text-[#a1a1aa] mb-1 font-medium">
                     {curr.studioLabel}
                   </label>
                   <div className="relative">
@@ -884,9 +884,9 @@ export default function LoginPage() {
                       value={studioName}
                       onChange={(e) => setStudioName(e.target.value)}
                       placeholder={curr.studioPlaceholder}
-                      className="w-full h-12 bg-white border border-[#E4E4E7] px-3.5 text-xs text-black placeholder:text-[#A1A1AA] focus:border-black rounded-xl focus:outline-none"
+                      className="w-full h-12 bg-white dark:bg-[#18181b] border border-[#E4E4E7] dark:border-[#27272a] px-3.5 text-xs text-black dark:text-white placeholder:text-[#A1A1AA] dark:placeholder:text-[#71717a] focus:border-black dark:focus:border-white rounded-xl focus:outline-none transition-colors"
                     />
-                    <span className="absolute right-3.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-[20px] text-outline">
+                    <span className="absolute right-3.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-[20px] text-outline dark:text-[#a1a1aa]">
                       domain
                     </span>
                   </div>
@@ -896,14 +896,14 @@ export default function LoginPage() {
               {/* Password */}
               <div>
                 <div className="flex justify-between items-center mb-1">
-                  <label className="text-xs uppercase tracking-wider text-[#71717A] font-medium">
+                  <label className="text-xs uppercase tracking-wider text-[#71717A] dark:text-[#a1a1aa] font-medium">
                     {curr.passwordLabel}
                   </label>
                   {authMode === "signin" && (
                     <button
                       type="button"
                       onClick={() => showToast(curr.passwordResetSent)}
-                      className="text-xs text-black hover:underline"
+                      className="text-xs text-black dark:text-white hover:underline"
                     >
                       {curr.forgotPassword}
                     </button>
@@ -916,12 +916,12 @@ export default function LoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••••••"
-                    className="w-full h-12 bg-white border border-[#E4E4E7] px-3.5 pr-11 text-xs text-black placeholder:text-[#A1A1AA] focus:border-black rounded-xl focus:outline-none"
+                    className="w-full h-12 bg-white dark:bg-[#18181b] border border-[#E4E4E7] dark:border-[#27272a] px-3.5 pr-11 text-xs text-black dark:text-white placeholder:text-[#A1A1AA] dark:placeholder:text-[#71717a] focus:border-black dark:focus:border-white rounded-xl focus:outline-none transition-colors"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-black p-1"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-black dark:text-[#a1a1aa] dark:hover:text-white p-1"
                     aria-label="Hiện hoặc ẩn mật mã"
                   >
                     <span className="material-symbols-outlined text-[18px]">
@@ -930,22 +930,22 @@ export default function LoginPage() {
                   </button>
                 </div>
                 {authMode === "register" && (
-                  <p className="text-[11px] text-zinc-500 mt-1">
+                  <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1">
                     {curr.passwordRequirement}
                   </p>
                 )}
               </div>
 
               {/* Checkboxes */}
-              <div className="space-y-2 pt-1 text-xs text-[#71717A]">
+              <div className="space-y-2 pt-1 text-xs text-[#71717A] dark:text-[#a1a1aa]">
                 <label className="flex items-center gap-2 cursor-pointer select-none">
                   <input
                     type="checkbox"
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
-                    className="w-4 h-4 rounded border border-black text-black focus:ring-0"
+                    className="w-4 h-4 rounded border border-black dark:border-white/50 text-black dark:bg-[#18181b] focus:ring-0"
                   />
-                  <span className="hover:text-black transition-colors">
+                  <span className="hover:text-black dark:hover:text-white transition-colors">
                     {curr.rememberMe}
                   </span>
                 </label>
@@ -956,14 +956,14 @@ export default function LoginPage() {
                     checked={agreedFSC}
                     onChange={(e) => setAgreedFSC(e.target.checked)}
                     required
-                    className="w-4 h-4 mt-0.5 rounded border border-black text-black focus:ring-0"
+                    className="w-4 h-4 mt-0.5 rounded border border-black dark:border-white/50 text-black dark:bg-[#18181b] focus:ring-0"
                   />
                   <span className="leading-relaxed">
                     {curr.agreePre}
                     <button
                       type="button"
                       onClick={() => showToast(curr.charterToast)}
-                      className="text-black underline"
+                      className="text-black dark:text-white underline"
                     >
                       {curr.agreeLink}
                     </button>
@@ -977,7 +977,7 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full h-12 bg-black text-white text-xs uppercase tracking-[0.15em] font-bold hover:bg-[#27272A] active:scale-99 transition-all flex items-center justify-center gap-2 disabled:opacity-50 rounded-xl"
+                  className="w-full h-12 bg-black dark:bg-white text-white dark:text-[#09090b] text-xs uppercase tracking-[0.15em] font-bold hover:bg-[#27272A] dark:hover:bg-[#e4e4e7] active:scale-99 transition-all flex items-center justify-center gap-2 disabled:opacity-50 rounded-xl cursor-pointer"
                 >
                   <span>
                     {isSubmitting
@@ -992,7 +992,7 @@ export default function LoginPage() {
             </form>
 
             {/* Guarantee & Security Footnote */}
-            <div className="pt-2 flex items-center justify-center gap-4 text-outline text-[11px] font-mono uppercase">
+            <div className="pt-2 flex items-center justify-center gap-4 text-outline dark:text-[#a1a1aa] text-[11px] font-mono uppercase">
               <div className="flex items-center gap-1">
                 <span className="material-symbols-outlined text-[16px]">eco</span>
                 <span>{curr.fscBadge}</span>
@@ -1006,13 +1006,13 @@ export default function LoginPage() {
           </div>
 
           {/* Card Mini Footer */}
-          <div className="mt-8 pt-4 border-t border-[#E4E4E7] flex flex-col sm:flex-row items-center justify-between text-outline text-[11px] gap-2">
+          <div className="mt-8 pt-4 border-t border-[#E4E4E7] dark:border-[#27272a] flex flex-col sm:flex-row items-center justify-between text-outline dark:text-[#a1a1aa] text-[11px] gap-2">
             <p>{curr.copyright}</p>
             <div className="flex items-center gap-3">
               <button
                 type="button"
                 onClick={() => showToast(curr.privacyToast)}
-                className="hover:text-black transition-colors"
+                className="hover:text-black dark:hover:text-white transition-colors"
               >
                 {curr.privacyPolicy}
               </button>
@@ -1020,7 +1020,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => showToast(curr.craftToast)}
-                className="hover:text-black transition-colors"
+                className="hover:text-black dark:hover:text-white transition-colors"
               >
                 {curr.craftStandards}
               </button>
