@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --breakpoint-xs: 30rem;
   --color-primary: #09090b;
@@ -344,6 +346,50 @@ html.dark .btn-consult-header * {
 }
 
 html.dark .text-on-primary {
+  color: #09090b !important;
+}
+
+/* Primary Inverted Elements & CTAs in Dark Mode (Hero Explore, Expand/Collapse, Modals) */
+html.dark .bg-primary {
+  background-color: #ffffff !important;
+  color: #09090b !important;
+}
+
+html.dark .bg-primary * {
+  color: #09090b !important;
+}
+
+html.dark .bg-primary:hover,
+html.dark a.bg-primary:hover,
+html.dark button.bg-primary:hover,
+html.dark .hover\:bg-\[\#27272a\]:hover,
+html.dark .hover\:bg-\[\#27272A\]:hover {
+  background-color: #e4e4e7 !important;
+  color: #09090b !important;
+}
+
+html.dark .bg-primary:hover *,
+html.dark a.bg-primary:hover *,
+html.dark button.bg-primary:hover *,
+html.dark .hover\:bg-\[\#27272a\]:hover *,
+html.dark .hover\:bg-\[\#27272A\]:hover * {
+  color: #09090b !important;
+}
+
+/* Hover on outline buttons that flip to primary (e.g. Add to Cart button on product cards) */
+html.dark .hover\:bg-primary:hover,
+html.dark button.hover\:bg-primary:hover,
+html.dark a.hover\:bg-primary:hover {
+  background-color: #ffffff !important;
+  border-color: #ffffff !important;
+  color: #09090b !important;
+}
+
+html.dark .hover\:bg-primary:hover *,
+html.dark button.hover\:bg-primary:hover *,
+html.dark a.hover\:bg-primary:hover *,
+html.dark .hover\:text-on-primary:hover,
+html.dark .hover\:text-on-primary:hover * {
   color: #09090b !important;
 }
 

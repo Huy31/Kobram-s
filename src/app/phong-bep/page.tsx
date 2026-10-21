@@ -331,7 +331,7 @@ export default function DiningKitchenPage() {
                           },
                         })
                       }
-                      className="px-4 py-2 border border-primary text-primary hover:bg-primary hover:text-on-primary text-xs uppercase tracking-wider font-semibold transition-colors flex items-center gap-1.5"
+                      className="px-4 py-2 border border-primary text-primary hover:bg-primary hover:text-on-primary text-xs uppercase tracking-wider font-semibold transition-colors flex items-center gap-1.5 dark:border-white/20 dark:text-white dark:hover:bg-white dark:hover:border-white dark:hover:text-[#09090b]"
                     >
                       <span className="material-symbols-outlined text-sm">shopping_bag</span>
                       {lang === "VN" ? "Thêm vào giỏ" : "Add to Bag"}
