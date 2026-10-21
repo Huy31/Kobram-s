@@ -6,6 +6,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ConsultationModal from "@/components/ConsultationModal";
+import HeartButton from "@/components/HeartButton";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { getProductsByCategory } from "@/services/productService";
@@ -125,7 +126,7 @@ const enAccOverrides: Record<string, { title: string; material: string }> = {
 };
 
 export default function CuratedCollectionsPage() {
-  const { addToCart } = useCart();
+  const { addToCart, toggleWishlist, isWishlisted, showToast } = useCart();
   const { lang } = useLanguage();
   const t = collectionTranslations[lang];
   const [isConsultationOpen, setIsConsultationOpen] = useState(false);
@@ -257,33 +258,39 @@ export default function CuratedCollectionsPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Bento Card 1 */}
-            <div className="border border-outline-variant bg-surface-container-lowest p-6 flex flex-col justify-between hover:border-primary transition-colors">
+            <div className="border border-outline-variant rounded-2xl overflow-hidden bg-surface-container-lowest p-5 sm:p-6 flex flex-col justify-between hover:border-primary hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 group">
               <div>
-                <div className="aspect-square bg-surface-container mb-space-md overflow-hidden relative">
+                <div className="aspect-square bg-surface-container mb-4 overflow-hidden relative rounded-xl">
                   <Image
                     src="/images/curated-2.jpg"
                     alt="Khớp mộng Kigumi thủ công bàn tam diện Kyoto"
                     fill
                     sizes="(max-width: 768px) 100vw, 33vw"
-                    className="object-cover hover:scale-105 transition-transform duration-500"
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <span className="absolute top-3 left-3 bg-white/95 border border-primary px-2 py-0.5 text-xs font-bold uppercase">
+                  <span className="absolute top-3 left-3 bg-white/95 dark:bg-[#18181b]/90 backdrop-blur-sm text-primary dark:text-white text-[11px] font-semibold px-2.5 py-1 rounded-md border border-outline-variant/60 dark:border-white/20 shadow-xs uppercase tracking-wider">
                     {t.kigumiTech}
                   </span>
                 </div>
-                <h3 className="font-headline-sm text-lg text-primary font-bold mb-1">
+                <div className="flex items-center gap-1 text-[13px] text-amber-500 mb-1">
+                  {"★★★★★"}
+                  <span className="text-zinc-500 dark:text-zinc-300 text-xs ml-1 font-mono">(5.0)</span>
+                </div>
+                <h3 className="font-headline text-base sm:text-lg text-primary font-bold mb-1 group-hover:underline">
                   {t.card1Title}
                 </h3>
-                <p className="text-body-sm text-secondary text-xs mb-4 leading-relaxed">
+                <p className="text-xs text-on-surface-variant mb-4 leading-relaxed font-light">
                   {t.card1Desc}
                 </p>
               </div>
               <div className="pt-4 border-t border-outline-variant/40 flex items-center justify-between">
-                <span className="font-label-md text-primary font-bold text-xs">#09 / 50</span>
+                <span className="font-mono bg-surface-container px-2.5 py-1 rounded-md text-primary font-bold text-xs border border-outline-variant/60">
+                  #09 / 50
+                </span>
                 <button
                   type="button"
                   onClick={() => setIsConsultationOpen(true)}
-                  className="font-label-sm text-xs uppercase tracking-wider text-primary underline underline-offset-4 hover:text-secondary"
+                  className="px-4 py-2 border border-outline-variant rounded-xl text-xs uppercase font-bold tracking-wider hover:bg-primary hover:border-primary hover:text-white dark:hover:bg-white dark:hover:text-[#09090b] transition-all"
                 >
                   {t.inspectBtn}
                 </button>
@@ -291,33 +298,39 @@ export default function CuratedCollectionsPage() {
             </div>
 
             {/* Bento Card 2 */}
-            <div className="border border-outline-variant bg-surface-container-lowest p-6 flex flex-col justify-between hover:border-primary transition-colors">
+            <div className="border border-outline-variant rounded-2xl overflow-hidden bg-surface-container-lowest p-5 sm:p-6 flex flex-col justify-between hover:border-primary hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 group">
               <div>
-                <div className="aspect-square bg-surface-container mb-space-md overflow-hidden relative">
+                <div className="aspect-square bg-surface-container mb-4 overflow-hidden relative rounded-xl">
                   <Image
                     src="/images/curated-3.jpg"
                     alt="Ghế bành tĩnh tọa Gion đánh số riêng"
                     fill
                     sizes="(max-width: 768px) 100vw, 33vw"
-                    className="object-cover hover:scale-105 transition-transform duration-500"
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <span className="absolute top-3 left-3 bg-white/95 border border-primary px-2 py-0.5 text-xs font-bold uppercase">
+                  <span className="absolute top-3 left-3 bg-white/95 dark:bg-[#18181b]/90 backdrop-blur-sm text-primary dark:text-white text-[11px] font-semibold px-2.5 py-1 rounded-md border border-outline-variant/60 dark:border-white/20 shadow-xs uppercase tracking-wider">
                     {t.numbered}
                   </span>
                 </div>
-                <h3 className="font-headline-sm text-lg text-primary font-bold mb-1">
+                <div className="flex items-center gap-1 text-[13px] text-amber-500 mb-1">
+                  {"★★★★★"}
+                  <span className="text-zinc-500 dark:text-zinc-300 text-xs ml-1 font-mono">(5.0)</span>
+                </div>
+                <h3 className="font-headline text-base sm:text-lg text-primary font-bold mb-1 group-hover:underline">
                   {t.card2Title}
                 </h3>
-                <p className="text-body-sm text-secondary text-xs mb-4 leading-relaxed">
+                <p className="text-xs text-on-surface-variant mb-4 leading-relaxed font-light">
                   {t.card2Desc}
                 </p>
               </div>
               <div className="pt-4 border-t border-outline-variant/40 flex items-center justify-between">
-                <span className="font-label-md text-primary font-bold text-xs">#24 / 50</span>
+                <span className="font-mono bg-surface-container px-2.5 py-1 rounded-md text-primary font-bold text-xs border border-outline-variant/60">
+                  #24 / 50
+                </span>
                 <button
                   type="button"
                   onClick={() => setIsConsultationOpen(true)}
-                  className="font-label-sm text-xs uppercase tracking-wider text-primary underline underline-offset-4 hover:text-secondary"
+                  className="px-4 py-2 border border-outline-variant rounded-xl text-xs uppercase font-bold tracking-wider hover:bg-primary hover:border-primary hover:text-white dark:hover:bg-white dark:hover:text-[#09090b] transition-all"
                 >
                   {t.inspectBtn}
                 </button>
@@ -325,32 +338,32 @@ export default function CuratedCollectionsPage() {
             </div>
 
             {/* Bento Card 3: Craftsman Manifesto */}
-            <div className="border border-outline-variant bg-surface-container-low p-6 flex flex-col justify-between">
+            <div className="border border-outline-variant rounded-2xl overflow-hidden bg-surface-container-low p-5 sm:p-6 flex flex-col justify-between hover:border-primary hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300">
               <div>
                 <div className="mb-4 pb-3 border-b border-outline-variant/60">
-                  <span className="font-label-sm text-xs uppercase text-secondary tracking-widest block">
+                  <span className="font-label-sm text-xs uppercase text-secondary tracking-widest block font-semibold">
                     {t.manifestoTag}
                   </span>
-                  <h4 className="font-headline-sm text-lg text-primary font-bold mt-1">
+                  <h4 className="font-headline text-lg text-primary font-bold mt-1">
                     {t.manifestoTitle}
                   </h4>
                 </div>
-                <blockquote className="text-body-md italic text-on-surface-variant mb-4 leading-relaxed text-xs sm:text-sm">
+                <blockquote className="text-xs sm:text-sm italic text-on-surface-variant mb-4 leading-relaxed font-light">
                   {t.manifestoQuote}
                 </blockquote>
-                <p className="text-xs text-primary font-medium">
+                <p className="text-xs text-primary font-semibold">
                   {t.manifestoAuthor}
                 </p>
               </div>
               <div className="mt-6 pt-4 border-t border-outline-variant/40">
-                <div className="bg-surface-container-lowest p-2.5 border border-outline-variant/40 mb-3 flex items-center justify-between text-xs">
-                  <span className="uppercase text-secondary">{t.verifyLabel}</span>
+                <div className="bg-surface-container-lowest p-2.5 border border-outline-variant/40 rounded-xl mb-3 flex items-center justify-between text-xs">
+                  <span className="uppercase text-secondary font-medium">{t.verifyLabel}</span>
                   <span className="font-bold text-primary">{t.verifyVal}</span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setIsConsultationOpen(true)}
-                  className="w-full bg-primary text-on-primary py-3 font-label-md text-xs uppercase tracking-wider hover:bg-[#27272a] transition-colors"
+                  className="w-full bg-primary text-on-primary py-3 rounded-xl font-label-md text-xs uppercase tracking-wider hover:bg-[#27272a] transition-all font-bold"
                 >
                   {t.reserveNextBtn}
                 </button>
@@ -369,54 +382,124 @@ export default function CuratedCollectionsPage() {
                   {t.fscTag}
                 </span>
               </div>
-              <h2 className="font-headline-md text-2xl sm:text-3xl font-bold text-primary uppercase tracking-tight">
+              <h2 className="font-headline text-2xl sm:text-3xl font-bold text-primary uppercase tracking-tight">
                 {t.fscTitle}
               </h2>
-              <p className="text-body-md text-on-surface-variant text-xs sm:text-sm leading-relaxed">
+              <p className="text-body-md text-on-surface-variant text-xs sm:text-sm leading-relaxed font-light">
                 {t.fscDesc}
               </p>
-              <div className="p-3 bg-surface-container-low border border-outline-variant text-xs space-y-1">
+              <div className="p-3 bg-surface-container-low border border-outline-variant rounded-xl text-xs space-y-1 font-mono text-outline">
                 <p>{t.fscCertLabel}</p>
                 <p>{t.fscKilnLabel}</p>
               </div>
             </div>
 
-            <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="border border-outline-variant bg-surface-container-lowest overflow-hidden group">
-                <div className="relative aspect-[4/3]">
-                  <Image
-                    src="/images/curated-4.jpg"
-                    alt={t.fscItem1Title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 30vw"
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
+            <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="border border-outline-variant rounded-2xl overflow-hidden bg-surface-container-lowest group flex flex-col justify-between transition-all duration-300 hover:border-primary hover:shadow-xl hover:-translate-y-1.5">
+                <div>
+                  <div className="relative aspect-[4/3] bg-surface-container overflow-hidden">
+                    <Image
+                      src="/images/curated-4.jpg"
+                      alt={t.fscItem1Title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 30vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <span className="absolute top-3 left-3 bg-white/95 dark:bg-[#18181b]/90 backdrop-blur-sm text-primary dark:text-white text-[11px] font-semibold px-2.5 py-1 rounded-md border border-outline-variant/60 dark:border-white/20 shadow-xs uppercase tracking-wider">
+                      FSC® 100% REGENERATIVE
+                    </span>
+                  </div>
+                  <div className="p-4 sm:p-5 space-y-1.5">
+                    <div className="flex items-center gap-1 text-[13px] text-amber-500">
+                      {"★★★★★"}
+                      <span className="text-zinc-500 dark:text-zinc-300 text-xs ml-1 font-mono">(5.0)</span>
+                    </div>
+                    <h4 className="font-headline text-base sm:text-lg font-bold text-primary">{t.fscItem1Title}</h4>
+                    <span className="text-xs text-outline block">{t.fscItem1Sub}</span>
+                  </div>
                 </div>
-                <div className="p-4">
-                  <h4 className="font-headline-sm text-base font-bold text-primary">{t.fscItem1Title}</h4>
-                  <span className="text-xs text-outline block mt-0.5">{t.fscItem1Sub}</span>
-                  <span className="text-sm font-bold text-primary block mt-2">
+                <div className="p-4 sm:p-5 pt-3.5 border-t border-outline-variant/30 flex items-center justify-between mt-2">
+                  <span className="font-headline text-base sm:text-lg font-bold text-primary">
                     {(7500000).toLocaleString(lang === "EN" ? "en-US" : "vi-VN")} {t.currency}
                   </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      addToCart({
+                        id: "fsc-item-1",
+                        sku: "KL-FSC-OAK",
+                        title: t.fscItem1Title,
+                        subtitle: t.fscItem1Sub,
+                        price: 7500000,
+                        image: "/images/curated-4.jpg",
+                        quantity: 1,
+                      });
+                      showToast(lang === "VN" ? `Đã thêm "${t.fscItem1Title}" vào giỏ hàng` : `Added "${t.fscItem1Title}" to cart`);
+                    }}
+                    className="p-2 sm:px-3 sm:py-2 border border-outline-variant rounded-xl transition-all text-on-surface hover:bg-primary hover:border-primary hover:text-on-primary dark:border-white/20 dark:text-white dark:hover:bg-white dark:hover:border-white dark:hover:text-[#09090b] group/cartbtn cursor-pointer flex items-center gap-1.5"
+                    title={t.addToCart}
+                  >
+                    <span className="material-symbols-outlined text-[18px] block group-hover/cartbtn:text-white dark:group-hover/cartbtn:text-[#09090b]">
+                      shopping_bag
+                    </span>
+                    <span className="hidden sm:inline text-xs font-semibold uppercase tracking-wider group-hover/cartbtn:text-white dark:group-hover/cartbtn:text-[#09090b]">
+                      {lang === "VN" ? "Thêm" : "Add"}
+                    </span>
+                  </button>
                 </div>
               </div>
 
-              <div className="border border-outline-variant bg-surface-container-lowest overflow-hidden group">
-                <div className="relative aspect-[4/3]">
-                  <Image
-                    src="/images/curated-5.jpg"
-                    alt={t.fscItem2Title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 30vw"
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
+              <div className="border border-outline-variant rounded-2xl overflow-hidden bg-surface-container-lowest group flex flex-col justify-between transition-all duration-300 hover:border-primary hover:shadow-xl hover:-translate-y-1.5">
+                <div>
+                  <div className="relative aspect-[4/3] bg-surface-container overflow-hidden">
+                    <Image
+                      src="/images/curated-5.jpg"
+                      alt={t.fscItem2Title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 30vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <span className="absolute top-3 left-3 bg-white/95 dark:bg-[#18181b]/90 backdrop-blur-sm text-primary dark:text-white text-[11px] font-semibold px-2.5 py-1 rounded-md border border-outline-variant/60 dark:border-white/20 shadow-xs uppercase tracking-wider">
+                      FSC® 100% REGENERATIVE
+                    </span>
+                  </div>
+                  <div className="p-4 sm:p-5 space-y-1.5">
+                    <div className="flex items-center gap-1 text-[13px] text-amber-500">
+                      {"★★★★★"}
+                      <span className="text-zinc-500 dark:text-zinc-300 text-xs ml-1 font-mono">(5.0)</span>
+                    </div>
+                    <h4 className="font-headline text-base sm:text-lg font-bold text-primary">{t.fscItem2Title}</h4>
+                    <span className="text-xs text-outline block">{t.fscItem2Sub}</span>
+                  </div>
                 </div>
-                <div className="p-4">
-                  <h4 className="font-headline-sm text-base font-bold text-primary">{t.fscItem2Title}</h4>
-                  <span className="text-xs text-outline block mt-0.5">{t.fscItem2Sub}</span>
-                  <span className="text-sm font-bold text-primary block mt-2">
+                <div className="p-4 sm:p-5 pt-3.5 border-t border-outline-variant/30 flex items-center justify-between mt-2">
+                  <span className="font-headline text-base sm:text-lg font-bold text-primary">
                     {(22800000).toLocaleString(lang === "EN" ? "en-US" : "vi-VN")} {t.currency}
                   </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      addToCart({
+                        id: "fsc-item-2",
+                        sku: "KL-FSC-TEA",
+                        title: t.fscItem2Title,
+                        subtitle: t.fscItem2Sub,
+                        price: 22800000,
+                        image: "/images/curated-5.jpg",
+                        quantity: 1,
+                      });
+                      showToast(lang === "VN" ? `Đã thêm "${t.fscItem2Title}" vào giỏ hàng` : `Added "${t.fscItem2Title}" to cart`);
+                    }}
+                    className="p-2 sm:px-3 sm:py-2 border border-outline-variant rounded-xl transition-all text-on-surface hover:bg-primary hover:border-primary hover:text-on-primary dark:border-white/20 dark:text-white dark:hover:bg-white dark:hover:border-white dark:hover:text-[#09090b] group/cartbtn cursor-pointer flex items-center gap-1.5"
+                    title={t.addToCart}
+                  >
+                    <span className="material-symbols-outlined text-[18px] block group-hover/cartbtn:text-white dark:group-hover/cartbtn:text-[#09090b]">
+                      shopping_bag
+                    </span>
+                    <span className="hidden sm:inline text-xs font-semibold uppercase tracking-wider group-hover/cartbtn:text-white dark:group-hover/cartbtn:text-[#09090b]">
+                      {lang === "VN" ? "Thêm" : "Add"}
+                    </span>
+                  </button>
                 </div>
               </div>
             </div>
@@ -443,11 +526,12 @@ export default function CuratedCollectionsPage() {
                 const enOverride = lang === "EN" ? enAccOverrides[acc.id] : null;
                 const displayTitle = enOverride?.title || acc.title;
                 const displayMaterial = enOverride?.material || acc.material;
+                const wishlisted = isWishlisted(acc.id);
 
                 return (
                   <div
                     key={acc.id}
-                    className="border border-outline-variant bg-surface-container-lowest flex flex-col justify-between group hover:border-primary transition-colors"
+                    className="border border-outline-variant rounded-2xl overflow-hidden bg-surface-container-lowest flex flex-col justify-between group hover:border-primary hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300"
                   >
                     <div>
                       <div className="relative aspect-square overflow-hidden bg-surface-container">
@@ -458,19 +542,34 @@ export default function CuratedCollectionsPage() {
                           sizes="(max-width: 640px) 100vw, 25vw"
                           className="object-cover group-hover:scale-105 transition-transform duration-500"
                         />
+                        <HeartButton
+                          isLiked={wishlisted}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            toggleWishlist(acc.id);
+                          }}
+                          className="absolute top-3 right-3 z-20"
+                          size="sm"
+                          ariaLabel={`Yêu thích ${displayTitle}`}
+                        />
                       </div>
-                      <div className="p-4 space-y-1">
-                        <h4 className="font-headline-sm text-base text-primary font-bold">{displayTitle}</h4>
-                        <p className="text-xs text-on-surface-variant">{displayMaterial}</p>
+                      <div className="p-4 space-y-1.5">
+                        <div className="flex items-center gap-1 text-[13px] text-amber-500">
+                          {"★★★★★"}
+                          <span className="text-zinc-500 dark:text-zinc-300 text-xs ml-1 font-mono">(5.0)</span>
+                        </div>
+                        <h4 className="font-headline text-base text-primary font-bold leading-snug">{displayTitle}</h4>
+                        <p className="text-xs text-on-surface-variant font-light line-clamp-2">{displayMaterial}</p>
                       </div>
                     </div>
-                    <div className="p-4 pt-0 border-t border-outline-variant/20 mt-3 flex items-center justify-between">
-                      <span className="font-bold text-primary text-sm">
+                    <div className="p-4 pt-3.5 border-t border-outline-variant/30 mt-2 flex items-center justify-between">
+                      <span className="font-headline text-base font-bold text-primary">
                         {acc.price.toLocaleString(lang === "EN" ? "en-US" : "vi-VN")} {t.currency}
                       </span>
                       <button
                         type="button"
-                        onClick={() =>
+                        onClick={() => {
                           addToCart({
                             id: acc.id,
                             sku: acc.sku,
@@ -479,11 +578,18 @@ export default function CuratedCollectionsPage() {
                             price: acc.price,
                             image: acc.image,
                             quantity: 1,
-                          })
-                        }
-                        className="px-3 py-1.5 border border-primary text-primary hover:bg-primary hover:text-on-primary text-xs uppercase font-semibold transition-colors"
+                          });
+                          showToast(lang === "VN" ? `Đã thêm "${displayTitle}" vào giỏ hàng` : `Added "${displayTitle}" to cart`);
+                        }}
+                        className="p-2 sm:px-3 sm:py-2 border border-outline-variant rounded-xl transition-all text-on-surface hover:bg-primary hover:border-primary hover:text-on-primary dark:border-white/20 dark:text-white dark:hover:bg-white dark:hover:border-white dark:hover:text-[#09090b] group/cartbtn cursor-pointer flex items-center gap-1.5"
+                        title={t.addToCart}
                       >
-                        {t.addToCart}
+                        <span className="material-symbols-outlined text-[18px] block group-hover/cartbtn:text-white dark:group-hover/cartbtn:text-[#09090b]">
+                          shopping_bag
+                        </span>
+                        <span className="hidden sm:inline text-xs font-semibold uppercase tracking-wider group-hover/cartbtn:text-white dark:group-hover/cartbtn:text-[#09090b]">
+                          {lang === "VN" ? "Thêm" : "Add"}
+                        </span>
                       </button>
                     </div>
                   </div>
