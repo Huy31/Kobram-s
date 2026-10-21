@@ -197,7 +197,7 @@ export default function WishlistPage() {
                       </Link>
 
                       {item.category && (
-                        <span className="absolute top-3 left-3 bg-white/95 backdrop-blur-sm text-primary text-label-sm font-label-sm px-2.5 py-1 rounded-md border border-outline-variant/60 shadow-sm text-xs font-semibold">
+                        <span className="absolute top-3 left-3 bg-white/95 dark:bg-[#18181b]/90 backdrop-blur-sm text-primary dark:text-white text-label-sm font-label-sm px-2.5 py-1 rounded-md border border-outline-variant/60 dark:border-white/20 shadow-sm text-xs font-semibold">
                           {item.category}
                         </span>
                       )}
@@ -215,7 +215,7 @@ export default function WishlistPage() {
                     <div className="p-4 flex flex-col flex-1 justify-between">
                       <div>
                         {item.material && (
-                          <span className="text-[11px] text-outline uppercase tracking-wider block mb-1">
+                          <span className="text-[11px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider block mb-1">
                             {item.material}
                           </span>
                         )}
@@ -226,7 +226,7 @@ export default function WishlistPage() {
                         >
                           {item.title}
                         </Link>
-                        <p className="text-body-sm text-outline text-xs mt-0.5 line-clamp-1">
+                        <p className="text-body-sm text-zinc-600 dark:text-zinc-200 text-xs mt-0.5 line-clamp-1">
                           {item.subtitle}
                         </p>
                       </div>
@@ -238,7 +238,7 @@ export default function WishlistPage() {
                             {item.price.toLocaleString(lang === "VN" ? "vi-VN" : "en-US")} {t.common.currency}
                           </span>
                           {item.originalPrice && (
-                            <span className="text-xs text-outline line-through">
+                            <span className="text-xs text-zinc-400 dark:text-zinc-400 line-through">
                               {item.originalPrice.toLocaleString(lang === "VN" ? "vi-VN" : "en-US")} {t.common.currency}
                             </span>
                           )}

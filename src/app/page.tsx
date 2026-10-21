@@ -479,7 +479,7 @@ export default function HomePage() {
                     </Link>
 
                     {/* Tag */}
-                    <span className="absolute top-3 left-3 bg-white/95 backdrop-blur-sm text-primary text-label-sm font-label-sm px-2.5 py-1 rounded-md border border-outline-variant/60 shadow-sm text-xs font-medium">
+                    <span className="absolute top-3 left-3 bg-white/95 dark:bg-[#18181b]/90 backdrop-blur-sm text-primary dark:text-white text-label-sm font-label-sm px-2.5 py-1 rounded-md border border-outline-variant/60 dark:border-white/20 shadow-sm text-xs font-semibold">
                       {displayTag}
                     </span>
 
@@ -501,9 +501,9 @@ export default function HomePage() {
                   <div className="p-4 flex flex-col flex-1 justify-between">
                     <div>
                       {/* Rating stars */}
-                      <div className="flex items-center gap-1 text-[13px] text-primary mb-1">
+                      <div className="flex items-center gap-1 text-[13px] text-amber-500 mb-1">
                         {"★★★★★"}
-                        <span className="text-outline text-xs ml-1">({product.ratingCount})</span>
+                        <span className="text-zinc-500 dark:text-zinc-300 text-xs ml-1 font-mono">({product.ratingCount})</span>
                       </div>
 
                       <Link
@@ -512,7 +512,7 @@ export default function HomePage() {
                       >
                         {displayTitle}
                       </Link>
-                      <p className="text-body-sm text-outline text-xs mt-0.5">{displaySubtitle}</p>
+                      <p className="text-body-sm text-zinc-600 dark:text-zinc-200 text-xs mt-0.5">{displaySubtitle}</p>
                     </div>
 
                     {/* Price and Cart button */}
@@ -522,7 +522,7 @@ export default function HomePage() {
                           {product.price.toLocaleString(lang === "VN" ? "vi-VN" : "en-US")} {t.common.currency}
                         </span>
                         {product.originalPrice && (
-                          <span className="text-xs text-outline line-through">
+                          <span className="text-xs text-zinc-400 dark:text-zinc-400 line-through">
                             {product.originalPrice.toLocaleString(lang === "VN" ? "vi-VN" : "en-US")} {t.common.currency}
                           </span>
                         )}
