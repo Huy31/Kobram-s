@@ -7,6 +7,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ConsultationModal from "@/components/ConsultationModal";
 import HeartButton from "@/components/HeartButton";
+import ValueCard from "@/components/ValueCard";
+import NeumorphicCard from "@/components/NeumorphicCard";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { getFeaturedProducts, submitConsultationToDb } from "@/services/productService";
@@ -585,78 +587,46 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* 3 Value Cards */}
+          {/* 3 Value Cards (Tunnel Depth Effect) */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Card 1 */}
-            <div className="p-space-lg bg-surface-container-lowest border border-outline-variant rounded-3xl flex flex-col justify-between hover:shadow-lg transition-shadow">
-              <div>
-                <div className="w-12 h-12 bg-surface-container-low border border-outline-variant rounded-2xl flex items-center justify-center mb-6">
-                  <span className="material-symbols-outlined text-2xl text-primary">forest</span>
-                </div>
-                <h3 className="font-headline-sm text-xl text-primary font-bold mb-2">
-                  {t.home.val1Title}
-                </h3>
-                <p className="text-body-sm text-on-surface-variant leading-relaxed">
-                  {t.home.val1Desc}
-                </p>
-              </div>
-              <div className="pt-6 mt-6 border-t border-outline-variant/30 flex items-center justify-between text-label-sm font-label-sm text-outline uppercase">
-                <span>{t.home.val1Sub}</span>
-                <span className="material-symbols-outlined text-sm text-primary">verified</span>
-              </div>
-            </div>
-
-            {/* Card 2 */}
-            <div className="p-space-lg bg-surface-container-lowest border border-outline-variant rounded-3xl flex flex-col justify-between hover:shadow-lg transition-shadow">
-              <div>
-                <div className="w-12 h-12 bg-surface-container-low border border-outline-variant rounded-2xl flex items-center justify-center mb-6">
-                  <span className="material-symbols-outlined text-2xl text-primary">hardware</span>
-                </div>
-                <h3 className="font-headline-sm text-xl text-primary font-bold mb-2">
-                  {t.home.val2Title}
-                </h3>
-                <p className="text-body-sm text-on-surface-variant leading-relaxed">
-                  {t.home.val2Desc}
-                </p>
-              </div>
-              <div className="pt-6 mt-6 border-t border-outline-variant/30 flex items-center justify-between text-label-sm font-label-sm text-outline uppercase">
-                <span>{t.home.val2Sub}</span>
-                <span className="material-symbols-outlined text-sm text-primary">handyman</span>
-              </div>
-            </div>
-
-            {/* Card 3 */}
-            <div className="p-space-lg bg-surface-container-lowest border border-outline-variant rounded-3xl flex flex-col justify-between hover:shadow-lg transition-shadow">
-              <div>
-                <div className="w-12 h-12 bg-surface-container-low border border-outline-variant rounded-2xl flex items-center justify-center mb-6">
-                  <span className="material-symbols-outlined text-2xl text-primary">workspace_premium</span>
-                </div>
-                <h3 className="font-headline-sm text-xl text-primary font-bold mb-2">
-                  {t.home.val3Title}
-                </h3>
-                <p className="text-body-sm text-on-surface-variant leading-relaxed">
-                  {t.home.val3Desc}
-                </p>
-              </div>
-              <div className="pt-6 mt-6 border-t border-outline-variant/30 flex items-center justify-between text-label-sm font-label-sm text-outline uppercase">
-                <span>{t.home.val3Sub}</span>
-                <span className="material-symbols-outlined text-sm text-primary">shield</span>
-              </div>
-            </div>
+            <ValueCard
+              index={0}
+              icon="forest"
+              title={t.home.val1Title}
+              description={t.home.val1Desc}
+              subText={t.home.val1Sub}
+              subIcon="verified"
+            />
+            <ValueCard
+              index={1}
+              icon="hardware"
+              title={t.home.val2Title}
+              description={t.home.val2Desc}
+              subText={t.home.val2Sub}
+              subIcon="handyman"
+            />
+            <ValueCard
+              index={2}
+              icon="workspace_premium"
+              title={t.home.val3Title}
+              description={t.home.val3Desc}
+              subText={t.home.val3Sub}
+              subIcon="shield"
+            />
           </div>
         </section>
 
         {/* WORKSHOP BANNER SECTION */}
         <section id="xuong-moc" className="py-space-md px-space-md lg:px-margin max-w-7xl mx-auto">
-          <div className="bg-surface-container-lowest border border-outline-variant rounded-3xl lg:rounded-[36px] p-space-lg sm:p-space-xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center overflow-hidden">
-            <div className="lg:col-span-7 space-y-4">
-              <span className="text-label-sm font-label-sm text-outline uppercase tracking-widest block">
+          <NeumorphicCard className="grid grid-cols-1 lg:grid-cols-12 items-stretch overflow-hidden">
+            <div className="lg:col-span-7 p-8 sm:p-12 lg:py-16 lg:pl-16 lg:pr-10 flex flex-col justify-center space-y-4">
+              <span className="text-label-sm font-label-sm text-[#71717a] uppercase tracking-widest block font-medium">
                 {t.home.workshopTag}
               </span>
-              <h3 className="text-headline-md font-headline-md text-2xl sm:text-3xl text-primary font-bold tracking-tight">
+              <h3 className="text-headline-md font-headline-md text-2xl sm:text-3xl lg:text-4xl text-primary font-bold tracking-tight">
                 {t.home.workshopHeading}
               </h3>
-              <p className="text-body-md text-on-surface-variant max-w-xl leading-relaxed">
+              <p className="text-body-md text-[#52525b] max-w-xl leading-relaxed">
                 {t.home.workshopDesc}
               </p>
               <div className="pt-2">
@@ -671,16 +641,16 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="lg:col-span-5 relative aspect-[16/10] sm:aspect-[16/9] overflow-hidden border border-outline-variant rounded-2xl lg:rounded-3xl">
+            <div className="lg:col-span-5 relative w-full aspect-[16/10] lg:aspect-auto min-h-[280px] sm:min-h-[340px] lg:min-h-full overflow-hidden">
               <Image
                 src="/images/artisan-woodworker.jpg"
                 alt="Thợ mộc Komorebi bào gỗ tại xưởng chế tác thủ công"
                 fill
-                sizes="(max-width: 1024px) 100vw, 40vw"
-                className="object-cover hover:scale-105 transition-transform duration-500"
+                sizes="(max-width: 1024px) 100vw, 42vw"
+                className="object-cover hover:scale-105 transition-transform duration-700"
               />
             </div>
-          </div>
+          </NeumorphicCard>
         </section>
 
         {/* CONSULTATION CTA BANNER */}
