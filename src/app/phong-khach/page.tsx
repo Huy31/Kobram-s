@@ -178,38 +178,38 @@ export default function LivingRoomPage() {
       <main className="flex-grow">
         {/* HERO BANNER SECTION */}
         <section className="border-b border-outline-variant/40 bg-surface-container-lowest">
-          <div className="max-w-7xl mx-auto px-space-md sm:px-space-lg lg:px-margin py-space-xl lg:py-space-2xl">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-end">
+          <div className="max-w-7xl mx-auto px-space-md sm:px-space-lg lg:px-margin py-8 sm:py-12 lg:py-16">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-end">
               <div className="lg:col-span-8">
-                <div className="flex items-center gap-2 mb-space-sm text-secondary font-label-sm text-label-sm uppercase tracking-widest text-xs">
+                <div className="flex items-center gap-2 mb-3 sm:mb-4 text-secondary font-label-sm text-label-sm uppercase tracking-widest text-xs">
                   <span>{lang === "VN" ? "Kiến trúc & Tĩnh tại" : "Architecture & Stillness"}</span>
                   <span className="w-8 h-[1px] bg-outline-variant"></span>
                   <span>Japandi Curation 2025</span>
                 </div>
-                <h1 className="font-display-hero text-2xl sm:text-4xl lg:text-5xl text-primary tracking-tight font-bold mb-space-md uppercase">
+                <h1 className="font-headline text-2xl sm:text-4xl lg:text-5xl font-bold text-primary uppercase leading-[1.28] sm:leading-[1.3] lg:leading-[1.32] tracking-normal mb-5 sm:mb-6">
                   {lang === "VN"
                     ? "Không Gian Phòng Khách — Nơi Chạm Vào Sự Tĩnh Lặng"
                     : "Living Room Spaces — Where Serenity Resides"}
                 </h1>
-                <p className="font-body-lg text-body-lg text-on-surface-variant max-w-2xl font-light text-sm sm:text-base leading-relaxed">
+                <p className="font-body text-on-surface-variant max-w-2xl font-light text-sm sm:text-base leading-relaxed">
                   {lang === "VN"
                     ? "Tuyển tập các tác phẩm nội thất mộc bản cho gian khách đương đại. Chế tác độc bản từ gỗ sồi Bắc Mỹ chuẩn FAS và đệm vải lanh linen tự nhiên, đón ánh sáng tĩnh tại của thời gian qua từng chi tiết ghép mộng không đinh."
                     : "Curated solid wood furniture for contemporary living rooms. Handcrafted from FAS North American white oak and natural linen, embracing serene light through nail-free joinery."}
                 </p>
               </div>
 
-              <div className="lg:col-span-4 flex flex-col justify-between border-t lg:border-t-0 lg:border-l border-outline-variant/40 pt-space-md lg:pt-0 lg:pl-space-lg">
-                <div className="space-y-1 mb-space-md text-xs sm:text-sm">
-                  <span className="font-label-sm text-label-sm uppercase tracking-widest text-secondary block">
+              <div className="lg:col-span-4 flex flex-col justify-between border-t lg:border-t-0 lg:border-l border-outline-variant/40 pt-5 lg:pt-0 lg:pl-8">
+                <div className="space-y-2 mb-5 text-xs sm:text-sm">
+                  <span className="font-label-sm text-label-sm uppercase tracking-widest text-secondary block font-semibold">
                     {lang === "VN" ? "Quy chuẩn xưởng mộc" : "Atelier Standards"}
                   </span>
-                  <p className="font-body-sm text-body-sm text-on-surface">
+                  <p className="font-body text-on-surface leading-relaxed text-xs sm:text-sm font-light">
                     {lang === "VN"
                       ? "Khớp mộng Kigumi truyền thống · Sơn gốc nước an toàn EU tiêu chuẩn E0 · Bảo hành mộng gỗ 10 năm."
                       : "Traditional Kigumi joinery · EU standard non-toxic water-based finish · 10-year joint warranty."}
                   </p>
                 </div>
-                <div className="flex items-center gap-2 text-primary font-label-md text-label-md uppercase tracking-wider text-xs font-bold">
+                <div className="flex items-center gap-2 text-primary font-label-md text-label-md uppercase tracking-wider text-xs font-bold pt-1">
                   <span>
                     {products.length} {lang === "VN" ? "Thiết kế cốt lõi" : "Core Designs"}
                   </span>
@@ -219,7 +219,7 @@ export default function LivingRoomPage() {
             </div>
 
             {/* Subcategory Filter Chips */}
-            <div className="mt-space-xl pt-space-lg border-t border-outline-variant/30 flex items-center gap-2 overflow-x-auto pb-2">
+            <div className="mt-8 sm:mt-10 pt-6 sm:pt-8 border-t border-outline-variant/30 flex items-center gap-2 overflow-x-auto pb-2">
               {[
                 {
                   id: "all",

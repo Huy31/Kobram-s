@@ -264,7 +264,7 @@ export default function HomePage() {
                 </span>
               </div>
 
-              <h1 className="font-headline-lg lg:font-display-lg text-3xl sm:text-4xl md:text-5xl xl:text-6xl text-on-background leading-[1.15] tracking-tight">
+              <h1 className="font-headline-lg lg:font-display-lg text-3xl sm:text-4xl md:text-5xl xl:text-6xl text-on-background leading-[1.25] sm:leading-[1.28] tracking-normal">
                 {t.home.heroHeadline} <br className="hidden sm:inline" />
                 <span className="italic font-normal text-primary">
                   {t.home.heroHeadlineAccent}

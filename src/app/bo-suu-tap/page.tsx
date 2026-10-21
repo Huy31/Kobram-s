@@ -188,19 +188,19 @@ export default function CuratedCollectionsPage() {
       <main className="min-h-screen">
         {/* HERO SECTION */}
         <section className="border-b border-outline-variant/40 bg-surface-container-lowest">
-          <div className="max-w-7xl mx-auto px-space-md sm:px-space-lg lg:px-margin py-space-xl lg:py-space-2xl">
+          <div className="max-w-7xl mx-auto px-space-md sm:px-space-lg lg:px-margin py-8 sm:py-12 lg:py-16">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
               <div className="lg:col-span-7 flex flex-col justify-center">
-                <div className="flex items-center gap-2 mb-3">
+                <div className="flex items-center gap-2 mb-3 sm:mb-4">
                   <span className="inline-block w-8 h-[1px] bg-primary"></span>
-                  <span className="font-label-sm text-label-sm text-secondary uppercase tracking-widest text-xs">
+                  <span className="font-label-sm text-label-sm text-secondary uppercase tracking-widest text-xs font-semibold">
                     {t.heroTag}
                   </span>
                 </div>
-                <h1 className="font-headline-lg text-2xl sm:text-4xl lg:text-5xl leading-tight text-primary uppercase font-bold tracking-tight mb-space-md">
+                <h1 className="font-headline text-2xl sm:text-4xl lg:text-5xl font-bold text-primary uppercase leading-[1.28] sm:leading-[1.3] lg:leading-[1.32] tracking-normal mb-5 sm:mb-6">
                   {t.heroTitle}
                 </h1>
-                <p className="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mb-space-lg leading-relaxed text-sm sm:text-base">
+                <p className="font-body text-on-surface-variant max-w-2xl mb-6 sm:mb-8 leading-relaxed text-sm sm:text-base font-light">
                   {t.heroDesc}
                 </p>
 
