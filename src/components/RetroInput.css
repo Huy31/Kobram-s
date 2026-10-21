@@ -1,0 +1,122 @@
+.retro-input-wrapper {
+  position: relative;
+  width: 100%;
+  flex: 1;
+}
+
+.retro-input {
+  width: 100%;
+  height: 56px;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-family: "Space Mono", "Courier New", Courier, monospace;
+  color: #000000;
+  background-color: #ffffff;
+  border: 3px solid #ffffff;
+  border-radius: 0;
+  outline: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  box-shadow: 6px 6px 0 rgba(255, 255, 255, 0.4);
+}
+
+.retro-input::placeholder {
+  color: #71717a;
+  font-family: inherit;
+  font-size: 15px;
+}
+
+.retro-input:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 9px 9px 0 #ffffff;
+}
+
+.retro-input:focus {
+  background-color: #010101;
+  color: #ffffff;
+  border-color: #ffffff;
+  box-shadow: 6px 6px 0 #ffffff;
+  animation: retro-shake 0.5s ease-in-out;
+}
+
+.retro-input:focus::placeholder {
+  color: #a1a1aa;
+}
+
+@keyframes retro-shake {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px) rotate(-1.5deg);
+  }
+  50% {
+    transform: translateX(4px) rotate(1.5deg);
+  }
+  75% {
+    transform: translateX(-4px) rotate(-1.5deg);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes retro-glitch {
+  0% {
+    transform: none;
+    opacity: 1;
+  }
+  7% {
+    transform: skew(-0.5deg, -0.9deg);
+    opacity: 0.85;
+  }
+  10% {
+    transform: none;
+    opacity: 1;
+  }
+  27% {
+    transform: none;
+    opacity: 1;
+  }
+  30% {
+    transform: skew(0.8deg, -0.1deg);
+    opacity: 0.85;
+  }
+  35% {
+    transform: none;
+    opacity: 1;
+  }
+  52% {
+    transform: none;
+    opacity: 1;
+  }
+  55% {
+    transform: skew(-1deg, 0.2deg);
+    opacity: 0.85;
+  }
+  60% {
+    transform: none;
+    opacity: 1;
+  }
+  72% {
+    transform: none;
+    opacity: 1;
+  }
+  75% {
+    transform: skew(0.4deg, 1deg);
+    opacity: 0.85;
+  }
+  80% {
+    transform: none;
+    opacity: 1;
+  }
+  100% {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+.retro-input:not(:placeholder-shown) {
+  animation: retro-glitch 1.5s linear infinite;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
