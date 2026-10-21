@@ -9,6 +9,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { createClient } from "@/utils/supabase/client";
 import { ExpandingSearchDock } from "@/components/ui/expanding-search-dock-shadcnui";
 import ThemeToggle from "@/components/ThemeToggle";
+import NotificationDropdown from "@/components/NotificationDropdown";
 
 interface HeaderProps {
   onOpenConsultation?: () => void;
@@ -200,6 +201,9 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
 
           {/* Icon buttons */}
           <div className="flex items-center gap-1 sm:gap-1.5 border-l border-outline-variant/60 pl-2 sm:pl-3">
+            {/* Notifications */}
+            <NotificationDropdown />
+
             {/* Wishlist */}
             <button
               type="button"

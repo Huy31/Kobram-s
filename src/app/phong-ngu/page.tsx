@@ -190,7 +190,7 @@ const bedroomTranslations = {
 };
 
 export default function BedroomPage() {
-  const { addToCart, toggleWishlist, isWishlisted } = useCart();
+  const { addToCart, toggleWishlist, isWishlisted, showToast } = useCart();
   const { lang } = useLanguage();
   const t = bedroomTranslations[lang];
   const [products, setProducts] = useState<BedroomProduct[]>(initialBedroomProducts);
@@ -295,7 +295,7 @@ export default function BedroomPage() {
               return (
                 <article
                   key={p.id}
-                  className="group border border-outline-variant/60 bg-surface-container-lowest flex flex-col justify-between hover:border-primary transition-all duration-200"
+                  className="group bg-surface-container-lowest border border-outline-variant rounded-2xl overflow-hidden flex flex-col justify-between transition-all duration-300 hover:border-primary hover:shadow-xl hover:-translate-y-1.5"
                 >
                   <div>
                     <div className="relative w-full aspect-[4/5] bg-surface-container overflow-hidden">
@@ -309,9 +309,15 @@ export default function BedroomPage() {
                         />
                       </Link>
 
-                      <span className="absolute top-3 left-3 bg-primary text-on-primary font-label-sm text-[10px] px-2.5 py-1 tracking-wider uppercase font-bold">
+                      <span className="absolute top-3 left-3 bg-white/95 dark:bg-[#18181b]/90 backdrop-blur-sm text-primary dark:text-white text-[11px] font-semibold px-2.5 py-1 rounded-md border border-outline-variant/60 dark:border-white/20 shadow-xs uppercase tracking-wider">
                         {displayTag}
                       </span>
+
+                      {p.originalPrice && (
+                        <span className="absolute bottom-3 left-3 bg-red-600/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-sm">
+                          -{Math.round(((p.originalPrice - p.price) / p.originalPrice) * 100)}%
+                        </span>
+                      )}
 
                       <HeartButton
                         isLiked={wishlisted}
@@ -326,30 +332,37 @@ export default function BedroomPage() {
                       />
                     </div>
 
-                    <div className="p-space-md space-y-2">
-                      <div className="flex items-center justify-between text-outline font-label-sm text-xs uppercase">
-                        <span>{displayMaterial}</span>
-                        <span>{p.dimensions}</span>
+                    <div className="p-4 sm:p-5 space-y-2">
+                      <div className="flex items-center gap-1 text-[13px] text-amber-500">
+                        {"★★★★★"}
+                        <span className="text-zinc-500 dark:text-zinc-300 text-xs ml-1 font-mono">(4.9)</span>
                       </div>
+
+                      <div className="flex items-center justify-between text-outline text-xs uppercase font-medium">
+                        <span className="truncate max-w-[65%]">{displayMaterial}</span>
+                        <span className="text-[11px] font-mono">{p.dimensions}</span>
+                      </div>
+
                       <Link
                         href={p.slug ? `/san-pham/${p.slug}` : "/san-pham/kura-lounge-chair"}
-                        className="font-headline-sm text-lg text-primary font-bold group-hover:underline block"
+                        className="font-headline text-base sm:text-lg text-primary font-bold hover:underline block leading-snug"
                       >
                         {displayTitle}
                       </Link>
-                      <p className="text-body-sm text-on-surface-variant text-xs line-clamp-2 leading-relaxed">
+
+                      <p className="text-xs text-on-surface-variant line-clamp-2 leading-relaxed font-light">
                         {displayDesc}
                       </p>
                     </div>
                   </div>
 
-                  <div className="p-space-md pt-0 border-t border-outline-variant/30 mt-4 flex items-center justify-between">
+                  <div className="p-4 sm:p-5 pt-3.5 border-t border-outline-variant/30 mt-2 flex items-center justify-between">
                     <div>
-                      <span className="font-headline-sm text-lg text-primary font-bold block">
+                      <span className="font-headline text-base sm:text-lg text-primary font-bold block leading-none">
                         {p.price.toLocaleString(lang === "EN" ? "en-US" : "vi-VN")} {t.currency}
                       </span>
                       {p.originalPrice && (
-                        <span className="text-xs text-outline line-through">
+                        <span className="text-xs text-zinc-400 dark:text-zinc-400 line-through mt-1 block">
                           {p.originalPrice.toLocaleString(lang === "EN" ? "en-US" : "vi-VN")} {t.currency}
                         </span>
                       )}
@@ -357,7 +370,7 @@ export default function BedroomPage() {
 
                     <button
                       type="button"
-                      onClick={() =>
+                      onClick={() => {
                         addToCart({
                           id: p.id,
                           sku: p.sku,
@@ -371,12 +384,19 @@ export default function BedroomPage() {
                             wood: displayMaterial,
                             size: p.dimensions,
                           },
-                        })
-                      }
-                      className="px-4 py-2 border border-primary text-primary hover:bg-primary hover:text-on-primary text-xs uppercase tracking-wider font-semibold transition-colors flex items-center gap-1.5 dark:border-white/20 dark:text-white dark:hover:bg-white dark:hover:border-white dark:hover:text-[#09090b]"
+                        });
+                        showToast(lang === "VN" ? `Đã thêm "${displayTitle}" vào giỏ hàng` : `Added "${displayTitle}" to cart`);
+                      }}
+                      className="p-2.5 sm:px-3.5 sm:py-2 border border-outline-variant rounded-xl transition-all text-on-surface hover:bg-primary hover:border-primary hover:text-on-primary dark:border-white/20 dark:text-white dark:hover:bg-white dark:hover:border-white dark:hover:text-[#09090b] group/cartbtn cursor-pointer flex items-center gap-1.5"
+                      title={t.addToCart}
+                      aria-label={t.addToCart}
                     >
-                      <span className="material-symbols-outlined text-sm">shopping_bag</span>
-                      {t.addToCart}
+                      <span className="material-symbols-outlined text-[18px] block group-hover/cartbtn:text-white dark:group-hover/cartbtn:text-[#09090b]">
+                        shopping_bag
+                      </span>
+                      <span className="hidden sm:inline text-xs font-semibold uppercase tracking-wider group-hover/cartbtn:text-white dark:group-hover/cartbtn:text-[#09090b]">
+                        {lang === "VN" ? "Thêm" : "Add"}
+                      </span>
                     </button>
                   </div>
                 </article>
