@@ -15,3 +15,25 @@
 .neumorphic-card .neumorphic-image-container {
   box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.08), -4px -4px 12px rgba(255, 255, 255, 0.6);
 }
+
+/* Dark mode styling */
+html.dark .neumorphic-card {
+  background: #18181b;
+  box-shadow: 12px 12px 28px #09090b, -12px -12px 28px #27272a;
+}
+
+html.dark .neumorphic-card:hover {
+  box-shadow: 16px 16px 36px #060608, -16px -16px 36px #2d2d32;
+}
+
+html.dark .neumorphic-card p {
+  color: #a1a1aa !important;
+}
+
+html.dark .neumorphic-card span.text-\[\#71717a\] {
+  color: #a1a1aa !important;
+}
+
+html.dark .neumorphic-card .neumorphic-image-container {
+  box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.5), -4px -4px 12px rgba(255, 255, 255, 0.05);
+}

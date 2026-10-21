@@ -166,3 +166,32 @@
   transform: translateY(0);
   transition-delay: 0.45s;
 }
+
+/* Dark mode styling for tunnel card */
+html.dark .tunnel-card {
+  background-color: #27272a;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+html.dark .tunnel-card .layer-one {
+  background-color: #202024;
+}
+
+html.dark .tunnel-card .stage-one h3 {
+  color: #ffffff !important;
+}
+
+html.dark .tunnel-card .stage-one .bg-white\/80 {
+  background-color: rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+html.dark .tunnel-card .stage-one span.text-outline {
+  color: #a1a1aa !important;
+}
+
+html.dark .tunnel-card .stage-one div.border-black\/10 {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #e4e4e7 !important;
+}

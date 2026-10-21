@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { ThemeProvider } from "@/context/ThemeContext";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { CartProvider } from "@/context/CartContext";
 import WishlistDrawer from "@/components/WishlistDrawer";
@@ -45,14 +46,16 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="bg-[#FAFAFA] text-[#18181B] antialiased selection:bg-[#09090B] selection:text-white min-h-screen flex flex-col font-body-md text-body-md">
-        <LanguageProvider>
-          <CartProvider>
-            {children}
-            <WishlistDrawer />
-            <ChatbotWidget />
-          </CartProvider>
-        </LanguageProvider>
+      <body className="bg-[#FAFAFA] text-[#18181B] antialiased selection:bg-[#09090B] selection:text-white min-h-screen flex flex-col font-body-md text-body-md transition-colors duration-300">
+        <ThemeProvider>
+          <LanguageProvider>
+            <CartProvider>
+              {children}
+              <WishlistDrawer />
+              <ChatbotWidget />
+            </CartProvider>
+          </LanguageProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
