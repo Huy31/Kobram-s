@@ -251,51 +251,84 @@ html.dark .bg-surface-container-lowest {
 }
 
 html.dark .bg-surface-container-low,
-html.dark .bg-muted {
-  background-color: #18181b !important;
+html.dark .bg-muted,
+html.dark .bg-\[\#F4F4F5\],
+html.dark .bg-\[\#f4f4f5\] {
+  background-color: #18181c !important;
 }
 
 html.dark .bg-surface-container {
-  background-color: #202024 !important;
+  background-color: #202026 !important;
 }
 
-/* Text overrides */
+html.dark .bg-surface-container-high {
+  background-color: #27272f !important;
+}
+
+html.dark .bg-surface-container-highest {
+  background-color: #303038 !important;
+}
+
+/* Primary Headings & Bold Text: Crisp Pure White */
 html.dark .text-primary,
+html.dark .text-on-background,
+html.dark .text-on-surface,
+html.dark .text-black,
 html.dark .text-\[\#18181B\],
+html.dark .text-\[\#18181b\],
 html.dark .text-\[\#09090b\],
 html.dark .text-\[\#09090B\] {
   color: #ffffff !important;
 }
 
-html.dark .text-on-surface {
-  color: #f4f4f5 !important;
-}
-
+/* Body & Secondary Text: Bright Zinc-200 for High Legibility (No More Chìm) */
 html.dark .text-on-surface-variant,
 html.dark .text-secondary {
+  color: #e4e4e7 !important;
+}
+
+/* Sub-labels, Metadata, Captions, Ratings & Outlines: Clear Zinc-400 */
+html.dark .text-outline,
+html.dark .text-muted-foreground,
+html.dark .text-\[\#71717A\],
+html.dark .text-\[\#71717a\] {
   color: #a1a1aa !important;
 }
 
-html.dark .text-outline {
-  color: #71717a !important;
+/* Hover effects */
+html.dark .hover\:text-black:hover,
+html.dark .hover\:text-primary:hover {
+  color: #ffffff !important;
 }
 
 /* Borders */
 html.dark .border-outline-variant,
-html.dark .border-border {
-  border-color: rgba(255, 255, 255, 0.1) !important;
+html.dark .border-border,
+html.dark .border-\[\#E4E4E7\],
+html.dark .border-\[\#e4e4e7\] {
+  border-color: rgba(255, 255, 255, 0.12) !important;
 }
 
 html.dark .border-outline-variant\/30,
 html.dark .border-outline-variant\/40,
 html.dark .border-outline-variant\/50,
 html.dark .border-outline-variant\/60 {
-  border-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.09) !important;
+}
+
+html.dark .border-\[\#18181B\],
+html.dark .border-\[\#18181b\] {
+  border-color: rgba(255, 255, 255, 0.22) !important;
+}
+
+html.dark .border-black\/10,
+html.dark .border-black\/20 {
+  border-color: rgba(255, 255, 255, 0.12) !important;
 }
 
 /* Header in dark mode */
 html.dark header {
-  background-color: rgba(9, 9, 11, 0.88) !important;
+  background-color: rgba(9, 9, 11, 0.9) !important;
   border-bottom-color: rgba(255, 255, 255, 0.1) !important;
 }
 
@@ -310,12 +343,54 @@ html.dark aside[role="dialog"] .bg-white {
   border-bottom-color: rgba(255, 255, 255, 0.1) !important;
 }
 
-/* Search input in dark mode */
+/* Inputs, Textareas & Selects across the app */
 html.dark input[type="text"],
-html.dark input[type="search"] {
-  background-color: #18181b;
-  color: #ffffff;
+html.dark input[type="email"],
+html.dark input[type="password"],
+html.dark input[type="tel"],
+html.dark input[type="number"],
+html.dark input[type="search"],
+html.dark textarea,
+html.dark select {
+  background-color: #18181c !important;
+  color: #f4f4f5 !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
 }
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #71717a !important;
+}
+
+/* Primary action buttons that use bg-black or bg-primary in dark mode */
+html.dark button.bg-black,
+html.dark a.bg-black {
+  background-color: #f4f4f5 !important;
+  color: #09090b !important;
+}
+
+html.dark button.bg-black:hover,
+html.dark a.bg-black:hover {
+  background-color: #ffffff !important;
+}
+
+html.dark span.bg-black {
+  background-color: #ffffff !important;
+}
+
+/* Active pill buttons with bg-white inside dark containers */
+html.dark button.bg-white,
+html.dark a.bg-white {
+  background-color: #26262e !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+html.dark button.bg-white:hover,
+html.dark a.bg-white:hover {
+  background-color: #2f2f3a !important;
+}
+
 
 /* Modals & Popups */
 html.dark div[role="dialog"] > div.bg-surface-container-lowest,

@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { createClient } from "@/utils/supabase/client";
+import ThemeToggle from "@/components/ThemeToggle";
 
 type AuthMode = "signin" | "register";
 type Role = "client" | "architect";
@@ -455,8 +456,9 @@ export default function LoginPage() {
             </Link>
           </div>
 
-          {/* Right: Controls (Language & Member Support) */}
-          <div className="flex items-center gap-4">
+          {/* Right: Controls (Theme, Language & Member Support) */}
+          <div className="flex items-center gap-2.5 sm:gap-4">
+            <ThemeToggle className="scale-85 sm:scale-90" />
             {/* Lang Switcher */}
             <div className="flex items-center border border-[#E4E4E7] p-0.5 bg-[#F4F4F5] text-xs font-semibold rounded-lg">
               <button
