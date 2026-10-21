@@ -277,10 +277,10 @@ export default function HomePage() {
               <div className="pt-1 sm:pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
                 <a
                   href="#bo-suu-tap"
-                  className="inline-flex items-center justify-center px-6 py-3.5 bg-primary text-on-primary text-label-md font-label-md tracking-wider uppercase rounded-xl hover:bg-[#27272a] transition-all shadow-sm active:scale-95 group text-xs sm:text-sm"
+                  className="inline-flex items-center justify-center px-6 py-3.5 bg-primary text-on-primary text-label-md font-label-md tracking-wider uppercase rounded-xl hover:bg-[#27272a] dark:bg-white dark:text-[#09090b] dark:hover:bg-[#e4e4e7] transition-all shadow-sm active:scale-95 group text-xs sm:text-sm font-bold"
                 >
-                  <span>{t.home.heroExploreBtn}</span>
-                  <span className="material-symbols-outlined ml-2 text-base transition-transform group-hover:translate-x-1">
+                  <span className="dark:text-[#09090b]">{t.home.heroExploreBtn}</span>
+                  <span className="material-symbols-outlined ml-2 text-base transition-transform group-hover:translate-x-1 dark:text-[#09090b]">
                     arrow_forward
                   </span>
                 </a>
@@ -391,7 +391,7 @@ export default function HomePage() {
                     }}
                     className={`px-3.5 sm:px-4 py-2 text-label-md font-label-md tracking-wider uppercase rounded-xl transition-colors whitespace-nowrap text-xs sm:text-sm flex-shrink-0 ${
                       isActive
-                        ? "bg-primary text-on-primary font-bold shadow-xs"
+                        ? "bg-primary text-on-primary font-bold shadow-xs dark:bg-white dark:text-[#09090b] dark:hover:bg-[#e4e4e7]"
                         : "bg-surface-container-low text-on-surface hover:bg-surface-container border border-outline-variant/40"
                     }`}
                   >
@@ -417,7 +417,7 @@ export default function HomePage() {
                     onClick={() => setSelectedMaterial(isSelected ? null : chip.key)}
                     className={`px-2.5 sm:px-3 py-1.5 text-label-sm font-label-sm uppercase rounded-lg transition-colors border text-xs whitespace-nowrap flex-shrink-0 ${
                       isSelected
-                        ? "bg-primary text-on-primary border-primary font-bold"
+                        ? "bg-primary text-on-primary border-primary font-bold dark:bg-white dark:text-[#09090b] dark:border-white"
                         : "bg-surface-container-lowest text-on-surface border-outline-variant hover:border-primary"
                     }`}
                   >
@@ -543,11 +543,11 @@ export default function HomePage() {
                           });
                           showToast(t.home.inCartToast);
                         }}
-                        className="p-2.5 border border-outline-variant rounded-xl hover:border-primary hover:bg-primary hover:text-on-primary transition-colors text-primary"
+                        className="p-2.5 border border-outline-variant rounded-xl transition-all text-on-surface hover:bg-primary hover:border-primary hover:text-on-primary dark:border-white/20 dark:text-white dark:hover:bg-white dark:hover:border-white dark:hover:text-[#09090b] group/cartbtn cursor-pointer"
                         title={t.home.addToCart}
                         aria-label={t.home.addToCart}
                       >
-                        <span className="material-symbols-outlined text-[18px] block">
+                        <span className="material-symbols-outlined text-[18px] block group-hover/cartbtn:text-[#09090b]">
                           shopping_bag
                         </span>
                       </button>
@@ -563,10 +563,10 @@ export default function HomePage() {
             <button
               type="button"
               onClick={() => setShowAllProducts(!showAllProducts)}
-              className="px-8 py-3.5 bg-primary text-on-primary text-label-md font-label-md uppercase tracking-wider rounded-xl hover:bg-[#27272a] transition-all inline-flex items-center gap-2"
+              className="px-8 py-3.5 bg-primary text-on-primary text-label-md font-label-md uppercase tracking-wider rounded-xl hover:bg-[#27272a] dark:bg-white dark:text-[#09090b] dark:hover:bg-[#e4e4e7] transition-all inline-flex items-center gap-2 font-bold shadow-sm"
             >
-              <span>{showAllProducts ? t.home.viewLess : t.home.viewMore}</span>
-              <span className={`material-symbols-outlined text-sm transition-transform ${showAllProducts ? "rotate-180" : ""}`}>
+              <span className="dark:text-[#09090b]">{showAllProducts ? t.home.viewLess : t.home.viewMore}</span>
+              <span className={`material-symbols-outlined text-sm transition-transform dark:text-[#09090b] ${showAllProducts ? "rotate-180" : ""}`}>
                 expand_more
               </span>
             </button>

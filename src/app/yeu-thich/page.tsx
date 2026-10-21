@@ -258,11 +258,11 @@ export default function WishlistPage() {
                               quantity: 1,
                             })
                           }
-                          className="px-3.5 py-2 bg-primary text-on-primary text-xs font-semibold uppercase tracking-wider rounded-xl hover:bg-[#27272a] transition-all flex items-center gap-1.5 shadow-sm active:scale-95"
+                          className="px-3.5 py-2 bg-primary text-on-primary text-xs font-semibold uppercase tracking-wider rounded-xl hover:bg-[#27272a] dark:bg-white dark:text-[#09090b] dark:hover:bg-[#e4e4e7] transition-all flex items-center gap-1.5 shadow-sm active:scale-95 font-bold"
                           title={t.wishlist.addToCartBtn}
                         >
-                          <span className="material-symbols-outlined text-sm">shopping_bag</span>
-                          <span>{t.wishlist.addToCartBtn}</span>
+                          <span className="material-symbols-outlined text-sm dark:text-[#09090b]">shopping_bag</span>
+                          <span className="dark:text-[#09090b]">{t.wishlist.addToCartBtn}</span>
                         </button>
                       </div>
                     </div>
