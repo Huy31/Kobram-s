@@ -9,6 +9,7 @@ import ConsultationModal from "@/components/ConsultationModal";
 import HeartButton from "@/components/HeartButton";
 import ValueCard from "@/components/ValueCard";
 import NeumorphicCard from "@/components/NeumorphicCard";
+import RetroInput from "@/components/RetroInput";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { getFeaturedProducts, submitConsultationToDb } from "@/services/productService";
@@ -667,17 +668,19 @@ export default function HomePage() {
                 {t.home.ctaDesc}
               </p>
 
-              <form onSubmit={handleBannerSubmit} className="pt-4 flex flex-col sm:flex-row gap-3">
-                <input
+              <form onSubmit={handleBannerSubmit} className="pt-4 flex flex-col sm:flex-row gap-4 items-stretch sm:items-center">
+                <RetroInput
                   type="tel"
+                  name="phone"
                   placeholder={t.home.ctaInputPlaceholder}
                   value={bannerPhone}
                   onChange={(e) => setBannerPhone(e.target.value)}
-                  className="flex-1 h-12 px-4 bg-white/10 border border-[#3F3F46] rounded-xl text-white placeholder:text-[#71717A] text-body-sm focus:border-white focus:outline-none transition-colors"
+                  wrapperClassName="flex-1 max-w-lg"
+                  aria-label={t.home.ctaInputPlaceholder}
                 />
                 <button
                   type="submit"
-                  className="h-12 px-7 bg-white text-[#09090B] text-label-md font-label-md uppercase tracking-wider font-bold rounded-xl hover:bg-[#E4E4E7] active:scale-98 transition-all whitespace-nowrap shadow-sm"
+                  className="h-[56px] px-8 bg-white text-[#09090B] font-mono text-xs sm:text-sm uppercase tracking-wider font-bold border-2 border-white shadow-[6px_6px_0_rgba(255,255,255,0.4)] hover:shadow-[9px_9px_0_#ffffff] hover:-translate-x-1 hover:-translate-y-1 active:translate-x-0 active:translate-y-0 active:shadow-none transition-all whitespace-nowrap cursor-pointer"
                 >
                   {t.home.ctaSubmitBtn}
                 </button>
