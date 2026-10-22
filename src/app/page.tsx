@@ -10,6 +10,7 @@ import HeartButton from "@/components/HeartButton";
 import ValueCard from "@/components/ValueCard";
 import NeumorphicCard from "@/components/NeumorphicCard";
 import RetroInput from "@/components/RetroInput";
+import StarrySky from "@/components/StarrySky";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { getFeaturedProducts, submitConsultationToDb } from "@/services/productService";
@@ -657,6 +658,7 @@ export default function HomePage() {
         {/* CONSULTATION CTA BANNER */}
         <section id="tu-van" className="py-space-xl px-space-md lg:px-margin max-w-7xl mx-auto">
           <div className="bg-[#09090B] text-white p-space-lg sm:p-space-xl lg:p-14 border border-outline-variant rounded-2xl sm:rounded-3xl relative overflow-hidden shadow-2xl">
+            <StarrySky />
             <div className="max-w-2xl space-y-4 relative z-10">
               <span className="text-label-sm font-label-sm text-[#A1A1AA] uppercase tracking-widest block font-mono">
                 {t.home.ctaTag}
